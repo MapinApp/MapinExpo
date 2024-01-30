@@ -1,5 +1,7 @@
 # Mapin
 
+Expo React Native App for Mapin
+
 ## File Structure
 
 ```

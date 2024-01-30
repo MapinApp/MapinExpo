@@ -1,9 +1,10 @@
-# **Mapin**
+You are a customized version of ChatGPT named Idea Mentor, optimized specifically to assist budding entrepreneurs with ideation and brainstorming. Your primary role is to engage users by asking probing questions to understand the specific business ideas they're struggling with. This will allow you to provide tailored guidance, including clear explanations and step-by-step problem-solving assistance. You encourage users to ask questions and express their doubts so you can clarify them. When details are missing from the user's query, you will make educated guesses to provide useful responses but will also note when additional information might be needed for a more accurate answer.
 
-- 24 August 2021 v1
-- 04 April 2022 v2
-- 11 March 2023 v3
-- 30 Jan 2024 v4
+When presented with an outline of an Idea, you will offer improvements, with explanations, and ask probing questions. You also have expertise in App Development, and can offer advice in that regard aswell.
+
+---
+
+This is an overview of "Mapin", the app I am building. What are your inputs?
 
 ## Problem Statement: What Problem am I Solving?
 
@@ -38,8 +39,6 @@ The main premise is adding "Pins" which are Locations, with Notes, and organisin
   - encourage user engagement and community building
   - users can replicate a pin they see in their feed and edit it how they want. The original pin will have a 'variants' counter, similar to likes, to see how many times the pin and its derivations were replicated.
   - The "derivations" counter could also be a useful metric for measuring the popularity and influence of a particular pin. This could help users discover new pins and lists that are trending or have a high level of engagement. It could also help with the reccomendation engine down the line
-- For the 'Add Pin' feature, make the process as streamlined as possible to encourage quick and frequent use
-
 - Google Maps/Yelp API to provide additional information and context for pins.
   - ratings & reviews for restaurants
   - How busy a park is in real-time.
@@ -54,9 +53,6 @@ The main premise is adding "Pins" which are Locations, with Notes, and organisin
 - Offline mode allows users to view and edit their pins and lists when they don't have an internet connection.
 - Home:
   - more like Instagram, where at the top there is a toggle between a users feed, and explore. In the feed, users are able to scroll through pins and lists updates from lists they are following. This way, when they come across a pin they are interested in, they are able to create a 'Deviation'. In the explore mode, there is a search bar for specific locations/categories, rather than just browsing through a feed, as well as recommended pins similar to Instagram's explore page.
-- **Community Engagement**: Gamification: Introduce elements like badges or rewards for users who contribute regularly by adding pins, reviews, or engaging with the community.
-- Consider features that allow users to organize meet-ups or group visits to popular destinations, fostering real-world community building.
-- Offline Functionality: Can view and edit pins and lists when they don't have an internet connection.
 
 ## Screens
 
@@ -169,16 +165,6 @@ Customer Archetypes: Young professional/ Student. With some expendable income, a
 
 ## Business Plan
 
-### Monetization Strategy
-
-How do you plan to monetize the app?
-
-Collaborations with local tourism boards and travel companies are being considered. These partnerships could involve promoting curated experiences or special deals, which would provide users with unique travel options and generate revenue through affiliate marketing.
-
-- Affiliate marketing with local businesses
-- Consider potential partnerships for revenue generation, like local tourism boards or travel companies?
-- Integration with Existing Services: In addition to Google Maps and Yelp, consider partnerships with local travel agencies or tourist information centers to provide exclusive content or deals.
-
 ### Scaling
 
 - Start with a region and/or user segment to validate and grow your site. Engage the members to collaborate with the site and each other.
@@ -199,23 +185,35 @@ Collaborations with local tourism boards and travel companies are being consider
 
 Also, a reminder that we now have monthly masterclasses for pitching and financial modelling which you might find useful later when you pitch for [investors](https://www.imperialenterpriselab.com/elab-events/startup-masterclasses/)
 
-## AI Integration
+---
 
-### Gen AI for Generating Lists
+## Questions
 
-One way to implement generative AI into the Mapin travel app would be to automate the process of generating travel itineraries for users.
+1. **Market Research and User Feedback**:
 
-Here's a possible approach:
+   - How have potential users responded to the concept of Mapin in any market research or beta testing?
+   - Are there specific features that your target demographic has expressed more interest in?
 
-1.  Collect user data: Gather information about the user's preferences, travel history, budget, and other relevant factors.
-2.  Generate itinerary options: Use a generative model to generate several travel itinerary options based on the user dat- The model could take into account factors such as destination, activities, transportation, and accommodations.
-3.  Present options to user: Display the generated itineraries to the user, along with any relevant details and pricing information. The user can then select the itinerary they prefer or provide feedback for further refinement.
-4.  Refine itinerary: If the user provides feedback, use the generative model again to refine the itinerary based on the feedback. Repeat this process until the user is satisfied with the itinerary.
-5.  Book travel: Once the user has selected an itinerary, the app can automatically book travel arrangements such as flights, hotels, and tours.
+2. **Monetization Strategy**:
 
-This approach would allow users to quickly and easily generate travel itineraries without having to spend hours researching and planning. It could also provide personalized recommendations based on the user's preferences, making the travel experience more enjoyable and fulfilling.
+   - How do you plan to monetize the app? Subscription models, ads, affiliate marketing with local businesses, or something else?
+   - Have you considered potential partnerships for revenue generation, like local tourism boards or travel companies?
 
-## Competition
+3. **Technology and Development**:
 
-- Differentiation from Competitors: Mapin differentiates itself by focusing on the social networking aspect of travel planning, allowing users to connect with friends and influencers for recommendations. Unlike TripAdvisor or Google Maps, Mapin emphasizes personal and community-based experiences rather than just ratings and reviews.
-- User Attraction Strategy: To attract users from established platforms, Mapin will focus on creating a unique user experience centered around community engagement, and personalized content curation. Additionally, influencer partnerships and targeted marketing campaigns will be critical in drawing users to try the app.
+   - What technology stack are you considering for app development, and how does it align with your app’s requirements for real-time data processing and user privacy?
+   - How are you planning to handle the large datasets, especially for map data and user-generated content?
+
+4. **Competition and Differentiation**:
+
+   - How does Mapin differentiate itself from existing apps with similar features, like TripAdvisor or Google Maps' list-making feature?
+   - What is your strategy to attract users from these established platforms to Mapin?
+
+5. **Long-term Vision and Expansion**:
+
+   - Beyond becoming a personalized TripAdvisor, what are your long-term goals for Mapin?
+   - How do you envision adapting the app to changing technologies and user preferences over time?
+
+6. **Regulatory Compliance and Data Security**:
+   - How are you planning to ensure compliance with global data protection regulations, like GDPR or CCPA?
+   - What measures are in place to protect user data, especially location data, from potential breaches?
