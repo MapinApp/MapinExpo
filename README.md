@@ -13,120 +13,117 @@ config.ts     - Contains config
   /(auth)     - Auth Screens
 ```
 
-## Screens
-
-Here is an example State mermaid diagram. Use the same structure to generate the hierachy of screens shown in the image:
+## Screens Overview
 
 ```mermaid
 stateDiagram-v2
-    state "CEO" as ceo
-    state "T. H. Eboss" as ceo
-    ceo --> devmngr
-    ceo --> admmngr
-    ceo --> law
+    state "/" as entry
+    entry --> auth
+    entry --> app
 
-    state "Dev. Manager" as devmngr
-    state "Alice" as devmngr
-    devmngr --> dev
+    state "(auth)" as auth
+    auth --> logIn
+    auth --> signUp
+    auth --> forgotPassword
 
-    state "Development Team" as dev
-    state "Bob" as dev
-    state "Charles" as dev
-    state "David" as dev
-    state "Eveline" as dev
+    state "log-in" as logIn
+    state "forgot-password" as forgotPassword
 
-    state "Adm. Manager" as admmngr
-    state "Florence" as admmngr
-    admmngr --> adm
+    state "sign-up" as signUp
+    signUp --> details
+    signUp --> user
+    signUp --> dob
+    signUp --> dobWhy
+    signUp --> tc
 
-    state "Administration Team" as adm
-    state "Grace" as adm
-    state "Holt" as adm
-    state "Ivan" as adm
+    state "details" as details
+    state "user" as user
+    state "dob" as dob
+    state "dob-why" as dobWhy
+    state "terms-and-conditions" as tc
 
-    state "Lawyer" as law
-    state "John" as law
-```
-
-```mermaid
-stateDiagram-v2
-    state "App" as app
+    state "(app)" as app
     app --> home
+    app --> map
+    app --> addPin
     app --> lists
     app --> profile
-    app --> auth
 
-    state "Home" as home
-    home --> map
-    home --> add_pin
+    state "home" as home
     home --> feed
     home --> explore
 
-    state "Feed" as feed
-    feed --> pin_visited
-    feed --> list_update
+    state "feed" as feed
+    feed --> pinVisited
+    feed --> listUpdated
     feed --> notifications
-    feed --> copy_pin
-    feed --> discover
+    feed --> copyPin
 
-    state "Explore" as explore
-    explore --> search_result
+    state "pin-visited" as pinVisited
+    pinVisited --> pinVisitedId
 
-    state "Lists" as lists
+    state "[pinId]" as pinVisitedId
+
+    state "list-updated" as listUpdated
+    listUpdated --> listUpdatedId
+
+    state "[listId]" as listUpdatedId
+
+    state "notifications" as notifications
+    state "copy-pin" as copyPin
+
+    state "explore" as explore
+    explore --> discover
+    explore --> searchResults
+
+    state "discover" as discover
+    discover --> discoverId
+
+    state "[discoverId]" as discoverId
+
+    state "search-results" as searchResults
+    searchResults --> searchResultId
+
+    state "[searchResultId]" as searchResultId
+
+    state "map" as map
+
+    state "add-pin" as addPin
+
+    state "lists" as lists
     lists --> list
-    lists --> bookmarks
-    lists --> create_list
+    lists --> createList
 
-    state "List" as list
-    list --> pin
-    list --> id
+    state "[listId] inc Bookmarks" as list
+    list --> listPinId
 
-    state "Bookmarks" as bookmarks
-    bookmarks --> pin
-    bookmarks --> id
+    state "[pinId]" as listPinId
 
-    state "Profile" as profile
+    state "profile" as profile
     profile --> settings
-    profile --> all_pins
-    profile --> list
+    profile --> allPins
+    profile --> profileList
     profile --> reviews
 
-    state "Settings" as settings
-    settings --> user_feedback
+    state "settings" as settings
+    settings --> userFeedback
 
-    state "All_pins" as all_pins
-    all_pins --> pin
+    state "user-feedback" as userFeedback
 
-    state "List_in_profile" as list
-    list_in_profile --> id
+    state "all-pins" as allPins
+    allPins --> allPinsId
 
-    state "Reviews" as reviews
-    reviews --> pin_review
+    state "[pinId]" as allPinsId
 
-    state "Pin_review" as pin_review
-    pin_review --> id
+    state "profile-lists" as profileList
+    profileList --> profileListId
 
-    state "Auth" as auth
-    auth --> login
-    auth --> forgot_password
-    auth --> sign_up
+    state "[listId]" as profileListId
 
-    state "Login" as login
-    login --> 1_details
-    login --> 2_user
+    state "reviews" as reviews
+    reviews --> reviewsId
 
-    state "Sign_up" as sign_up
-    sign_up --> 1_details
-    sign_up --> 2_user
-    sign_up --> 3_dob
-    sign_up --> dob_why
-    sign_up --> terms_and_conditions
-
-    state "1_details" as details
-    state "2_user" as user
-    state "3_dob" as dob
-    state "dob_why" as dobwhy
-    state "terms_and_conditions" as terms
+    state "[reviewId]" as reviewsId
 ```
 
 ## Colors
@@ -135,21 +132,20 @@ Light:
 BG: background: linear-gradient(to top, #eeeeee 0%, #f4f5fa 100%);
 Text: color: rgb(95, 95, 95);
 
+## Scripts
+
+Replace Spaces with Underscores:
+
+```bash
+for f in *\ *; do mv "$f" "${f// /_}"; done
+```
+
 ## 🚀 ToDo
 
 - [ ] Replace Alers with Modal
 - [ ] Check ifg username is taken
 - [ ] Typography and Fonts
 - [ ] Design
-  - Inspiration:
-    - https://dribbble.com/nikitinteam
-
-## Scripts
-
-Replace Spaces with Underscores:
-`for f in *\ *; do mv "$f" "${f// /_}"; done`
-
-## Data
 
 - Add user location to auth context
 - Add name
