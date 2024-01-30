@@ -156,17 +156,6 @@ Customer Archetypes: Young professional/ Student. With some expendable income, a
 - Cusumano, M. A., et al. (2019). The Business of Platforms: Strategy in the Age of Digital Competition, Innovation, and Power, Harper Business New York.
 - Choudary, S. P. (2015). Platform Scale: How an Emerging Business Model Helps Startups Build Large Empires with Minimum Investment, Platform Thinking Labs Pte. Ltd.
 
-### Supabase
-
-- [Expo With Supabase Auth](https://github.com/codingki/react-native-expo-template/tree/master/template-typescript-bottom-tabs-supabase-auth-flow)
-- [Expo ToDo App with Supabase Integration](https://github.com/supabase/supabase/tree/master/examples/expo-todo-list)
-- [Adding Stripe Payment to Supabase apps](https://www.sandromaglione.com/supabase-auth-create-stripe-customer-subscription-supabase-stripe-billing-part-1/)
-- [Supabase Crash Course](https://www.youtube.com/watch?time_continue=1516&v=7uKQBl9uZ00&feature=emb_logo)
-
-## General Coding
-
-- [UI from Tiny Tim](https://www.creative-tim.com/product/soft-ui-pro-react-native)
-
 ## Business Plan
 
 ### Monetization Strategy

@@ -2,7 +2,7 @@
 
 Expo React Native App for Mapin
 
-## File Structure
+## 📁 Folder Structure
 
 ```
 config.ts     - Contains config
@@ -15,7 +15,7 @@ config.ts     - Contains config
   /(auth)     - Auth Screens
 ```
 
-## Screens Overview
+## 📱 Screens Overview
 
 ```mermaid
 stateDiagram-v2
@@ -128,11 +128,33 @@ stateDiagram-v2
     state "[reviewId]" as reviewsId
 ```
 
-## Colors
+## 🚀 ToDo
 
+- [ ] Check ifg username is taken
+- [ ] Typography and Fonts
+- [ ] Will need to implement a Full Text Search
+  - https://supabase.com/docs/guides/database/full-text-search
+
+## 📚 Resources
+
+### Supabase
+
+- [Expo With Supabase Auth](https://github.com/codingki/react-native-expo-template/tree/master/template-typescript-bottom-tabs-supabase-auth-flow)
+- [Expo ToDo App with Supabase Integration](https://github.com/supabase/supabase/tree/master/examples/expo-todo-list)
+- [Adding Stripe Payment to Supabase apps](https://www.sandromaglione.com/supabase-auth-create-stripe-customer-subscription-supabase-stripe-billing-part-1/)
+- [Supabase Crash Course](https://www.youtube.com/watch?time_continue=1516&v=7uKQBl9uZ00&feature=emb_logo)
+
+### General Coding
+
+- [UI from Tiny Tim](https://www.creative-tim.com/product/soft-ui-pro-react-native)
+
+## Color Reference
+
+```
 Light:
 BG: background: linear-gradient(to top, #eeeeee 0%, #f4f5fa 100%);
 Text: color: rgb(95, 95, 95);
+```
 
 ## Scripts
 
@@ -142,32 +164,7 @@ Replace Spaces with Underscores:
 for f in *\ *; do mv "$f" "${f// /_}"; done
 ```
 
-## 🚀 ToDo
-
-- [ ] Replace Alers with Modal
-- [ ] Check ifg username is taken
-- [ ] Typography and Fonts
-- [ ] Design
-
-- Add user location to auth context
-- Add name
-- add other details
-- Add Feed into data
-- Notifications
-
-# Auth
-
-- [ ] On Sign up validate unique username
-  - https://supabase.com/docs/guides/database/functions
-- [ ] On Sign up validate age over 13
-- [ ] On Sign up Implement Gender Select
-
-# Explore
-
-- [ ] Will need to implement a Full Text Search
-  - https://supabase.com/docs/guides/database/full-text-search
-
-## 📝 Notes
+## 📝 Docs
 
 - [Routing Docs](https://expo.github.io/router/docs/features/routing)
 - [Expo Router: Docs](https://expo.github.io/router)
