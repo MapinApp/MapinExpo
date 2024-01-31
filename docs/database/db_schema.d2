@@ -1,0 +1,181 @@
+# Main Tables
+tables: "Main Tables" {
+  profiles: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    updated_at: timestamptz
+    username: varchar {constraint: unique}
+    first_name: varchar
+    last_name: varchar
+    email: varchar {constraint: unique}
+    gender: varchar
+    bio: text
+    date_of_birth: date
+    created_date: timestamptz
+    last_login: timestamptz
+    profile_photo_id: uuid {constraint: foreign_key}
+    accouint_status: varchar
+  }
+
+  pins: {
+    shape: sql_table
+    pin_id: uuid {constraint: primary_key}
+    places_id: varchar
+    user_id: uuid {constraint: foreign_key}
+    pin_photo_id: uuid {constraint: foreign_key}
+    pin_name: varchar
+    address_str: varchar
+    lat: decimal
+    lng: decimal
+    notes: text
+    label_id: int {constraint: foreign_key}
+    created_at: timestamptz
+    updated_at: timestamptz
+    visited: boolean
+    visited_at: timestamptz
+    copied_from_pin_id: uuid {constraint: foreign_key}
+    deviation_count: int
+  }
+
+  reviews: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    created_at: timestamptz
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+    review: text
+    rating: int8
+  }
+
+  labels: {
+    shape: sql_table
+    label_id: int {constraint: primary_key}
+    label_name: varchar
+    color: hex
+    label_icon: varchar
+  }
+
+  lists: {
+    shape: sql_table
+    list_id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    name: varchar
+    description: varchar
+    created_at: timestamptz
+    updated_at: timestamptz
+    private: boolean
+    list_photo_id: uuid {constraint: foreign_key}
+  }
+
+  comments: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+    comment: varchar
+    created_at: timestamptz
+  }
+
+  notifications: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    created_at: timestamptz
+    # User to be Notified
+    user_id: uuid {constraint: foreign_key}
+    notification_type: varchar
+    notification_text: varchar
+    read: boolean
+    read_at: timestamptz
+  }
+
+  settings: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    push_notifications: boolean
+    dark_mode: boolean
+  }
+
+  search_history: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    search_term: varchar
+    created_at: timestamptz
+  }
+
+  pins.user_id -> profiles.id
+  pins.label_id -> labels.label_id
+  pins.copied_from -> pins.pin_id
+  reviews.user_id -> profiles.id
+  reviews.pin_id -> pins.pin_id
+  lists.user_id -> profiles.id
+  comments.user_id -> profiles.id
+  comments.pin_id -> pins.pin_id
+  notifications.user_id -> profiles.id
+  settings.user_id -> profiles.id
+  search_history.user_id -> profiles.id
+}
+
+tables.profiles.profile_photo_id -> images.profile_photos.profile_photo_id
+tables.pins.pin_photo_id -> images.pin_photos.pin_photo_id
+tables.lists.list_photo_id -> images.list_cover_photos.list_photo_id
+
+# Join Tables
+joins: "Join Tables" {
+  list_pin: {
+    shape: sql_table
+    id: int {constraint: primary_key}
+    dt: timestamptz
+    list_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+  }
+
+  bookmarks: {
+    shape: sql_table
+    id: int {constraint: primary_key}
+    dt: timestamptz
+    # The user who Bookmarked the Pin
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+    active: boolean
+  }
+
+  follows: {
+    shape: sql_table
+    id: int {constraint: primary_key}
+    dt: timestamptz
+    # User who is following the list
+    user_id: uuid {constraint: foreign_key}
+    list_id: uuid {constraint: foreign_key}
+    active: boolean
+  }
+}
+
+joins.list_pin.list_id -> tables.lists.list_id
+joins.list_pin.pin_id -> tables.pins.pin_id
+joins.bookmarks.user_id -> tables.profiles.id
+joins.bookmarks.pin_id -> tables.pins.pin_id
+joins.follows.list_id -> tables.lists.list_id
+joins.follows.user_id -> tables.profiles.id
+
+# Images
+images: "Images" {
+  pin_photos: {
+    shape: sql_table
+    pin_photo_id: uuid {constraint: primary_key}
+    url: varchar
+  }
+
+  profile_photos: {
+    shape: sql_table
+    profile_photo_id: uuid {constraint: primary_key}
+    url: varchar
+  }
+
+  list_cover_photos: {
+    shape: sql_table
+    list_photo_id: uuid {constraint: primary_key}
+    url: varchar
+  }
+}

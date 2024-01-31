@@ -5,11 +5,12 @@ Expo React Native App for Mapin
 ## 📁 Folder Structure
 
 ```
-config.ts     - Contains config
-/context      - Contexts used to manage global state. Auth & Data
-/lib          - Contains Functions, Hooks & Supabase Client
+/docs         - Documentation
+/assets       - Images, Fonts, etc
 /components   - All Components. Most low level components, e.g. Text
-/layout       - Layout components - higher level than components
+/context      - Contexts used to manage global state. Auth & Data
+/constants    - Constants used throughout the app
+/lib          - Contains Functions, Hooks & Supabase Client
 /app          - Routing Folder. Each file becomes a route
   /(app)      - Logged in app
   /(auth)     - Auth Screens
@@ -128,54 +129,35 @@ stateDiagram-v2
     state "[reviewId]" as reviewsId
 ```
 
-## 🚀 ToDo
+## 💾 DataBase
 
-- [ ] Check ifg username is taken
-- [ ] Typography and Fonts
-- [ ] Will need to implement a Full Text Search
-  - https://supabase.com/docs/guides/database/full-text-search
+# Schema
 
-## 📚 Resources
+![Mapin Database](/docs/database/img/mapin_v11.svg)
 
-### Supabase
+## API Structure
 
-- [Expo With Supabase Auth](https://github.com/codingki/react-native-expo-template/tree/master/template-typescript-bottom-tabs-supabase-auth-flow)
-- [Expo ToDo App with Supabase Integration](https://github.com/supabase/supabase/tree/master/examples/expo-todo-list)
-- [Adding Stripe Payment to Supabase apps](https://www.sandromaglione.com/supabase-auth-create-stripe-customer-subscription-supabase-stripe-billing-part-1/)
-- [Supabase Crash Course](https://www.youtube.com/watch?time_continue=1516&v=7uKQBl9uZ00&feature=emb_logo)
-
-### General Coding
-
-- [UI from Tiny Tim](https://www.creative-tim.com/product/soft-ui-pro-react-native)
-
-## Color Reference
-
-```
-Light:
-BG: background: linear-gradient(to top, #eeeeee 0%, #f4f5fa 100%);
-Text: color: rgb(95, 95, 95);
-```
-
-## Scripts
-
-Replace Spaces with Underscores:
-
-```bash
-for f in *\ *; do mv "$f" "${f// /_}"; done
-```
-
-## 📝 Docs
-
-- [Routing Docs](https://expo.github.io/router/docs/features/routing)
-- [Expo Router: Docs](https://expo.github.io/router)
-- [Expo Router: Repo](https://github.com/expo/router)
-- [Request for Comments](https://github.com/expo/router/discussions/1)
-
-## Routes to add to Website
-
-- https://mapin.co.uk/reset-password
-- https://mapin.co.uk/welcome
-
-## Issues
-
-- [Known storage limits of Async Storage](https://react-native-async-storage.github.io/async-storage/docs/limits)
+| **<br>**           | **Description**                  | **API id** | **Type** | **API Request**                                   | **Policies**                         | **URL** | **Body Keys** |
+| ------------------ | -------------------------------- | ---------- | -------- | ------------------------------------------------- | ------------------------------------ | ------- | ------------- |
+| **Register/Login** | OAuth Sign in                    | 1          |          |                                                   |                                      |         |               |
+| **<br>**           | Register                         | 2          | POST     | POST to Profile to update private details         | User can only edit their own profile |         |               |
+|                    | Edit Profile                     | 3          | PATCH    |                                                   |                                      |         |               |
+| **Feed**           | Get Feed                         | 4          | GET      | GET Updates for Pins in Lists a user is following |                                      |         |               |
+| **<br>**           | Get Pin Info on Feed             | 5          | GET      | GET single Pin Info                               |                                      |         |               |
+| **<br>**           | Comment on a Pin                 | 6          | POST     | POST a comment to a Pin                           |                                      |         |               |
+| **<br>**           | Copy Pin                         | 7          | POST     | Copy Pin. Update derivation number on Pin         |                                      |         |               |
+| **Explore**        | Popular Pins                     | 8          | GET      | GET popular Pins                                  |                                      |         |               |
+| **<br>**           | Follow List                      | 9          | POST     | Follow list                                       |                                      |         |               |
+| **Map**            | Fetch all Nearby Pins            | 10         | GET      | GET Pins with Filters (List)                      |                                      |         |               |
+| **Add Pin**        | Post a new Pin                   | 11         | POST     | New Pin                                           |                                      |         |               |
+| **Pins**           | Get ALL Pins                     | 12         | GET      | Get all Pins                                      |                                      |         |               |
+| **<br>**           | Get 1 Pin                        | 13         | GET      | Get detail 1 Pin                                  |                                      |         |               |
+| **<br>**           | Update 1 Pin as vistied          | 14         | UPDATE   | Update 1 Pin as visited                           |                                      |         |               |
+| **<br>**           | Update Pin                       | 15         | UPDATE   | Update detail on 1 pin                            |                                      |         |               |
+| **My Lists**       | Get Lists Overview               | 16         | GET      | GET lists                                         |                                      |         |               |
+| **<br>**           | Get 1 List Detail                | 17         | GET      | Get 1 list Details                                |                                      |         |               |
+| **<br>**           | Get 1 Pin Detail                 | 18         | GET      | Get 1 Pin Detail                                  |                                      |         |               |
+| **Profile**        | Pin number, Followers, Following | 19         | GET      | Get Person Details                                |                                      |         |               |
+| **<br>**           | Lists- own; get all. else Public | 20         | GET      | Get Lists for Profile                             |                                      |         |               |
+| **<br>**           | All Pins (Public/Private)        | 21         |          |                                                   |                                      |         |               |
+| **Settings**       | User Feedback                    | 22         | POST     | Send user feedback                                |                                      |         |               |
