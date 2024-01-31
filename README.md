@@ -162,13 +162,3 @@ stateDiagram-v2
 | **<br>**           | Lists- own; get all. else Public | 20         | GET      | Get Lists for Profile                             |                                      |         |               |
 | **<br>**           | All Pins (Public/Private)        | 21         |          |                                                   |                                      |         |               |
 | **Settings**       | User Feedback                    | 22         | POST     | Send user feedback                                |                                      |         |               |
-
-# Fonts
-
-Manophiser.otf
-Montserrat-Italic.otf
-Montserrat-Thin.otf
-Montserrat-Black.otf
-Montserrat-Medium.otf
-Montserrat-Bold.otf
-Montserrat-Regular.otf

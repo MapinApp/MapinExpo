@@ -1,20 +1,18 @@
 import { StyleSheet } from "react-native";
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { View } from "@/components/Themed";
-import { Text } from "@/components/ui";
 
-export default function TabOneScreen() {
+import EditScreenInfo from "@/components/EditScreenInfo";
+import { Text, View } from "@/components/Themed";
+
+export default function TabTwoScreen() {
   return (
     <View style={styles.container}>
-      <Text h1 uppercase primary>
-        Mapin
-      </Text>
+      <Text style={styles.title}>Tab Two</Text>
       <View
         style={styles.separator}
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
-      <EditScreenInfo path="app/(app)/index.tsx" />
+      <EditScreenInfo path="app/(app)/two.tsx" />
     </View>
   );
 }

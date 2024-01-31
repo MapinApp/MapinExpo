@@ -73,7 +73,7 @@ const Typography = (props: ITextProps) => {
   } = props;
   // use theme context
   const { theme } = useTheme();
-  const { colors, sizes, lines, weights, fonts } = theme;
+  const { colors, sizes, lines, weights, fonts, letterSpacing } = theme;
 
   const colorIndex = primary
     ? "primary"
@@ -118,36 +118,42 @@ const Typography = (props: ITextProps) => {
         lineHeight: lines.h1,
         fontWeight: weights.h1,
         fontFamily: fonts.h1,
+        letterSpacing: letterSpacing.h1,
       }),
       ...(h2 && {
         fontSize: sizes.h2,
         lineHeight: lines.h2,
         fontWeight: weights.h2,
         fontFamily: italic ? fonts.h2 + "Italic" : fonts.h2,
+        letterSpacing: letterSpacing.h2,
       }),
       ...(h3 && {
         fontSize: sizes.h3,
         lineHeight: lines.h3,
         fontWeight: weights.h3,
         fontFamily: italic ? fonts.h3 + "Italic" : fonts.h3,
+        letterSpacing: letterSpacing.h3,
       }),
       ...(h4 && {
         fontSize: sizes.h4,
         lineHeight: lines.h4,
         fontWeight: weights.h4,
         fontFamily: italic ? fonts.h4 + "Italic" : fonts.h4,
+        letterSpacing: letterSpacing.h4,
       }),
       ...(h5 && {
         fontSize: sizes.h5,
         lineHeight: lines.h5,
         fontWeight: weights.h5,
         fontFamily: italic ? fonts.h5 + "Italic" : fonts.h5,
+        letterSpacing: letterSpacing.h5,
       }),
       ...(p && {
         fontSize: sizes.p,
         lineHeight: lines.p,
         fontWeight: weights.p,
         fontFamily: italic ? fonts.p + "Italic" : fonts.p,
+        letterSpacing: letterSpacing.p,
       }),
       ...(underline && { textDecorationLine: "underline" }),
       ...(marginBottom && { marginBottom }),
