@@ -179,3 +179,17 @@ images: "Images" {
     url: varchar
   }
 }
+
+misc: "Misc Tables" {
+  # Table to store Contact Submissions
+  contact: {
+    shape: sql_table
+    id: int {constraint: primary_key}
+    dt: timestamptz
+    name: varchar
+    email: varchar
+    message: text,
+    src: varchar
+    marketing: boolean,
+  }
+}
