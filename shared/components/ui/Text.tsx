@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { LinearGradient, LinearGradientPoint } from "expo-linear-gradient";
 import MaskedView from "@react-native-masked-view/masked-view";
-import { ITheme } from "@/context/theme/dark";
+import { ITheme } from "@/types/theme";
 import { useTheme } from "@/context/theme";
 
 const Typography = (props: ITextProps) => {

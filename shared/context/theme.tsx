@@ -2,9 +2,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 // import theme constants
+import type { ITheme } from "@/types/theme";
 import { THEME as dark } from "./theme/dark";
 import { THEME as light } from "./theme/light";
-import { ITheme } from "./theme/light";
 
 type ThemeContext = {
   isDark: boolean;

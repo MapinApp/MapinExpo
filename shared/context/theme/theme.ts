@@ -37,24 +37,24 @@ const WEIGHTS: ThemeWeights = {
 const ASSETS: ThemeAssets = {
   // backgrounds/logo
   logo: require("../../assets/img/logo.png"),
-  background: require("../../assets/img/bg.png"),
+  background: require("../../assets/img/bg_light.png"),
 };
 
 const FONTS: ThemeFonts = {
   // based on font size
-  h1: "YesevaOneRegular",
-  h2: "JosefinSansBold",
-  h3: "JosefinSansSemiBold",
-  h4: "JosefinSansMedium",
-  h5: "JosefinSansRegular",
-  p: "JosefinSansLight",
-  text: "JosefinSansLight",
+  h1: "Manophiser",
+  h2: "MontserratBold",
+  h3: "MontserratMedium",
+  h4: "MontserratMedium",
+  h5: "MontserratRegular",
+  p: "MontserratThin",
+  text: "MontserratThin",
   // based on fontWeight
-  light: "JosefinSansLight",
-  normal: "JosefinSansRegular",
-  medium: "JosefinSansMedium",
-  bold: "JosefinSansBold",
-  semibold: "JosefinSansSemiBold",
+  light: "MontserratThin",
+  normal: "MontserratRegular",
+  medium: "MontserratMedium",
+  bold: "MontserratBold",
+  semibold: "MontserratMedium",
 };
 
 const LINE_HEIGHTS: ThemeLineHeights = {
