@@ -5,8 +5,13 @@
     "removeComments": true,
     "paths": {
       "@/*": [
-        "./*"
-      ]
+        "./shared/*"
+      ],
+      "@/assets/*": ["./shared/assets/*"],
+      "@/components/*": ["./shared/components/*"],
+      "@/context/*": ["./shared/context/*"],
+      "@/lib/*": ["./shared/lib/*"],
+      "@/types/*": ["./shared/types/*"]
     }
   },
   "include": [

@@ -32,3 +32,9 @@
 ## Issues
 
 - [Known storage limits of Async Storage](https://react-native-async-storage.github.io/async-storage/docs/limits)
+
+## Deps
+
+```bash
+npx expo install @react-native-community/datetimepicker @react-native-masked-view/masked-view dayjs expo-blur expo-constants expo-haptics expo-linear-gradient
+```

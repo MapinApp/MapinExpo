@@ -6,11 +6,12 @@ Expo React Native App for Mapin
 
 ```
 /docs         - Documentation
-/assets       - Images, Fonts, etc
-/components   - All Components. Most low level components, e.g. Text
-/context      - Contexts used to manage global state. Auth & Data
-/constants    - Constants used throughout the app
-/lib          - Contains Functions, Hooks & Supabase Client
+/shared       - Shared Components
+  /assets     - Images, Fonts, etc
+  /components - All Components. Most low level components, e.g. Text
+  /context    - Contexts used to manage global state. Auth & Data
+  /constants  - Constants used throughout the app
+  /lib        - Contains Functions, Hooks & Supabase Client
 /app          - Routing Folder. Each file becomes a route
   /(app)      - Logged in app
   /(auth)     - Auth Screens
