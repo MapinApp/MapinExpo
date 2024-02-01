@@ -35,7 +35,7 @@ const WEIGHTS: ThemeWeights = {
 };
 
 const ASSETS: ThemeAssets = {
-  // backgrounds/logo
+  og: require("../../assets/img/og.jpg"),
   logo: require("../../assets/img/logo.png"),
   background: require("../../assets/img/bg_light.png"),
 };
@@ -97,10 +97,10 @@ const SIZES: ThemeSizes = {
   // input sizes
   inputHeight: 46,
   inputBorder: 0.8,
-  inputRadius: 9,
+  inputRadius: 6,
   inputPadding: 12,
   // card sizes
-  cardRadius: 16,
+  cardRadius: 6,
   cardPadding: 10,
   // image sizes
   imageRadius: 14,

@@ -221,6 +221,7 @@ const Typography = (props: ITextProps) => {
           colors={gradient}
           end={end || [1, 0]}
           start={start || [0, 0]}
+          style={{ flex: 1, height: gradientHeight, flexWrap: "wrap" }}
         >
           <Text
             {...textID}

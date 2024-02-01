@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useTheme } from "@/context/theme";
+import { Ionicons } from "@expo/vector-icons";
 import { colors } from "react-native-elements";
 import {
   Block,
@@ -27,13 +28,13 @@ const Buttons = () => {
   const { assets, colors, gradients, sizes } = theme;
 
   return (
-    <Block paddingHorizontal={sizes.padding}>
+    <Block margin={sizes.sm} padding={sizes.padding} outlined radius={6}>
       <Text p semibold marginBottom={sizes.s}>
         Buttons
       </Text>
       <Block>
         <Button flex={1} gradient={gradients.primary} marginBottom={sizes.base}>
-          <Text white bold transform="uppercase">
+          <Text white bold uppercase>
             Primary
           </Text>
         </Button>
@@ -42,70 +43,61 @@ const Buttons = () => {
           gradient={gradients.secondary}
           marginBottom={sizes.base}
         >
-          <Text white bold transform="uppercase">
+          <Text white bold uppercase>
             Secondary
           </Text>
         </Button>
         <Button flex={1} gradient={gradients.info} marginBottom={sizes.base}>
-          <Text white bold transform="uppercase">
+          <Text white bold uppercase>
             info
           </Text>
         </Button>
         <Button flex={1} gradient={gradients.success} marginBottom={sizes.base}>
-          <Text white bold transform="uppercase">
+          <Text white bold uppercase>
             success
           </Text>
         </Button>
         <Button flex={1} gradient={gradients.warning} marginBottom={sizes.base}>
-          <Text white bold transform="uppercase">
+          <Text white bold uppercase>
             warning
           </Text>
         </Button>
         <Button flex={1} gradient={gradients.danger} marginBottom={sizes.base}>
-          <Text white bold transform="uppercase">
+          <Text white bold uppercase>
             danger
           </Text>
         </Button>
         <Button flex={1} gradient={gradients.light} marginBottom={sizes.base}>
-          <Text bold transform="uppercase">
+          <Text bold uppercase>
             light
           </Text>
         </Button>
         <Button flex={1} gradient={gradients.dark} marginBottom={sizes.base}>
-          <Text white bold transform="uppercase">
+          <Text white bold uppercase>
             dark
           </Text>
         </Button>
         <Block row justify="space-between" marginBottom={sizes.base}>
-          <Button
-            flex={1}
-            row
-            gradient={gradients.dark}
-            onPress={() => setModal(true)}
-          >
+          <Button flex={1} row primary onPress={() => setModal(true)}>
             <Block
               row
               align="center"
               justify="space-between"
               paddingHorizontal={sizes.sm}
             >
-              <Text white bold transform="uppercase" marginRight={sizes.sm}>
+              <Text white bold uppercase marginRight={sizes.sm}>
                 {quantity}
               </Text>
-              <Image
-                source={assets.logo}
-                color={colors.white}
-                transform={[{ rotate: "90deg" }]}
-              />
+              <Ionicons name="chevron-down-outline" size={16} color="white" />
             </Block>
           </Button>
-          <Button flex={1} gradient={gradients.dark} marginHorizontal={sizes.s}>
-            <Text white bold transform="uppercase" marginHorizontal={sizes.s}>
+          <Button flex={1} primary marginHorizontal={sizes.s}>
+            <Text white bold uppercase marginHorizontal={sizes.s}>
               Delete
             </Text>
           </Button>
-          <Button gradient={gradients.dark}>
-            <Text white bold transform="uppercase" marginHorizontal={sizes.sm}>
+          <Button primary>
+            <Text white bold uppercase marginHorizontal={sizes.sm}>
               Save for later
             </Text>
           </Button>
@@ -123,7 +115,7 @@ const Buttons = () => {
                 setModal(false);
               }}
             >
-              <Text p white semibold transform="uppercase">
+              <Text p white semibold uppercase>
                 {item}
               </Text>
             </Button>
@@ -134,50 +126,103 @@ const Buttons = () => {
   );
 };
 
-// texts example
+// // texts example
 const Typography = () => {
   const { sizes, gradients } = useTheme().theme;
 
   return (
-    <Block marginTop={sizes.m} paddingHorizontal={sizes.padding}>
+    <Block margin={sizes.sm} padding={sizes.padding} outlined radius={6}>
       <Text p semibold marginBottom={sizes.s}>
         Typography
       </Text>
-      {/* prettier-ignore */}
       <Block>
-      <Text h1 uppercase> This h1</Text>
-        <Text h2 uppercase> This h2</Text>
-        <Text h3> This h3</Text>
-        <Text h4> This h4</Text>
-        <Text h5> This h5</Text>
-        <Text h5 italic > Italic h5</Text>
-        <Text p> This p</Text>
-        <Text p italic > Italic p</Text>
-        <View
-        style={styles.separator}
-        />
-        <Text h2 uppercase primary>Primary</Text>
-        <Text h2 uppercase secondary>Secondary</Text>
-        <Text h2 uppercase tertiary>Tertiary</Text>
-        <Text h2 uppercase black>Black</Text>
-        <Text h2 uppercase white> white </Text>
-        <Text h2 uppercase gray> gray </Text>
-        <Text h2 uppercase danger> danger </Text>
-        <Text h2 uppercase warning> warning </Text>
-        <Text h2 uppercase success> success </Text>
-        <View
-        style={styles.separator}
-        />
-        <Text h2 uppercase gradient={gradients.primary}>G Primary</Text>
-        <Text h2 uppercase gradient={gradients.secondary}>G Secondary</Text>
-        <Text h2 uppercase gradient={gradients.success}>G Success</Text>
-        <Text h2 uppercase gradient={gradients.warning}>G Warning</Text>
-        <Text h2 uppercase gradient={gradients.danger}>G Danger</Text>
-        <Text h2 uppercase gradient={gradients.black}>G Black</Text>
-        <Text h2 uppercase gradient={gradients.white}>G White</Text>
-        <Text h2 uppercase gradient={gradients.dark}>G Dark</Text>
-        <Text h2 uppercase gradient={gradients.light}>G Light</Text>
-        <Text h2 uppercase gradient={gradients.info}>G Info</Text>
+        <Text h1 uppercase center marginVertical={3}>
+          Head 1
+        </Text>
+        <Text center marginVertical={3} h2 uppercase>
+          Head 2
+        </Text>
+        <Text center marginVertical={3} h3>
+          Head 3
+        </Text>
+        <Text center marginVertical={3} h4>
+          Head 4
+        </Text>
+        <Text center marginVertical={3} h5>
+          Head 5
+        </Text>
+        <Text center marginVertical={3} p>
+          Paragraph
+        </Text>
+        <Text center marginVertical={3} marginBottom={sizes.xs}>
+          Text
+        </Text>
+        <Text h2 uppercase primary>
+          Primary
+        </Text>
+        <Text h2 uppercase secondary>
+          Secondary
+        </Text>
+        <Text h2 uppercase tertiary>
+          Tertiary
+        </Text>
+        <Text h2 uppercase black>
+          Black
+        </Text>
+        <Text h2 uppercase white>
+          white
+        </Text>
+        <Text h2 uppercase gray>
+          gray
+        </Text>
+        <Text h2 uppercase danger>
+          danger
+        </Text>
+        <Text h2 uppercase warning>
+          warning
+        </Text>
+        <Text h2 uppercase success>
+          success
+        </Text>
+        <Text h2 uppercase gradient={gradients.primary}>
+          G Primary
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.secondary}>
+          G Secondary
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.success}>
+          G Success
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.warning}>
+          G Warning
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.danger}>
+          G Danger
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.black}>
+          G Black
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.white}>
+          G White
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.dark}>
+          G Dark
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.light}>
+          G Light
+        </Text>
+
+        <Text h2 uppercase gradient={gradients.info}>
+          G Info
+        </Text>
       </Block>
     </Block>
   );
@@ -188,12 +233,7 @@ const Inputs = () => {
   const { colors, sizes } = useTheme().theme;
 
   return (
-    <Block
-      color={colors.card}
-      marginTop={sizes.m}
-      paddingTop={sizes.m}
-      paddingHorizontal={sizes.padding}
-    >
+    <Block margin={sizes.sm} padding={sizes.padding} outlined radius={6}>
       <Text p semibold marginBottom={sizes.s}>
         Inputs
       </Text>
@@ -221,11 +261,7 @@ const Switches = () => {
   const [switch2, setSwitch2] = useState(false);
 
   return (
-    <Block
-      color={colors.card}
-      paddingVertical={sizes.m}
-      paddingHorizontal={sizes.padding}
-    >
+    <Block margin={sizes.sm} padding={sizes.padding} outlined radius={6}>
       <Text p semibold marginBottom={sizes.s}>
         Switches
       </Text>
@@ -260,7 +296,7 @@ const Social = () => {
   const { sizes } = useTheme().theme;
 
   return (
-    <Block paddingVertical={sizes.m} paddingHorizontal={sizes.padding}>
+    <Block margin={sizes.sm} padding={sizes.padding} outlined radius={6}>
       <Text p semibold marginBottom={sizes.s}>
         Social
       </Text>
@@ -284,253 +320,97 @@ const Cards = () => {
       {/* single card */}
       <Block>
         <Block card row>
-          <Image
-            resizeMode="contain"
-            source={assets?.background}
-            style={{ height: 114 }}
-          />
+          <Image source={assets.og} height={"100%"} width={"33%"} />
           <Block padding={sizes.s} justify="space-between">
-            <Text p>Adventures - Multi day trips with meals and stays.</Text>
-            <TouchableOpacity>
-              <Block row align="center">
-                <Text p semibold marginRight={sizes.s} color={colors.link}>
-                  Read Article
-                </Text>
-                <Image source={assets.logo} color={colors.link} />
-              </Block>
-            </TouchableOpacity>
-          </Block>
-        </Block>
-      </Block>
-      {/* inline cards */}
-      <Block row marginTop={sizes.sm}>
-        <Block card marginRight={sizes.sm}>
-          <Image
-            resizeMode="cover"
-            source={assets?.background}
-            style={{ width: "100%" }}
-          />
-          <Block padding={sizes.s} justify="space-between">
-            <Text p marginBottom={sizes.s}>
-              New ways to meet your business goals.
+            <Text p marginBottom={15}>
+              Adventures - Multi day trips with meals and stays.
             </Text>
             <TouchableOpacity>
               <Block row align="center">
                 <Text p semibold marginRight={sizes.s} color={colors.link}>
                   Read Article
                 </Text>
-                <Image source={assets.logo} color={colors.link} />
-              </Block>
-            </TouchableOpacity>
-          </Block>
-        </Block>
-        <Block card>
-          <Image
-            resizeMode="cover"
-            source={assets?.background}
-            style={{ width: "100%" }}
-          />
-          <Block padding={sizes.s} justify="space-between">
-            <Text p marginBottom={sizes.s}>
-              The highest status people.
-            </Text>
-            <TouchableOpacity>
-              <Block row align="center">
-                <Text p semibold marginRight={sizes.s} color={colors.link}>
-                  Read Article
-                </Text>
-                <Image source={assets.logo} color={colors.link} />
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={16}
+                  color={colors.text}
+                />
               </Block>
             </TouchableOpacity>
           </Block>
         </Block>
       </Block>
-      {/* full image width card */}
-      <Block card marginTop={sizes.sm}>
-        <Image
-          resizeMode="cover"
-          source={assets?.background}
-          style={{ width: "100%" }}
-        />
-        <Text
-          h5
-          bold
-          transform="uppercase"
-          gradient={gradients.primary}
-          marginTop={sizes.sm}
+    </Block>
+  );
+};
+
+// texts example
+const Header = () => {
+  const { theme, isDark, handleIsDark } = useTheme();
+  const { sizes, gradients } = theme;
+
+  return (
+    <Block margin={sizes.sm} padding={sizes.padding} outlined radius={6}>
+      <Text h1 uppercase gradient={gradients.primary}>
+        Mapin
+      </Text>
+
+      <Block>
+        <Pressable
+          onPress={() => {
+            handleIsDark();
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "rgb(210, 230, 255)" : "transparent",
+            },
+          ]}
         >
-          Trending
-        </Text>
-        <Text
-          p
-          marginTop={sizes.s}
-          marginLeft={sizes.xs}
-          marginBottom={sizes.sm}
+          <Text p>Toggle Dark: {JSON.stringify(isDark)}</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => {
+            console.log("Hello");
+          }}
+          style={({ pressed }) => [
+            {
+              backgroundColor: pressed ? "rgb(210, 230, 255)" : "transparent",
+            },
+          ]}
         >
-          The most beautiful and complex UI Kits built by Creative Tim.
-        </Text>
-        {/* user details */}
-        <Block row marginLeft={sizes.xs} marginBottom={sizes.xs}>
-          <Image
-            source={assets.background}
-            style={{ width: sizes.xl, height: sizes.xl, borderRadius: sizes.s }}
-          />
-          <Block marginLeft={sizes.s}>
-            <Text p semibold>
-              Mathew Glock
-            </Text>
-            <Text p gray>
-              Posted on 28 February
-            </Text>
-          </Block>
-        </Block>
-      </Block>
-      {/* image background card */}
-      <Block card padding={0} marginTop={sizes.sm}>
-        <Image
-          background
-          resizeMode="cover"
-          source={assets.background}
-          radius={sizes.cardRadius}
-        >
-          <Block color="rgba(0,0,0,0.3)" padding={sizes.padding}>
-            <Text h4 white marginBottom={sizes.sm}>
-              Flexible office space means growth.
-            </Text>
-            <Text p white>
-              Rather than worrying about switching offices every couple years,
-              you can instead stay in the same location.
-            </Text>
-            {/* user details */}
-            <Block row marginLeft={sizes.xs} marginTop={sizes.xxl}>
-              <Image
-                source={assets.background}
-                style={{
-                  width: sizes.xl,
-                  height: sizes.xl,
-                  borderRadius: sizes.s,
-                }}
-              />
-              <Block marginLeft={sizes.s}>
-                <Text p white semibold>
-                  Devin Coldewey
-                </Text>
-                <Text p white>
-                  Marketing Manager
-                </Text>
-              </Block>
-            </Block>
-          </Block>
-        </Image>
+          <Text p>Call Log()</Text>
+        </Pressable>
       </Block>
     </Block>
   );
 };
 
 export default function Components() {
-  const { theme, isDark, handleIsDark } = useTheme();
-  const { colors, gradients } = theme;
+  const { theme } = useTheme();
+  const { colors, sizes } = theme;
 
   return (
-    <ScrollView style={{ backgroundColor: theme.colors.background }}>
-      <View style={[styles.container]}>
-        <Text h1 uppercase gradient={gradients.primary}>
-          Mapin
-        </Text>
-        <View style={styles.main}>
-          <Pressable
-            onPress={() => {
-              handleIsDark();
-            }}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "rgb(210, 230, 255)" : "transparent",
-              },
-            ]}
-          >
-            <Text p>Toggle Dark: {JSON.stringify(isDark)}</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => {
-              console.log("Hello");
-            }}
-            style={({ pressed }) => [
-              {
-                backgroundColor: pressed ? "rgb(210, 230, 255)" : "transparent",
-              },
-            ]}
-          >
-            <Text p>Call Log()</Text>
-          </Pressable>
-
-          {/* <Link href="/profile">
-            <Text h5>Go to Profile</Text>{" "}
-          </Link> */}
-        </View>
-
-        {/* prettier-ignore */}
-        <View style={styles.container}>
-        <Text h1 uppercase> This h1</Text>
-        <Text h2 uppercase> This h2</Text>
-        <Text h3> This h3</Text>
-        <Text h4> This h4</Text>
-        <Text h5> This h5</Text>
-        <Text h5 italic > Italic h5</Text>
-        <Text p> This p</Text>
-        <Text p italic > Italic p</Text>
-        <View
-        style={styles.separator}
-        />
-        <Text h2 uppercase primary>Primary</Text>
-        <Text h2 uppercase secondary>Secondary</Text>
-        <Text h2 uppercase tertiary>Tertiary</Text>
-        <Text h2 uppercase black>Black</Text>
-        <Text h2 uppercase white> white </Text>
-        <Text h2 uppercase gray> gray </Text>
-        <Text h2 uppercase danger> danger </Text>
-        <Text h2 uppercase warning> warning </Text>
-        <Text h2 uppercase success> success </Text>
-        <View
-        style={styles.separator}
-        />
-        <Text h2 uppercase gradient={gradients.primary}>G Primary</Text>
-        <Text h2 uppercase gradient={gradients.secondary}>G Secondary</Text>
-        <Text h2 uppercase gradient={gradients.success}>G Success</Text>
-        <Text h2 uppercase gradient={gradients.warning}>G Warning</Text>
-        <Text h2 uppercase gradient={gradients.danger}>G Danger</Text>
-        <Text h2 uppercase gradient={gradients.black}>G Black</Text>
-        <Text h2 uppercase gradient={gradients.white}>G White</Text>
-        <Text h2 uppercase gradient={gradients.dark}>G Dark</Text>
-        <Text h2 uppercase gradient={gradients.light}>G Light</Text>
-        <Text h2 uppercase gradient={gradients.info}>G Info</Text>
-        </View>
-        <View style={styles.separator} />
-        <Switch />
-        <Switch checked />
-      </View>
-    </ScrollView>
+    <Block background>
+      <Block safe>
+        <Block
+          scroll
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingVertical: sizes.l,
+          }}
+        >
+          <Block>
+            <Header />
+            <Typography />
+            <Buttons />
+            <Inputs />
+            <Switches />
+            <Social />
+            <Cards />
+          </Block>
+        </Block>
+      </Block>
+    </Block>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    padding: 24,
-    marginTop: 24,
-    width: "100%",
-  },
-  main: {
-    flex: 1,
-    justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-    backgroundColor: colors.primary,
-  },
-});

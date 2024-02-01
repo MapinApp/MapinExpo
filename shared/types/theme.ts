@@ -50,6 +50,7 @@ export interface ThemeWeights {
 
 export interface ThemeAssets {
   // backgrounds/logo
+  og: ImageSourcePropType;
   logo: ImageSourcePropType;
   background: ImageSourcePropType;
 }

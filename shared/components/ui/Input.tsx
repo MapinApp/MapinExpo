@@ -34,7 +34,6 @@ const Input = ({
   disabled,
   label,
   icon,
-  width,
   marginBottom,
   marginTop,
   marginHorizontal,
@@ -88,8 +87,7 @@ const Input = ({
   const inputBoxStyles = StyleSheet.flatten([
     style,
     {
-      height: sizes.inputHeight,
-      ...(width && { width: width }),
+      minHeight: sizes.inputHeight,
       ...(marginBottom && { marginBottom: marginBottom }),
       ...(marginTop && { marginTop: marginTop }),
       ...(marginHorizontal && { marginHorizontal: marginHorizontal }),
@@ -272,11 +270,4 @@ interface IInputProps extends TextInputProps, ISpacing {
    * @see https://reactnative.dev/docs/textinput#style
    */
   style?: TextStyle;
-  /**
-   * ref
-   * @see https://reactnative.dev/docs/textinput#ref
-   */
-  ref?: React.Ref<TextInput>;
-  innerRef?: React.Ref<TextInput>;
-  width?: number;
 }

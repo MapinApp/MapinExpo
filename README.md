@@ -162,3 +162,12 @@ stateDiagram-v2
 | **<br>**           | Lists- own; get all. else Public | 20         | GET      | Get Lists for Profile                             |                                      |         |               |
 | **<br>**           | All Pins (Public/Private)        | 21         |          |                                                   |                                      |         |               |
 | **Settings**       | User Feedback                    | 22         | POST     | Send user feedback                                |                                      |         |               |
+
+# Upgrading Expo
+
+```bash
+# Install Latest
+npm install expo@latest
+# Upgrade all dependencies to match the installed SDK version.
+npx expo install --fix
+```

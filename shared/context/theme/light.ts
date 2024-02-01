@@ -40,14 +40,14 @@ const COLORS: ThemeColors = {
   focus: "#7ecee0",
   input: "#252F40",
   /** UI color for switch checked/active color 🧐 */
-  switchOn: "#3A416F",
+  switchOn: "#1CC0E8",
   switchOff: "#E9ECEF",
   /** UI color for checkbox icon checked/active color 🧐 */
-  checkbox: ["#3A416F", "#141727"],
+  checkbox: ["#1CC0E8", "#141727"],
   checkboxIcon: "#FFFFFF",
   /** social colors 🧐*/
-  google: "#3B5998",
-  apple: "#55ACEE",
+  google: "#df4a37",
+  apple: "#000000",
   /** icon tint color 🧐*/
   icon: "#8392AB",
   /** blur tint color 🧐*/

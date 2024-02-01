@@ -22,6 +22,7 @@ import {
   ViewProps,
   ScrollViewProps,
   StyleProp,
+  ImageBackground,
 } from "react-native";
 import { ISpacing } from "@/types/theme";
 import { BlurView, BlurViewProps } from "expo-blur";
@@ -41,6 +42,7 @@ const Block = (props: IBlockProps) => {
     overflow,
     row,
     safe,
+    background,
     keyboard,
     scroll,
     color,
@@ -89,7 +91,7 @@ const Block = (props: IBlockProps) => {
     ...rest
   } = props;
   const { theme } = useTheme();
-  const { colors, sizes } = theme;
+  const { assets, colors, sizes } = theme;
 
   const colorIndex = primary
     ? "primary"
@@ -136,14 +138,8 @@ const Block = (props: IBlockProps) => {
         backgroundColor: colors.card,
         borderRadius: sizes.cardRadius,
         padding: sizes.cardPadding,
-        shadowColor: colors.shadow,
-        shadowOffset: {
-          width: sizes.shadowOffsetWidth,
-          height: sizes.shadowOffsetHeight,
-        },
-        shadowOpacity: sizes.shadowOpacity,
-        shadowRadius: sizes.shadowRadius,
-        elevation: sizes.elevation,
+        borderWidth: 0.8,
+        borderColor: colors.gray,
       }),
       ...(cardDark && {
         backgroundColor: colors.card,
@@ -236,6 +232,28 @@ const Block = (props: IBlockProps) => {
     );
   }
 
+  if (background) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+        }}
+      >
+        <ImageBackground
+          source={assets.og}
+          resizeMode="cover"
+          style={{
+            flex: 1,
+            justifyContent: "center",
+          }}
+        >
+          {children}
+        </ImageBackground>
+      </View>
+    );
+  }
+
   return (
     <View {...blockID} {...rest} style={blockStyles}>
       {children}
@@ -275,6 +293,11 @@ interface IBlockProps extends ISpacing, ViewProps, ScrollViewProps {
    * @see https://reactnative.dev/docs/safeareaview
    */
   safe?: boolean;
+  /**
+   * Renders an ImageBackground component
+   * @see https://reactnative.dev/docs/imagebackground
+   */
+  background?: boolean;
   /**
    * Renders a KeyboardAwareScrollView component
    * @see https://github.com/APSL/react-native-keyboard-aware-scroll-view#usage
