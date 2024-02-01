@@ -1,13 +1,15 @@
 ## 🚀 ToDo
 
-- [ ] Get Theme & Components Working Properly
+- [x] Get Theme & Components Working Properly
 - [ ] Get Layouts Working Properly
 - [ ] Get Router Working Properly
   - Including Lists ToDo Starter Code
 - [ ] Get Auth Working
 - [ ] Get Data Layer Working
 - [ ] Check ifg username is taken
-- [ ] Typography and Fonts
+- [x] Typography and Fonts
+- [ ] Add In the Chat UI
+- [ ] Use the Booking UI to start off the List UI
 - [ ] Will need to implement a Full Text Search
   - https://supabase.com/docs/guides/database/full-text-search
 - [ ] Add routes to Website

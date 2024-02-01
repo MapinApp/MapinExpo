@@ -20,7 +20,7 @@ const COLORS: ThemeColors = {
   light: "#e4e4e7",
   // gray variations
   /** UI color for #gray */
-  gray: "#C2C2C1",
+  gray: "#71717a",
   // colors variations
   /** UI color for #danger */
   danger: "#FF595E",

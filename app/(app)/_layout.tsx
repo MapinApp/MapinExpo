@@ -56,7 +56,7 @@ export default function TabLayout() {
             backgroundColor: String(colors.background),
             borderBottomWidth: 0.5,
             borderBottomColor: String(colors.border),
-            shadowColor: "transparent",
+            // shadowColor: "transparent",
           },
           headerTitleStyle: {
             color: String(colors.text),
