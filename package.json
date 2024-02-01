@@ -6,9 +6,10 @@
     "dev": "expo start --android",
     "cache": "expo start --clear",
     "start": "expo start",
-    "ios": "expo start --ios",
+    "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "android": "expo run:android"
   },
   "jest": {
     "preset": "jest-expo"

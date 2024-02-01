@@ -1,5 +1,11 @@
 ## 🚀 ToDo
 
+- [ ] Get Router Working Properly
+  - Including Lists ToDo Starter Code
+- [ ] Get Theme Working Properly
+- [ ] Get Layouts Working Properly
+- [ ] Get Auth Working
+- [ ] Get Data Layer Working
 - [ ] Check ifg username is taken
 - [ ] Typography and Fonts
 - [ ] Will need to implement a Full Text Search
