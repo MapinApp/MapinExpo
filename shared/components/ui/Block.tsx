@@ -90,7 +90,7 @@ const Block = (props: IBlockProps) => {
     start,
     ...rest
   } = props;
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { assets, colors, sizes } = theme;
 
   const colorIndex = primary
@@ -139,7 +139,7 @@ const Block = (props: IBlockProps) => {
         borderRadius: sizes.cardRadius,
         padding: sizes.cardPadding,
         borderWidth: 0.8,
-        borderColor: colors.gray,
+        borderColor: colors.border,
       }),
       ...(cardDark && {
         backgroundColor: colors.card,
@@ -241,7 +241,7 @@ const Block = (props: IBlockProps) => {
         }}
       >
         <ImageBackground
-          source={assets.og}
+          source={isDark ? assets.backgroundDark : assets.backgroundLight}
           resizeMode="cover"
           style={{
             flex: 1,

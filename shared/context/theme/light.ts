@@ -33,6 +33,7 @@ const COLORS: ThemeColors = {
   /** UI colors for navigation & card  */
   card: "#FFFFFF", // 🧐
   background: "#fefeff",
+  border: "#d4d4d8",
   /** UI color for shadowColor 🧐 */
   shadow: "#000000",
   overlay: "rgba(0,0,0,0.3)",
@@ -53,7 +54,7 @@ const COLORS: ThemeColors = {
   /** blur tint color 🧐*/
   blurTint: "light",
   /** product link color 🧐*/
-  link: "#3C77E0",
+  link: "#6782E7",
 };
 
 const GRADIENTS: ThemeGradients = {

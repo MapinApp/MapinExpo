@@ -52,7 +52,8 @@ export interface ThemeAssets {
   // backgrounds/logo
   og: ImageSourcePropType;
   logo: ImageSourcePropType;
-  background: ImageSourcePropType;
+  backgroundLight: ImageSourcePropType;
+  backgroundDark: ImageSourcePropType;
 }
 
 export interface ThemeFonts {
@@ -189,6 +190,7 @@ export interface ThemeColors {
   success: ColorValue;
   info: ColorValue;
   card: ColorValue;
+  border: ColorValue;
   background: ColorValue;
   shadow: ColorValue;
   overlay: ColorValue;
