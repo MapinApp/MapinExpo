@@ -56,7 +56,7 @@ const COLORS: ThemeColors = {
 };
 
 const GRADIENTS: ThemeGradients = {
-  primary: ["#21d4fd", "#8052ff"],
+  primary: ["#12D7EC", "#26A8E6"],
   secondary: ["#A8B8D8", "#627594"],
   info: ["#21D4FD", "#2152FF"],
   success: ["#98EC2D", "#17AD37"],

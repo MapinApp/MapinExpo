@@ -1,9 +1,9 @@
 ## 🚀 ToDo
 
+- [ ] Get Theme & Components Working Properly
+- [ ] Get Layouts Working Properly
 - [ ] Get Router Working Properly
   - Including Lists ToDo Starter Code
-- [ ] Get Theme Working Properly
-- [ ] Get Layouts Working Properly
 - [ ] Get Auth Working
 - [ ] Get Data Layer Working
 - [ ] Check ifg username is taken

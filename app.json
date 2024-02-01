@@ -5,16 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./shared/assets/img/icon.png",
-    "scheme": "myapp",
+    "scheme": "mapin",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./shared/assets/img/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.mapin"

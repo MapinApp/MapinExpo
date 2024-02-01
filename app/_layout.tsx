@@ -24,7 +24,6 @@ export default function RootLayout() {
     SpaceMono: require("../shared/assets/fonts/SpaceMono-Regular.ttf"),
     Manophiser: require("../shared/assets/fonts/Manophiser.otf"),
     MontserratItalic: require("../shared/assets/fonts/Montserrat-Italic.otf"),
-    MontserratThin: require("../shared/assets/fonts/Montserrat-Thin.otf"),
     MontserratBlack: require("../shared/assets/fonts/Montserrat-Black.otf"),
     MontserratMedium: require("../shared/assets/fonts/Montserrat-Medium.otf"),
     MontserratBold: require("../shared/assets/fonts/Montserrat-Bold.otf"),

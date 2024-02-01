@@ -68,6 +68,8 @@ export interface ThemeFonts {
   medium: string;
   bold: string;
   semibold: string;
+  // Italic Montserrat
+  italic: string;
 }
 
 export interface ThemeLineHeights {

@@ -43,18 +43,19 @@ const ASSETS: ThemeAssets = {
 const FONTS: ThemeFonts = {
   // based on font size
   h1: "Manophiser",
-  h2: "MontserratBold",
+  h2: "Manophiser",
   h3: "MontserratMedium",
   h4: "MontserratMedium",
   h5: "MontserratRegular",
-  p: "MontserratThin",
-  text: "MontserratThin",
+  p: "MontserratRegular",
+  text: "MontserratRegular",
   // based on fontWeight
-  light: "MontserratThin",
+  light: "MontserratRegular",
   normal: "MontserratRegular",
   medium: "MontserratMedium",
-  bold: "MontserratBold",
   semibold: "MontserratMedium",
+  bold: "MontserratBold",
+  italic: "MontserratItalic",
 };
 
 const LINE_HEIGHTS: ThemeLineHeights = {
@@ -63,9 +64,9 @@ const LINE_HEIGHTS: ThemeLineHeights = {
   h1: 60,
   h2: 55,
   h3: 43,
-  h4: 33,
+  h4: 43,
   h5: 24,
-  p: 22,
+  p: 24,
 };
 
 const SIZES: ThemeSizes = {
@@ -75,12 +76,12 @@ const SIZES: ThemeSizes = {
   radius: 4,
   padding: 20,
   // font sizes
-  h1: 44,
-  h2: 40,
-  h3: 32,
-  h4: 24,
-  h5: 18,
-  p: 14,
+  h1: 38,
+  h2: 28,
+  h3: 30,
+  h4: 30,
+  h5: 22,
+  p: 22,
   // button sizes
   buttonBorder: 1,
   buttonRadius: 11,
@@ -139,11 +140,11 @@ const SPACING: ThemeSpacing = {
 };
 
 const LETTER_SPACING: ThemeLetterSpacing = {
-  h1: 10,
-  h2: 8,
-  h3: 7,
+  h1: 12,
+  h2: 6,
+  h3: 9,
   h4: 2,
-  h5: 2,
+  h5: 9,
   p: 2,
 };
 

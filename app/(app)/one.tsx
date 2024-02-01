@@ -11,8 +11,8 @@ export default function Details() {
   return (
     <ScrollView style={{ backgroundColor: theme.colors.background }}>
       <View style={[styles.container]}>
-        <Text h1 underline italic uppercase>
-          Component Reference
+        <Text h1 underline uppercase gradient={gradients.primary}>
+          Mapin
         </Text>
         <View style={styles.main}>
           <Pressable
@@ -41,9 +41,9 @@ export default function Details() {
             <Text h5>Call Log()</Text>
           </Pressable>
 
-          <Link href="/profile">
+          {/* <Link href="/profile">
             <Text h5>Go to Profile</Text>{" "}
-          </Link>
+          </Link> */}
         </View>
 
         {/* prettier-ignore */}
