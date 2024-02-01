@@ -1,15 +1,7 @@
-import React, { useLayoutEffect, useState } from "react";
-import {
-  FlatList,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import React, { useState } from "react";
+import { FlatList, TouchableOpacity, Pressable } from "react-native";
 import { useTheme } from "@/context/theme";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "react-native-elements";
 import {
   Block,
   Button,
