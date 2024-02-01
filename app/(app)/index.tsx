@@ -28,7 +28,7 @@ const Buttons = () => {
   const { assets, colors, gradients, sizes } = theme;
 
   return (
-    <Block margin={sizes.s} card>
+    <Block margin={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Buttons
       </Text>
@@ -131,7 +131,7 @@ const Typography = () => {
   const { sizes, gradients } = useTheme().theme;
 
   return (
-    <Block margin={sizes.s} card>
+    <Block margin={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Typography
       </Text>
@@ -233,7 +233,7 @@ const Inputs = () => {
   const { colors, sizes } = useTheme().theme;
 
   return (
-    <Block margin={sizes.s} card>
+    <Block margin={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Inputs
       </Text>
@@ -261,7 +261,7 @@ const Switches = () => {
   const [switch2, setSwitch2] = useState(false);
 
   return (
-    <Block margin={sizes.s} card>
+    <Block margin={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Switches
       </Text>
@@ -296,7 +296,7 @@ const Social = () => {
   const { sizes } = useTheme().theme;
 
   return (
-    <Block margin={sizes.s} card>
+    <Block margin={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Social
       </Text>
@@ -313,7 +313,7 @@ const Cards = () => {
   const { assets, colors, gradients, sizes } = useTheme().theme;
 
   return (
-    <Block margin={sizes.s} card>
+    <Block margin={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Cards
       </Text>
@@ -350,7 +350,7 @@ const Header = () => {
   const { sizes, gradients } = theme;
 
   return (
-    <Block margin={sizes.s} card>
+    <Block margin={sizes.xs} card>
       <Text h1 uppercase gradient={gradients.primary}>
         Mapin
       </Text>
@@ -397,7 +397,7 @@ export default function Components() {
           scroll
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingVertical: sizes.s,
+            paddingVertical: sizes.xs,
           }}
         >
           <Block>
