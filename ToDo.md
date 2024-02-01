@@ -7,6 +7,13 @@
 - [ ] Add routes to Website
   - `/reset-password`
   - `/welcome`
+- [ ] Add Permissions Request
+  - [ ] Location
+  - [ ] Notifications
+  - [Docs](https://docs.expo.dev/guides/permissions/)
+- [ ] Deep linking for directions to a pin
+  - [Docs](https://docs.expo.dev/guides/linking/)
+- [ ] When Ready, test on a [Development Build](https://docs.expo.dev/develop/development-builds/introduction/). Wil need to test Deep Linking, Permissions etc.
 
 ## 📚 Resources
 
@@ -38,3 +45,7 @@
 ```bash
 npx expo install @react-native-community/datetimepicker @react-native-masked-view/masked-view dayjs expo-blur expo-constants expo-haptics expo-linear-gradient
 ```
+
+## Packages
+
+- [FlashList](https://docs.expo.dev/versions/latest/sdk/flash-list/)
