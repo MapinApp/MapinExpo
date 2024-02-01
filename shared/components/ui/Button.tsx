@@ -68,6 +68,7 @@ const Button = ({
   haptic = true,
   vibrate,
   vibrateRepeat,
+  chit,
   onPress,
   ...props
 }: IButtonProps) => {
@@ -109,8 +110,8 @@ const Button = ({
   const buttonStyles = StyleSheet.flatten([
     style,
     {
-      minHeight: sizes.xl,
-      minWidth: sizes.xl,
+      minHeight: chit ? sizes.xs : sizes.xl,
+      minWidth: chit ? sizes.xs : sizes.xl,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: buttonColor,
@@ -454,5 +455,6 @@ interface IButtonProps extends TouchableOpacityProps, ISpacing {
   /**
    * Renders Button content
    */
+  chit?: boolean;
   children?: React.ReactNode;
 }

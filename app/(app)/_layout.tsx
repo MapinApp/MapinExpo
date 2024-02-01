@@ -60,8 +60,7 @@ export default function TabLayout() {
           },
           headerTitleStyle: {
             color: String(colors.text),
-            fontFamily: "Manophiser",
-            textTransform: "uppercase",
+            fontFamily: "MontserratRegular",
           },
 
           // Set Dark Status Bar

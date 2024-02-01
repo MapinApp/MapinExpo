@@ -1,16 +1,17 @@
 import React from "react";
 import {
   StyleSheet,
-  Image as RNImage,
   ImageStyle,
   ImageBackground,
   Platform,
-  ImageProps,
   StyleProp,
 } from "react-native";
 import { ISpacing } from "@/types/theme";
-
+import { Image as ExpoImage, ImageProps } from "expo-image";
 import { useTheme } from "@/context/theme";
+
+const blurhash =
+  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 const Image = ({
   id = "Image",
@@ -90,15 +91,15 @@ const Image = ({
   const imageID =
     Platform.OS === "android" ? { accessibilityLabel: id } : { testID: id };
 
-  if (background) {
-    return (
-      <ImageBackground {...imageID} style={imageStyles} {...props}>
-        {children}
-      </ImageBackground>
-    );
-  }
-
-  return <RNImage {...imageID} style={imageStyles} {...props} />;
+  return (
+    <ExpoImage
+      style={imageStyles}
+      {...props}
+      {...imageID}
+      placeholder={blurhash}
+      transition={1000}
+    />
+  );
 };
 
 export default Image;
@@ -112,13 +113,11 @@ interface IImageProps extends ImageProps, ISpacing {
    * Avatar sizing: borderRadius from Math.min(height, weight)
    * sets the width & height to Math.min(height, weight)
    */
-  // height?: ImageStyle["height"] ;
   height?: any;
   /**
    * Height of the image component.
    * @see https://reactnative.dev/docs/image#height
    */
-  // width?: ImageStyle["width"];
   width?: any;
   /**
    * @see https://reactnative.dev/docs/image#width

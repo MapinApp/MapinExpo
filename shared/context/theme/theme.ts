@@ -85,9 +85,9 @@ const SIZES: ThemeSizes = {
   p: 22,
   // button sizes
   buttonBorder: 1,
-  buttonRadius: 11,
+  buttonRadius: 4,
   socialSize: 64,
-  socialRadius: 16,
+  socialRadius: 8,
   socialIconSize: 26,
   // button shadow
   shadowOffsetWidth: 0,
@@ -98,13 +98,13 @@ const SIZES: ThemeSizes = {
   // input sizes
   inputHeight: 46,
   inputBorder: 0.8,
-  inputRadius: 6,
+  inputRadius: 4,
   inputPadding: 12,
   // card sizes
   cardRadius: 6,
   cardPadding: 10,
   // image sizes
-  imageRadius: 14,
+  imageRadius: 7,
   avatarSize: 32,
   avatarRadius: 8,
   // switch sizes

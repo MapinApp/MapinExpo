@@ -308,12 +308,235 @@ const Social = () => {
   );
 };
 
+const Carousel = () => {
+  const { gradients, sizes } = useTheme().theme;
+  const [optionId, setOptionId] = useState(0);
+
+  const article = [
+    {
+      id: 1,
+      title: "Single room in center",
+      description:
+        "As Uber works through a huge amount of internal management turmoil, the company is also consolidating.",
+      type: "room",
+      guests: 1,
+      sleeping: { total: 1, type: "sofa" },
+      price: 89,
+
+      image:
+        "https://images.unsplash.com/photo-1543489822-c49534f3271f?fit=crop&w=450&q=80",
+    },
+    {
+      id: 2,
+      title: "Cosy apartment",
+      description:
+        "Different people have different taste, and various types of music have many ways of leaving an impact on someone.",
+      type: "apartment",
+      guests: 3,
+      sleeping: { total: 2, type: "bed" },
+      price: 200,
+
+      image:
+        "https://images.unsplash.com/photo-1603034203013-d532350372c6?fit=crop&w=450&q=80",
+    },
+    {
+      id: 3,
+      title: "Single room in center",
+      description:
+        "As Uber works through a huge amount of internal management turmoil, the company is also consolidating.",
+      type: "room",
+      guests: 1,
+      sleeping: { total: 1, type: "sofa" },
+      price: 89,
+
+      image:
+        "https://images.unsplash.com/photo-1543489822-c49534f3271f?fit=crop&w=450&q=80",
+    },
+  ];
+
+  const CARD_WIDTH = sizes.width - sizes.s;
+
+  return (
+    <Block
+      scroll
+      horizontal
+      pagingEnabled
+      decelerationRate="fast"
+      snapToAlignment="center"
+      scrollEventThrottle={16}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
+      onScroll={({ nativeEvent }) => {
+        const optionIndex = Math.round(
+          Number(nativeEvent?.contentOffset?.x) / sizes.width
+        );
+        const option = article.find((_, index) => index === optionIndex);
+        if (option) setOptionId(option?.id);
+      }}
+    >
+      {article.map((option, index) => {
+        return (
+          <Block
+            card
+            width={CARD_WIDTH - sizes.sm}
+            marginLeft={index === 0 ? sizes.sm : 0}
+            marginRight={sizes.sm}
+            key={`article-${option.id}-option`}
+          >
+            <Image
+              shadow
+              height={261}
+              width={CARD_WIDTH - sizes.md}
+              source={{ uri: option?.image }}
+            />
+            <Block marginTop={sizes.sm} paddingHorizontal={sizes.s}>
+              <Block row flex={0} marginBottom={sizes.s}>
+                <Text p transform="capitalize">
+                  {option?.type}
+                  {" • "}
+                  {option?.guests}
+                  {" • "}
+                  {option?.sleeping?.total} {option?.sleeping?.type}
+                </Text>
+              </Block>
+              <Text h4 marginBottom={sizes.s}>
+                {option?.title}
+              </Text>
+              <Text p lineHeight={26}>
+                {option?.description}
+              </Text>
+            </Block>
+          </Block>
+        );
+      })}
+    </Block>
+  );
+};
+
+const Chits = () => {
+  const { colors, gradients, sizes } = useTheme().theme;
+  let dummyChits = [
+    "Shoreditch",
+    "North London",
+    "London Bridge",
+    "Tooting",
+    "Waterloo",
+    "Paddington",
+  ];
+  const [currentChit, setChit] = useState(dummyChits[0]);
+
+  return (
+    <Block color={colors.card} row flex={0} paddingVertical={sizes.padding}>
+      <Block
+        scroll
+        horizontal
+        renderToHardwareTextureAndroid
+        showsHorizontalScrollIndicator={false}
+        contentOffset={{ x: -sizes.padding, y: 0 }}
+      >
+        {dummyChits?.map((category, index) => {
+          const isSelected = category === currentChit;
+          return (
+            <Button
+              chit
+              radius={sizes.m}
+              marginHorizontal={sizes.s}
+              key={`category-${category}-${index}`}
+              onPress={() => setChit(category)}
+              gradient={gradients?.[isSelected ? "primary" : "light"]}
+            >
+              <Text
+                p
+                size={sizes.s}
+                bold={isSelected}
+                white={isSelected}
+                black={!isSelected}
+                transform="capitalize"
+              >
+                {category}
+              </Text>
+            </Button>
+          );
+        })}
+      </Block>
+    </Block>
+  );
+};
+
+const Album = () => {
+  const { assets, sizes } = useTheme().theme;
+
+  const IMAGE_SIZE = (sizes.width - (sizes.padding + sizes.sm) * 2) / 3;
+  const IMAGE_VERTICAL_SIZE =
+    (sizes.width - (sizes.padding + sizes.sm) * 2) / 2;
+  const IMAGE_MARGIN = (sizes.width - IMAGE_SIZE * 3 - sizes.padding * 2) / 2;
+  const IMAGE_VERTICAL_MARGIN =
+    (sizes.width - (IMAGE_VERTICAL_SIZE + sizes.sm) * 2) / 2;
+
+  return (
+    <Block margin={sizes.xs} card>
+      <Block row align="center" justify="space-between">
+        <Text h5>Album</Text>
+        <Button>
+          <Text p primary>
+            View all
+          </Text>
+        </Button>
+      </Block>
+      <Block row justify="space-between" wrap="wrap">
+        <Image
+          contentFit="cover"
+          source={assets?.og}
+          marginBottom={IMAGE_MARGIN}
+          height={IMAGE_SIZE}
+          width={IMAGE_SIZE}
+        />
+        <Image
+          contentFit="cover"
+          source={assets?.og}
+          marginBottom={IMAGE_MARGIN}
+          height={IMAGE_SIZE}
+          width={IMAGE_SIZE}
+        />
+        <Image
+          contentFit="cover"
+          source={assets?.og}
+          marginBottom={IMAGE_MARGIN}
+          height={IMAGE_SIZE}
+          width={IMAGE_SIZE}
+        />
+        <Image
+          contentFit="cover"
+          source={assets?.og}
+          marginBottom={IMAGE_MARGIN}
+          height={IMAGE_SIZE}
+          width={IMAGE_SIZE}
+        />
+        <Image
+          contentFit="cover"
+          source={assets?.og}
+          marginBottom={IMAGE_MARGIN}
+          height={IMAGE_SIZE}
+          width={IMAGE_SIZE}
+        />
+        <Image
+          contentFit="cover"
+          source={assets?.og}
+          marginBottom={IMAGE_MARGIN}
+          height={IMAGE_SIZE}
+          width={IMAGE_SIZE}
+        />
+      </Block>
+    </Block>
+  );
+};
+
 // cards example
 const Cards = () => {
   const { assets, colors, gradients, sizes } = useTheme().theme;
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block margin={sizes.xs}>
       <Text p semibold marginBottom={sizes.s}>
         Cards
       </Text>
@@ -337,6 +560,85 @@ const Cards = () => {
                 />
               </Block>
             </TouchableOpacity>
+          </Block>
+        </Block>
+      </Block>
+      {/* inline cards */}
+      <Block row marginTop={sizes.sm}>
+        <Block card marginRight={sizes.sm}>
+          <Image contentFit="cover" source={assets?.og} height={100} />
+          <Block padding={sizes.s} justify="space-between">
+            <Text p marginBottom={sizes.s}>
+              New ways to meet your business goals.
+            </Text>
+            <TouchableOpacity>
+              <Block row align="center">
+                <Text p semibold marginRight={sizes.s} color={colors.link}>
+                  Read Article
+                </Text>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={16}
+                  color={colors.text}
+                />
+              </Block>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+        <Block card>
+          <Image contentFit="cover" source={assets?.og} height={100} />
+          <Block padding={sizes.s} justify="space-between">
+            <Text p marginBottom={sizes.s}>
+              The highest status people.
+            </Text>
+            <TouchableOpacity>
+              <Block row align="center">
+                <Text p semibold marginRight={sizes.s} color={colors.link}>
+                  Read Article
+                </Text>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={16}
+                  color={colors.text}
+                />
+              </Block>
+            </TouchableOpacity>
+          </Block>
+        </Block>
+      </Block>
+      {/* full image width card */}
+      <Block card marginTop={sizes.sm}>
+        <Image contentFit="cover" source={assets?.og} height={200} />
+        <Text
+          h5
+          bold
+          uppercase
+          gradient={gradients.primary}
+          marginTop={sizes.sm}
+        >
+          Trending
+        </Text>
+        <Text
+          p
+          marginTop={sizes.s}
+          marginLeft={sizes.xs}
+          marginBottom={sizes.sm}
+        >
+          Some kind of update to put onto the timeline.
+        </Text>
+        {/* user details */}
+        <Block row marginLeft={sizes.xs} marginBottom={sizes.xs}>
+          <Image
+            source={assets.og}
+            style={{ width: sizes.xl, height: sizes.xl, borderRadius: sizes.s }}
+          />
+          <Block marginLeft={sizes.s}>
+            <Text p semibold>
+              Mathew Glock
+            </Text>
+            <Text p gray>
+              Posted on 28 February
+            </Text>
           </Block>
         </Block>
       </Block>
@@ -408,6 +710,9 @@ export default function Components() {
             <Switches />
             <Social />
             <Cards />
+            <Chits />
+            <Album />
+            <Carousel />
           </Block>
         </Block>
       </Block>
