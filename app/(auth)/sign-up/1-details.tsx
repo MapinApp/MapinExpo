@@ -55,7 +55,7 @@ export default function LogIn() {
       setRegisterData({ ...registerData, email, password });
       // console.log(registerData);
       setLoading(false);
-      router.push("./sign-up/2-user");
+      router.push("/sign-up/2-user");
     } else {
       if (!isValid.email && isValid.password && isValid.passwordConfirm) {
         alert("Seems your Email isn't valid...");
@@ -105,6 +105,7 @@ export default function LogIn() {
             >
               <Block
                 blur
+                outlined
                 flex={0}
                 intensity={90}
                 radius={sizes.blockRadius}

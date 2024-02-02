@@ -65,6 +65,7 @@ export default function ForgotPassword() {
               shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
             >
               <Block
+                outlined
                 blur
                 flex={0}
                 intensity={90}

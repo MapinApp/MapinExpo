@@ -157,14 +157,20 @@ export function AuthProvider(props: React.PropsWithChildren) {
       const { data, error } = await supabase
         .from("profiles")
         .select("username")
-        .eq("username", username)
-        .single(); // Assuming usernames are unique, single() can be more efficient
+        .eq("username", username);
 
       if (error) {
         alert(error.message);
         // throw new Error(error.message);
       }
-      return !data; // If no data is returned, the username is unique
+      if (data) {
+        if (data.length > 0) {
+          return false;
+        }
+        return true;
+      } else {
+        return true;
+      } // If no data is returned, the username is unique
     } catch (error) {
       console.error("Error checking username uniqueness:", error);
       return false; // In case of error, assume username is not unique to avoid duplicate usernames
@@ -177,14 +183,21 @@ export function AuthProvider(props: React.PropsWithChildren) {
       const { data, error } = await supabase
         .from("profiles")
         .select("email")
-        .eq("email", email)
-        .single(); // Assuming usernames are unique, single() can be more efficient
+        .eq("email", email);
 
+      console.log(data);
       if (error) {
         alert(error.message);
         // throw new Error(error.message);
       }
-      return !data; // If no data is returned, the username is unique
+      if (data) {
+        if (data.length > 0) {
+          return false;
+        }
+        return true;
+      } else {
+        return true;
+      }
     } catch (error) {
       console.error("Error checking if email exists:", error);
       return false; // In case of error, conservatively return false to prevent false negatives

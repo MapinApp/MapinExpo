@@ -67,6 +67,7 @@ export default function LogIn() {
       });
       console.log(registerData);
       signUp();
+      router.replace("/(auth)/");
     } else {
       if (!isValid.date) {
         alert("Choose a valid date...");
@@ -102,6 +103,7 @@ export default function LogIn() {
             >
               <Block
                 blur
+                outlined
                 flex={0}
                 intensity={90}
                 radius={sizes.blockRadius}

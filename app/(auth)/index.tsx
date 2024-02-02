@@ -61,6 +61,7 @@ export default function LogIn() {
           {/* login form */}
           <Block scroll marginTop={-(sizes.height * 0.2 - sizes.l)}>
             <Block
+              outlined
               flex={0}
               radius={sizes.blockRadius}
               marginHorizontal="8%"

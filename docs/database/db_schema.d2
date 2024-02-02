@@ -13,8 +13,8 @@ tables: "Main Tables" {
     date_of_birth: date
     created_date: timestamptz
     last_login: timestamptz
-    profile_photo_id: uuid {constraint: foreign_key}
-    accouint_status: varchar
+    avatar_url: text {constraint: foreign_key}
+    account_status: varchar
   }
 
   pins: {
@@ -117,7 +117,7 @@ tables: "Main Tables" {
   search_history.user_id -> profiles.id
 }
 
-tables.profiles.profile_photo_id -> images.profile_photos.profile_photo_id
+tables.profiles.avatar_url -> images.profile_photos.avatar_url
 tables.pins.pin_photo_id -> images.pin_photos.pin_photo_id
 tables.lists.list_photo_id -> images.list_cover_photos.list_photo_id
 
@@ -169,7 +169,7 @@ images: "Images" {
 
   profile_photos: {
     shape: sql_table
-    profile_photo_id: uuid {constraint: primary_key}
+    avatar_url: uuid {constraint: primary_key}
     url: varchar
   }
 

@@ -1,6 +1,8 @@
 ## 🚀 ToDo
 
 - [x] Get Theme & Components Working Properly
+- [ ] Come up with Sign up Design
+  - [X](https://dribbble.com/shots/13845336-Sign-in-UI)
 - [ ] Get Layouts Working Properly
 - [ ] Get Router Working Properly
   - Including Lists ToDo Starter Code

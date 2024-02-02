@@ -128,6 +128,7 @@ export default function LogIn() {
             >
               <Block
                 blur
+                outlined
                 flex={0}
                 intensity={90}
                 radius={sizes.blockRadius}

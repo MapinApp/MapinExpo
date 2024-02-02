@@ -5,8 +5,8 @@ language 'plpgsql'
 security definer
 as $$
 declare
-  project_url text := 'https://edtuxnsgmahggzfvfxkg.supabase.co';
-  service_role_key text := 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVkdHV4bnNnbWFoZ2d6ZnZmeGtnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MDIxMTQxNywiZXhwIjoxOTk1Nzg3NDE3fQ.Ip1cayXwY9SlIAlq1DErRcyHx1XfiU5EDxRwiuyLehU'; --  full access needed
+  project_url text := '<YOURPROJECTURL>';
+  service_role_key text := '<YOURSERVICEROLEKEY>'; --  full access needed
   url text := project_url||'/storage/v1/object/'||bucket||'/'||object;
 begin
   select
@@ -44,13 +44,16 @@ as $$
 declare
   status int;
   content text;
+  avatar_name text;
 begin
   if coalesce(old.avatar_url, '') <> ''
-      and (tg_op = 'DELETE' or (old.avatar_url <> new.avatar_url)) then
+      and (tg_op = 'DELETE' or (old.avatar_url <> coalesce(new.avatar_url, ''))) then
+    -- extract avatar name
+    avatar_name := old.avatar_url;
     select
       into status, content
       result.status, result.content
-      from public.delete_avatar(old.avatar_url) as result;
+      from public.delete_avatar(avatar_name) as result;
     if status <> 200 then
       raise warning 'Could not delete avatar: % %', status, content;
     end if;

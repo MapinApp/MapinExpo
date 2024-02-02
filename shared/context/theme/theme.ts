@@ -80,9 +80,9 @@ const SIZES: ThemeSizes = {
   h1: 38,
   h2: 28,
   h3: 30,
-  h4: 30,
-  h5: 22,
-  p: 22,
+  h4: 24,
+  h5: 18,
+  p: 14,
   // button sizes
   buttonBorder: 1,
   buttonRadius: 4,
