@@ -132,11 +132,11 @@ stateDiagram-v2
 
 ## 💾 DataBase
 
-# Schema
+### Schema
 
 ![Mapin Database](/docs/database/img/mapin_v11.svg)
 
-## API Structure
+### API Structure
 
 | **<br>**           | **Description**                  | **API id** | **Type** | **API Request**                                   | **Policies**                         | **URL** | **Body Keys** |
 | ------------------ | -------------------------------- | ---------- | -------- | ------------------------------------------------- | ------------------------------------ | ------- | ------------- |
@@ -163,7 +163,7 @@ stateDiagram-v2
 | **<br>**           | All Pins (Public/Private)        | 21         |          |                                                   |                                      |         |               |
 | **Settings**       | User Feedback                    | 22         | POST     | Send user feedback                                |                                      |         |               |
 
-# Upgrading Expo
+## 🆕 Upgrading Expo
 
 ```bash
 # Install Latest

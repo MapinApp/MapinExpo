@@ -1,9 +1,9 @@
 import { Stack } from "expo-router";
 import { View } from "react-native";
-import { useTheme } from "../context/theme";
+import { useTheme } from "@/context/theme";
 import { StatusBar } from "expo-status-bar";
 
-export default function StackLayout() {
+export default function Layout() {
   const { theme, isDark } = useTheme();
   const { colors } = theme;
   return (

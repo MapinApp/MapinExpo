@@ -1,11 +1,11 @@
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Link, Tabs } from "expo-router";
+import { Tabs, Redirect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Pressable } from "react-native";
 // Components
 import { useTheme } from "@/context/theme";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useAuth } from "@/context/auth";
+import { Text } from "@/components/ui";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -19,6 +19,21 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const { theme, isDark } = useTheme();
   const { colors } = theme;
+  const { session, isLoading } = useAuth();
+  console.log("session", session);
+
+  // You can keep the splash screen open, or render a loading screen like we do here.
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
+  // Only require authentication within the (app) group's layout as users
+  // need to be able to access the (auth) group and sign in again.
+  if (!session) {
+    // On web, static rendering will stop here as the user is not authenticated
+    // in the headless Node process that the pages are rendered in.
+    return <Redirect href="/" />;
+  }
 
   return (
     <>
@@ -69,15 +84,23 @@ export default function TabLayout() {
         {/* Order of the tabs */}
 
         <Tabs.Screen
-          name="index"
+          name="components"
           options={{
             // This tab will no longer show up in the tab bar.
-            href: null,
+            // href: null,
+            tabBarLabel: "Components",
+            tabBarIcon: ({ color, size, focused }) => (
+              <TabBarIcon
+                name={focused ? "logo-android" : "logo-android"}
+                color={color}
+                size={size}
+              />
+            ),
           }}
         />
 
         <Tabs.Screen
-          name="one"
+          name="home"
           options={{
             // set as initial tab
             tabBarLabel: "Home",
@@ -92,7 +115,7 @@ export default function TabLayout() {
         />
 
         <Tabs.Screen
-          name="two"
+          name="map"
           options={{
             tabBarLabel: "Map",
             tabBarIcon: ({ color, size, focused }) => (
@@ -105,7 +128,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="three"
+          name="add-pin"
           options={{
             tabBarLabel: "Add Pin",
             tabBarIcon: ({ color, size, focused }) => (
@@ -118,7 +141,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="four"
+          name="lists"
           options={{
             tabBarLabel: "Lists",
             tabBarIcon: ({ color, size, focused }) => (
@@ -131,7 +154,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="five"
+          name="profile"
           options={{
             tabBarLabel: "Profile",
             tabBarIcon: ({ color, size, focused }) => (
@@ -143,21 +166,6 @@ export default function TabLayout() {
             ),
           }}
         />
-        {/* <Tabs.Screen
-        name="one"
-        options={{
-          // This tab will no longer show up in the tab bar.
-          href: null,
-          tabBarLabel: "Components",
-          tabBarIcon: ({ color, size, focused }) => (
-            <TabBarIcon
-              name={focused ? "logo-android" : "logo-android"}
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      /> */}
       </Tabs>
     </>
   );

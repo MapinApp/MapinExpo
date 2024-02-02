@@ -1,182 +1,225 @@
-// import { useRouter, useSegments } from "expo-router";
-// import React, { useState, useEffect, useContext, createContext } from "react";
-// import { supabase } from "@/lib/supabase";
+/*
+ * set up a React Context provider that can expose an authentication session to the entire app.
+ * This provider uses a mock implementation. You can replace it with your own authentication provider.
+ */
+import React, { useEffect, useState } from "react";
+import { useStorageState } from "@/lib/useStorageState";
+import { supabase } from "@/lib/supabase";
+import { router } from "expo-router";
+// Custom
+import type { RegisterData, AuthSession } from "@/types/auth";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
-// // Create the auth context
-// const AuthContext = createContext(null);
+// Create the auth context
+const AuthContext = React.createContext<{
+  signIn: (payload: { email: string; password: string }) => void;
+  signUp: () => void;
+  signOut: () => void;
+  resetPassword: (payload: { email: string }) => void;
+  registerData: RegisterData;
+  setRegisterData: React.Dispatch<React.SetStateAction<RegisterData>>;
+  session: AuthSession | null;
+  isLoading: boolean;
+  // Utils
+  isUsernameUnique: (username: string) => Promise<boolean>;
+  isEmailUnique: (email: string) => Promise<boolean>;
+}>({
+  signIn: () => null,
+  signUp: () => null,
+  signOut: () => null,
+  resetPassword: () => null,
+  registerData: {
+    email: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    gender: "",
+    dob: new Date(),
+  },
+  setRegisterData: () => null,
+  session: null,
+  isLoading: false,
+  // Utils
+  isUsernameUnique: () => Promise.resolve(false),
+  isEmailUnique: () => Promise.resolve(false),
+});
 
-// // Export the auth context
-// export function useAuth() {
-//   return useContext(AuthContext);
-// }
+// Export the auth context
+// This hook can be used to access the user info in the Session Object
+export function useAuth() {
+  const value = React.useContext(AuthContext);
+  if (process.env.NODE_ENV !== "production") {
+    if (!value) {
+      throw new Error("useAuth must be wrapped in a <AuthProvider />");
+    }
+  }
+  return value;
+}
 
-// function useProtectedRoute(session: any) {
-//   const rootSegment = useSegments()[0];
-//   const router = useRouter();
+export function AuthProvider(props: React.PropsWithChildren) {
+  // From the useStorageState hook
+  const [[isLoading, session], setSession] = useStorageState("session");
+  // Internal Loading for SupaBase
+  const [loading, setLoading] = useState(false);
+  const [registerData, setRegisterData] = useState<RegisterData>({
+    email: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    gender: "",
+    dob: new Date(),
+  });
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      // Stringify the session object for storage
+      setSession(JSON.stringify(session));
+    });
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(JSON.stringify(session));
+    });
+  }, []);
 
-//   useEffect(() => {
-//     if (
-//       // If the session is not signed in and the initial segment is not anything in the auth group.
-//       !session &&
-//       rootSegment !== "(auth)"
-//     ) {
-//       // Navigate to dynamic routes by passing an object like { pathname: 'profile', params: { id: '123' } }.
-//       // Redirect to the log-in page.
-//       router.replace("(auth)/");
-//     } else if (session && session.user && rootSegment !== "(app)") {
-//       // Redirect away from the log-in page.
-//       router.replace("/");
-//     }
-//   }, [session, rootSegment]);
-// }
+  async function signInWithEmail(payload: { email: string; password: string }) {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: payload.email,
+      password: payload.password,
+    });
+    if (error) {
+      alert(error.message);
+    } else router.replace("/(app)/home");
+    setLoading(false);
+  }
 
-// export function AuthProvider(props) {
-//   const [session, setSession] = useState(null);
-//   const router = useRouter();
-//   const [registerData, setRegisterData] = useState({
-//     email: "",
-//     firstName: "",
-//     lastName: "",
-//     username: "",
-//     password: "",
-//     gender: "",
-//     dob: new Date(),
-//   });
-//   const [loading, setLoading] = useState(false);
+  async function signUpWithEmail() {
+    const { email, firstName, lastName, username, password, gender, dob } =
+      registerData;
+    setLoading(true);
+    const data = {
+      first_name: capitalizeFirstLetter(firstName),
+      last_name: capitalizeFirstLetter(lastName),
+      username: username,
+      gender: gender,
+      date_of_birth: dob.toISOString().split("T")[0],
+    };
+    // console.log(data);
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        emailRedirectTo: "https://mapin.co.uk/welcome",
+        data: data,
+      },
+    });
+    if (error) {
+      if (error.message.includes("profiles_username_key")) {
+        alert("That username is already taken...");
+      } else {
+        alert(error.message);
+      }
+    }
+    if (!session)
+      alert(
+        "Mapin account created! Check your email for the verification link"
+      );
+    setLoading(false);
+  }
 
-//   useEffect(() => {
-//     supabase.auth.getSession().then(({ data: { session } }) => {
-//       setSession(session);
-//     });
-//     supabase.auth.onAuthStateChange((_event, session) => {
-//       setSession(session);
-//     });
-//   }, []);
+  async function resetPassword(payload: { email: string }) {
+    setLoading(true);
+    const { data, error } = await supabase.auth.resetPasswordForEmail(
+      payload.email,
+      {
+        redirectTo: "https://mapin.co.uk/reset-password",
+      }
+    );
+    if (error) {
+      alert(error.message);
+    } else {
+      alert("Check your email (& Spam...) for the password reset link");
+      router.replace("/(auth)/");
+    }
+    setLoading(false);
+  }
 
-//   useProtectedRoute(session);
+  // UTILITY FUNCTIONS
+  async function isUsernameUnique(username: string): Promise<boolean> {
+    // If username is unique, return true, else return false
+    /*
+    This function checks if a username is unique by querying the Supabase database. It should handle errors gracefully and return false in case of any error to prevent unintended registration with a non-unique username.
+    */
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("username")
+        .eq("username", username)
+        .single(); // Assuming usernames are unique, single() can be more efficient
 
-//   async function signInWithEmail(payload) {
-//     setLoading(true);
-//     const { error } = await supabase.auth.signInWithPassword({
-//       email: payload.email,
-//       password: payload.password,
-//     });
-//     if (error) alert(error.message);
-//     setLoading(false);
-//   }
+      if (error) {
+        alert(error.message);
+        // throw new Error(error.message);
+      }
+      return !data; // If no data is returned, the username is unique
+    } catch (error) {
+      console.error("Error checking username uniqueness:", error);
+      return false; // In case of error, assume username is not unique to avoid duplicate usernames
+    }
+  }
 
-//   function capitalizeFirstLetter(string: string) {
-//     return string.charAt(0).toUpperCase() + string.slice(1).toLocaleLowerCase();
-//   }
+  async function isEmailUnique(email: string): Promise<boolean> {
+    // If email is unique, return true, else return false
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("email", email)
+        .single(); // Assuming usernames are unique, single() can be more efficient
 
-//   async function signUpWithEmail(registerData: any) {
-//     // prettier-ignore
-//     const { email, firstName, lastName, username, password, gender, dob } = registerData;
-//     setLoading(true);
+      if (error) {
+        alert(error.message);
+        // throw new Error(error.message);
+      }
+      return !data; // If no data is returned, the username is unique
+    } catch (error) {
+      console.error("Error checking if email exists:", error);
+      return false; // In case of error, conservatively return false to prevent false negatives
+    }
+  }
 
-//     const data = {
-//       first_name: capitalizeFirstLetter(firstName),
-//       last_name: capitalizeFirstLetter(lastName),
-//       username: username,
-//       gender: gender,
-//       date_of_birth: dob.toISOString().split("T")[0],
-//     };
-//     // console.log(data);
-//     const { error } = await supabase.auth.signUp({
-//       email: email,
-//       password: password,
-//       options: {
-//         emailRedirectTo: "https://mapin.co.uk/welcome",
-//         data: data,
-//       },
-//     });
-
-//     if (error) {
-//       if (error.message.includes("profiles_username_key")) {
-//         alert("That username is already taken...");
-//       } else {
-//         alert(error.message);
-//       }
-//     } else {
-//       router.replace("(auth)/");
-//       alert(
-//         "Mapin account created! Check your email (& Spam...) for the verification link"
-//       );
-//     }
-//     setLoading(false);
-//   }
-
-//   async function resetPassword(email: string) {
-//     setLoading(true);
-
-//     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-//       redirectTo: "https://mapin.co.uk/reset-password",
-//     });
-//     if (error) {
-//       alert(error.message);
-//     } else {
-//       alert("Check your email (& Spam...) for the password reset link");
-//       router.replace("(auth)/");
-//     }
-//     setLoading(false);
-//   }
-
-//   async function isUsernameUnique(username: string) {
-//     // If username is unique, return true, else return false
-//     const { data, error } = await supabase
-//       .from("profiles")
-//       .select("username")
-//       .eq("username", username);
-//     if (error) {
-//       alert(error.message);
-//     }
-//     if (data.length > 0) {
-//       return false;
-//     }
-//     return true;
-//   }
-
-//   async function doesEmailExist(email: string) {
-//     // If email exists, return true, else return false
-//     const { data, error } = await supabase
-//       .from("profiles")
-//       .select("email")
-//       .eq("email", email);
-//     if (error) {
-//       alert(error.message);
-//     }
-//     if (data.length > 0) {
-//       return true;
-//     }
-//     return false;
-//   }
-
-//   return (
-//     <AuthContext.Provider
-//       value={{
-//         signIn: (payload) => {
-//           signInWithEmail(payload);
-//         },
-//         signOut: async () => {
-//           await supabase.auth.signOut();
-//           router.replace("(auth)/");
-//         },
-//         signUp: () => {
-//           signUpWithEmail(registerData);
-//         },
-//         resetPassword: (email) => {
-//           resetPassword(email);
-//         },
-//         registerData: registerData,
-//         setRegisterData: setRegisterData,
-//         session,
-//         loading,
-//         setLoading,
-//         isUsernameUnique,
-//         doesEmailExist,
-//       }}
-//     >
-//       {props.children}
-//     </AuthContext.Provider>
-//   );
-// }
+  return (
+    <AuthContext.Provider
+      value={{
+        signIn: (payload: { email: string; password: string }) => {
+          // Perform sign-in logic here
+          signInWithEmail(payload);
+        },
+        signUp: () => {
+          // Perform sign-up logic here
+          signUpWithEmail();
+        },
+        signOut: async () => {
+          await supabase.auth.signOut();
+          setSession(null);
+          router.replace("/(auth)/");
+        },
+        resetPassword: (payload: { email: string }) => {
+          resetPassword(payload);
+        },
+        registerData: registerData,
+        setRegisterData: setRegisterData,
+        session: session ? JSON.parse(session) : null,
+        isLoading: isLoading || loading,
+        // Utils
+        isUsernameUnique,
+        isEmailUnique,
+      }}
+    >
+      {props.children}
+    </AuthContext.Provider>
+  );
+}

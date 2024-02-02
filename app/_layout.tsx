@@ -1,10 +1,8 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+import { Stack, SplashScreen, Slot } from "expo-router";
 import { useEffect } from "react";
-// Migrated
 import { ThemeProvider } from "@/context/theme";
+import { AuthProvider } from "@/context/auth";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -28,7 +26,6 @@ export default function RootLayout() {
     MontserratMedium: require("../shared/assets/fonts/Montserrat-Medium.otf"),
     MontserratBold: require("../shared/assets/fonts/Montserrat-Bold.otf"),
     MontserratRegular: require("../shared/assets/fonts/Montserrat-Regular.otf"),
-    ...FontAwesome.font,
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
@@ -43,6 +40,8 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
+    // The native splash screen will stay visible for as long as there
+    // are `<SplashScreen />` components mounted. This component can be nested.
     return null;
   }
 
@@ -50,12 +49,14 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  // Render the children routes now that all the assets are loaded.
   return (
-    <ThemeProvider>
-      <Stack>
-        <Stack.Screen name="(app)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-      </Stack>
-    </ThemeProvider>
+    // Setup the auth context and render our layout inside of it.
+    <AuthProvider>
+      <ThemeProvider>
+        {/* <Slot /> will render the selected child route. This component can be wrapped with other components to create a layout. */}
+        <Slot />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

@@ -22,6 +22,7 @@
 - [ ] Deep linking for directions to a pin
   - [Docs](https://docs.expo.dev/guides/linking/)
 - [ ] When Ready, test on a [Development Build](https://docs.expo.dev/develop/development-builds/introduction/). Wil need to test Deep Linking, Permissions etc.
+- [ ] Add [Splash Screen](https://docs.expo.dev/router/appearance/#splash-screen) Until Posts are loaded
 
 ## 📚 Resources
 
