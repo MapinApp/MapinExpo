@@ -20,7 +20,7 @@ const Buttons = () => {
   const { assets, colors, gradients, sizes } = theme;
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block marginVertical={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Buttons
       </Text>
@@ -123,7 +123,7 @@ const Typography = () => {
   const { sizes, gradients } = useTheme().theme;
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block marginVertical={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Typography
       </Text>
@@ -225,7 +225,7 @@ const Inputs = () => {
   const { colors, sizes } = useTheme().theme;
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block marginVertical={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Inputs
       </Text>
@@ -253,7 +253,7 @@ const Switches = () => {
   const [switch2, setSwitch2] = useState(false);
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block marginVertical={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Switches
       </Text>
@@ -288,7 +288,7 @@ const Social = () => {
   const { sizes } = useTheme().theme;
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block marginVertical={sizes.xs} card>
       <Text p semibold marginBottom={sizes.s}>
         Social
       </Text>
@@ -466,7 +466,7 @@ const Album = () => {
     (sizes.width - (IMAGE_VERTICAL_SIZE + sizes.sm) * 2) / 2;
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block marginVertical={sizes.xs} card>
       <Block row align="center" justify="space-between">
         <Text h5>Album</Text>
         <Button>
@@ -528,7 +528,7 @@ const Cards = () => {
   const { assets, colors, gradients, sizes } = useTheme().theme;
 
   return (
-    <Block margin={sizes.xs}>
+    <Block marginVertical={sizes.xs}>
       <Text p semibold marginBottom={sizes.s}>
         Cards
       </Text>
@@ -644,7 +644,7 @@ const Header = () => {
   const { sizes, gradients } = theme;
 
   return (
-    <Block margin={sizes.xs} card>
+    <Block marginVertical={sizes.xs} card>
       <Text h1 uppercase gradient={gradients.primary}>
         Mapin
       </Text>
@@ -681,11 +681,11 @@ const Header = () => {
 };
 
 export default function Components() {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { colors, sizes } = theme;
 
   return (
-    <Block background>
+    <Block color={isDark ? colors.black : colors.white}>
       <Block safe>
         <Block
           scroll

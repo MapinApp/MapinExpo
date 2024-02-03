@@ -20,7 +20,6 @@ export default function TabLayout() {
   const { theme, isDark } = useTheme();
   const { colors } = theme;
   const { session, isLoading } = useAuth();
-  console.log("session", session);
 
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (isLoading) {
