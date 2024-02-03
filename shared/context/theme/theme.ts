@@ -37,8 +37,8 @@ const WEIGHTS: ThemeWeights = {
 const ASSETS: ThemeAssets = {
   og: require("../../assets/img/og.jpg"),
   logo: require("../../assets/img/logo.png"),
-  backgroundLight: require("../../assets/img/light-bg.png"),
-  backgroundDark: require("../../assets/img/dark-bg.png"),
+  backgroundLight: require("../../assets/img/bg-light.png"),
+  backgroundDark: require("../../assets/img/bg-dark.png"),
 };
 
 const FONTS: ThemeFonts = {
