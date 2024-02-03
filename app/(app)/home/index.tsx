@@ -17,7 +17,7 @@ import {
 export default function Account() {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
-  const [website, setWebsite] = useState("");
+  const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const { session, signOut } = useAuth();
   const { theme, isDark, handleIsDark } = useTheme();
@@ -34,7 +34,7 @@ export default function Account() {
 
       const { data, error, status } = await supabase
         .from("profiles")
-        .select(`username, website, avatar_url`)
+        .select(`username, bio, avatar_url`)
         .eq("id", session?.user.id)
         .single();
       if (error && status !== 406) {
@@ -43,7 +43,7 @@ export default function Account() {
 
       if (data) {
         setUsername(data.username);
-        setWebsite(data.website);
+        setBio(data.bio);
         setAvatarUrl(data.avatar_url);
       }
     } catch (error) {
@@ -57,11 +57,11 @@ export default function Account() {
 
   async function updateProfile({
     username,
-    website,
+    bio,
     avatar_url,
   }: {
     username: string;
-    website: string;
+    bio: string;
     avatar_url: string;
   }) {
     try {
@@ -71,7 +71,7 @@ export default function Account() {
       const updates = {
         id: session?.user.id,
         username,
-        website,
+        bio,
         avatar_url,
         updated_at: new Date(),
       };
@@ -99,7 +99,7 @@ export default function Account() {
             url={avatarUrl}
             onUpload={(url: string) => {
               setAvatarUrl(url);
-              updateProfile({ username, website, avatar_url: url });
+              updateProfile({ username, bio, avatar_url: url });
             }}
           />
           <Input
@@ -115,15 +115,15 @@ export default function Account() {
             marginBottom={20}
           />
           <Input
-            label="Website"
-            value={website || ""}
-            onChangeText={(text) => setWebsite(text)}
+            label="Bio"
+            value={bio || ""}
+            onChangeText={(text) => setBio(text)}
             marginBottom={20}
           />
 
           <Button
             onPress={() =>
-              updateProfile({ username, website, avatar_url: avatarUrl })
+              updateProfile({ username, bio, avatar_url: avatarUrl })
             }
             disabled={loading}
             marginBottom={sizes.s}

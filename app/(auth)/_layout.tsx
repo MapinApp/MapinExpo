@@ -16,7 +16,7 @@ export default function Layout() {
   return (
     <>
       {/* Add view so it doesn't flicker white between screens. */}
-      <Block background flex={1}>
+      <Block background flex={1} justify={"center"}>
         <Stack
           screenOptions={{
             // hide header

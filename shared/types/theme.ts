@@ -54,6 +54,7 @@ export interface ThemeAssets {
   logo: ImageSourcePropType;
   backgroundLight: ImageSourcePropType;
   backgroundDark: ImageSourcePropType;
+  profilePicture: ImageSourcePropType;
 }
 
 export interface ThemeFonts {

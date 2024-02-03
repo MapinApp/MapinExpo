@@ -247,10 +247,7 @@ const Block = (props: IBlockProps) => {
         <ImageBackground
           source={isDark ? assets.backgroundDark : assets.backgroundLight}
           resizeMode="cover"
-          style={{
-            flex: 1,
-            justifyContent: "center",
-          }}
+          style={blockStyles}
         >
           {children}
         </ImageBackground>

@@ -81,6 +81,8 @@ const Image = ({
         width: sizes.avatarSize,
         borderRadius: sizes.avatarRadius,
         overflow: "hidden",
+        borderWidth: 0.8,
+        borderColor: colors.gray,
       }),
     },
   ]) as ImageStyle;

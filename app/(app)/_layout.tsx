@@ -36,7 +36,6 @@ export default function TabLayout() {
 
   return (
     <>
-      <StatusBar style={isDark ? "light" : "dark"} />
       <Tabs
         detachInactiveScreens={true}
         screenOptions={{
@@ -156,6 +155,7 @@ export default function TabLayout() {
           name="profile"
           options={{
             tabBarLabel: "Profile",
+            headerShown: false,
             tabBarIcon: ({ color, size, focused }) => (
               <TabBarIcon
                 name={focused ? "person" : "person-outline"}

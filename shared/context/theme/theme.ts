@@ -39,6 +39,7 @@ const ASSETS: ThemeAssets = {
   logo: require("../../assets/img/logo.png"),
   backgroundLight: require("../../assets/img/bg-light.png"),
   backgroundDark: require("../../assets/img/bg-dark.png"),
+  profilePicture: require("../../assets/img/profile-picture.jpg"),
 };
 
 const FONTS: ThemeFonts = {
@@ -80,7 +81,7 @@ const SIZES: ThemeSizes = {
   h1: 38,
   h2: 28,
   h3: 30,
-  h4: 24,
+  h4: 18,
   h5: 14,
   p: 14,
   // button sizes
@@ -88,7 +89,7 @@ const SIZES: ThemeSizes = {
   buttonRadius: 4,
   socialSize: 64,
   socialRadius: 8,
-  socialIconSize: 26,
+  socialIconSize: 30,
   // button shadow
   shadowOffsetWidth: 0,
   shadowOffsetHeight: 7,
@@ -105,8 +106,8 @@ const SIZES: ThemeSizes = {
   cardPadding: 10,
   // image sizes
   imageRadius: 7,
-  avatarSize: 32,
-  avatarRadius: 8,
+  avatarSize: 62,
+  avatarRadius: 62,
   // switch sizes
   switchWidth: 50,
   switchHeight: 24,
