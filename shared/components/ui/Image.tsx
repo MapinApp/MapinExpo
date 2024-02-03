@@ -10,9 +10,6 @@ import { ISpacing } from "@/types/theme";
 import { Image as ExpoImage, ImageProps } from "expo-image";
 import { useTheme } from "@/context/theme";
 
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
 const Image = ({
   id = "Image",
   style,
@@ -91,6 +88,10 @@ const Image = ({
   // generate component testID or accessibilityLabel based on Platform.OS
   const imageID =
     Platform.OS === "android" ? { accessibilityLabel: id } : { testID: id };
+
+  const blurhash = disableTransition
+    ? ""
+    : "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   return (
     <ExpoImage

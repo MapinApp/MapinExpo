@@ -44,7 +44,7 @@ const COLORS: ThemeColors = {
   switchOn: "#1CC0E8",
   switchOff: "#E9ECEF",
   /** UI color for checkbox icon checked/active color 🧐 */
-  checkbox: ["#1CC0E8", "#141727"],
+  checkbox: ["#12D7EC", "#26A8E6"],
   checkboxIcon: "#FFFFFF",
   /** social colors 🧐*/
   google: "#df4a37",

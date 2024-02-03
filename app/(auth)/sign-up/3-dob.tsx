@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Platform, Pressable } from "react-native";
 import { useRouter, Link } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Text as RNText } from "react-native";
 import DateTimePicker, {
   DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
@@ -77,58 +77,43 @@ export default function LogIn() {
 
   return (
     <>
-      <Block color={colors.background}>
-        <Block safe marginTop={sizes.l} paddingHorizontal={sizes.s}>
-          <Block flex={0} style={{ zIndex: 0 }}>
-            <Image
-              background
-              contentFit="cover"
-              padding={sizes.sm}
-              radius={sizes.blockRadius}
-              source={assets.og}
-              height={sizes.height * 0.3}
-            >
-              <Text h1 center white size={sizes.h1 * 1.2} marginTop={sizes.m}>
-                Join Mapin
-              </Text>
-            </Image>
-          </Block>
+      <Block background>
+        <Block safe paddingVertical={"15%"} paddingHorizontal={"10%"}>
           {/* login form */}
-          <Block scroll marginTop={-(sizes.height * 0.2 - sizes.l)}>
-            <Block
-              flex={0}
-              radius={sizes.blockRadius}
-              marginHorizontal="8%"
-              shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
-            >
-              <Block
-                blur
-                outlined
-                flex={0}
-                intensity={90}
-                radius={sizes.blockRadius}
-                overflow="hidden"
-                justify="space-evenly"
-                tint={colors.blurTint}
-                paddingVertical={sizes.sm}
-              >
+          <Block
+            card
+            outlined
+            flex={0}
+            radius={sizes.cardRadius}
+            overflow="hidden"
+            justify="flex-start"
+            paddingVertical={sizes.sm}
+            shadow={true}
+            height={"100%"}
+            width={"100%"}
+            marginTop={sizes.sm}
+          >
+            <Block flex={0}>
+              <Block scroll flex={0} marginBottom={"45%"}>
                 <Text medium p center>
                   Your Birthday
                 </Text>
-                <Block
-                  flex={0}
-                  align="center"
-                  marginTop={sizes.s}
-                  marginBottom={sizes.sm}
+                <RNText
+                  style={{
+                    fontSize: 60, // Sets a large text size
+                    lineHeight: 70, // Sets the height of each line of text
+                    textAlign: "center", // Centers the text horizontally
+                  }}
                 >
-                  <Ionicons name="calendar" size={70} color={colors.text} />
-                </Block>
+                  🎂
+                </RNText>
+
                 {/* form inputs */}
-                <Block paddingHorizontal={sizes.sm}>
-                  <Text marginBottom={sizes.sm}>
+                <Block paddingHorizontal={sizes.sm} paddingTop={sizes.sm}>
+                  <Text p marginBottom={sizes.sm}>
                     This won't be part of your public profile.{" "}
                     <Link href="/sign-up/dob-why">
-                      <Text underline>
+                      <Text p underline primary>
                         Why do I need to provide my date of birth?
                       </Text>
                     </Link>
@@ -154,11 +139,10 @@ export default function LogIn() {
                   marginTop={sizes.m * 1.1}
                   flex={0}
                   align="center"
-                  justify="center"
+                  justify="space-around"
                   paddingHorizontal={sizes.sm}
                 >
                   <Checkbox
-                    marginRight={sizes.xs}
                     checked={agreed}
                     onPress={() => setAgreed(!agreed)}
                   />
@@ -182,7 +166,9 @@ export default function LogIn() {
                   </Text>
                 </Button>
                 <Button onPress={() => router.back()}>
-                  <Text p>Go back</Text>
+                  <Text p underline primary>
+                    Go back
+                  </Text>
                 </Button>
               </Block>
             </Block>

@@ -50,6 +50,7 @@ const Checkbox = ({
             color={colors.checkboxIcon}
             width={sizes.checkboxIconWidth}
             height={sizes.checkboxIconHeight}
+            disableTransition={true}
           />
         )}
       </Block>

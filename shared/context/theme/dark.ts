@@ -20,7 +20,7 @@ const COLORS: ThemeColors = {
   light: "#e4e4e7",
   // gray variations
   /** UI color for #gray */
-  gray: "#e4e4e7",
+  gray: "#374151",
   // colors variations
   /** UI color for #danger */
   danger: "#FF595E",
@@ -35,7 +35,7 @@ const COLORS: ThemeColors = {
   background: "#1B1D22",
   border: "#3f3f46",
   /** UI color for shadowColor */
-  shadow: "#627594",
+  shadow: "#374151",
   overlay: "rgba(0,0,0,0.3)",
   /** UI color for input borderColor on focus */
   focus: "#7ecee0",
@@ -44,7 +44,7 @@ const COLORS: ThemeColors = {
   switchOn: "#1CC0E8",
   switchOff: "#3f3f46",
   /** UI color for checkbox icon checked/active color */
-  checkbox: ["#1CC0E8", "#141727"],
+  checkbox: ["#12D7EC", "#26A8E6"],
   checkboxIcon: "#FFFFFF",
   /** social colors */
   google: "#df4a37",

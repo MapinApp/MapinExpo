@@ -102,41 +102,40 @@ export default function LogIn() {
 
   return (
     <>
-      <Block color={colors.background}>
-        <Block safe marginTop={sizes.l} paddingHorizontal={sizes.s}>
-          <Block flex={0} style={{ zIndex: 0 }}>
-            <Image
-              background
-              contentFit="cover"
-              padding={sizes.sm}
-              radius={sizes.blockRadius}
-              source={assets.og}
-              height={sizes.height * 0.3}
-            >
-              <Text h1 center white size={sizes.h1 * 1.2} marginTop={sizes.m}>
-                Join Mapin
-              </Text>
-            </Image>
-          </Block>
+      <Block background>
+        <Block safe paddingVertical={"15%"} paddingHorizontal={"10%"}>
           {/* login form */}
-          <Block scroll marginTop={-(sizes.height * 0.2 - sizes.l)}>
-            <Block
-              flex={0}
-              radius={sizes.blockRadius}
-              marginHorizontal="8%"
-              shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
-            >
+          <Block
+            card
+            outlined
+            flex={0}
+            radius={sizes.cardRadius}
+            overflow="hidden"
+            justify="flex-start"
+            paddingVertical={sizes.sm}
+            shadow={true}
+            height={"100%"}
+            width={"100%"}
+            marginTop={sizes.sm}
+          >
+            <Block flex={0}>
               <Block
-                blur
-                outlined
-                flex={0}
-                intensity={90}
-                radius={sizes.blockRadius}
-                overflow="hidden"
-                justify="space-evenly"
-                tint={colors.blurTint}
-                paddingVertical={sizes.sm}
+                row
+                center
+                justify="center"
+                align="center"
+                paddingVertical={"20%"}
+                marginBottom={sizes.sm}
               >
+                <Image
+                  padding={sizes.sm}
+                  source={assets.logo}
+                  height={130}
+                  width={130}
+                  disableTransition={true}
+                />
+              </Block>
+              <Block scroll flex={0} marginBottom={"45%"}>
                 <Text medium p center>
                   Your Details
                 </Text>
@@ -145,7 +144,8 @@ export default function LogIn() {
                 <Block paddingHorizontal={sizes.sm}>
                   <Input
                     label="First Name(s)"
-                    marginBottom={sizes.xl}
+                    marginBottom={sizes.sm}
+                    marginTop={sizes.sm}
                     success={Boolean(firstName && isValid.firstName)}
                     danger={Boolean(firstName && !isValid.firstName)}
                     onChangeText={(text) => setFirstName(text)}
@@ -158,7 +158,7 @@ export default function LogIn() {
                   />
                   <Input
                     label="Last Name"
-                    marginBottom={sizes.xl}
+                    marginBottom={sizes.sm}
                     success={Boolean(lastName && isValid.lastName)}
                     danger={Boolean(lastName && !isValid.lastName)}
                     onChangeText={(text) => setLastName(text)}
@@ -170,7 +170,7 @@ export default function LogIn() {
                     placeholder="Enter last name"
                   />
                   <Input
-                    marginBottom={sizes.xl}
+                    marginBottom={sizes.sm}
                     label="Username"
                     success={Boolean(username && isValid.username)}
                     danger={Boolean(username && !isValid.username)}
@@ -184,7 +184,7 @@ export default function LogIn() {
                   />
                   <Pressable onPressIn={() => setModal(true)}>
                     <Input
-                      marginBottom={sizes.m * 1.45}
+                      marginBottom={sizes.xs}
                       label="Gender"
                       onFocus={() => setModal(true)}
                       success={Boolean(gender && isValid.gender)}
@@ -206,7 +206,7 @@ export default function LogIn() {
                     isLoading
                   }
                   marginBottom={sizes.s}
-                  marginTop={sizes.s * 1.4}
+                  marginTop={sizes.sm}
                   marginHorizontal={sizes.sm}
                   gradient={gradients.primary}
                 >
@@ -236,7 +236,7 @@ export default function LogIn() {
                 setModal(false);
               }}
             >
-              <Text p white semibold transform="uppercase">
+              <Text h5 transform="uppercase">
                 {item}
               </Text>
             </Button>

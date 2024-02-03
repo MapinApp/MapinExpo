@@ -6,6 +6,7 @@ import {
   Platform,
   ModalProps,
 } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { useTheme } from "@/context/theme";
 
@@ -38,18 +39,18 @@ const Modal = ({
       onRequestClose={onRequestClose}
     >
       <Block justify="flex-end">
-        <Block blur safe card flex={0} color="rgba(0,0,0,0.8)">
+        <Block blur safe card outlined flex={0}>
           <Button
             top={0}
             right={0}
             position="absolute"
             onPress={(e) => onRequestClose?.(e)}
           >
-            <Image source={icons.close} color={colors.white} />
+            <Ionicons name="close" size={16} color={colors.text} />
           </Button>
           <Block
             flex={0}
-            marginTop={sizes.xxl}
+            marginTop={sizes.md}
             paddingHorizontal={sizes.padding}
           >
             {children}
