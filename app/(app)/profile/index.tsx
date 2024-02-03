@@ -15,6 +15,8 @@ import {
 } from "@/components/ui";
 import Constants from "expo-constants";
 import ProfilePicture from "@/components/ProfilePicture";
+import { useRouter } from "expo-router";
+import { Link } from "expo-router";
 
 const lists = "lists";
 const reviews = "Reviews";
@@ -25,6 +27,7 @@ export default function Account() {
   const [bio, setBio] = useState("");
   const [tab, setTab] = useState<number>(0);
   const [Page, setPage] = useState(lists);
+  const router = useRouter();
 
   const handlePage = useCallback(
     (tab: number) => {
@@ -103,17 +106,15 @@ export default function Account() {
             >
               <Button
                 onPress={() => {
-                  console.log("Go back");
+                  router.back();
                 }}
               >
                 <Ionicons name="chevron-back-outline" size={16} color="white" />
               </Button>
-              <Button
-                onPress={() => {
-                  handleIsDark();
-                }}
-              >
-                <Ionicons name="settings" size={16} color="white" />
+              <Button>
+                <Link asChild href="/(app)/profile/settings">
+                  <Ionicons name="settings" size={16} color="white" />
+                </Link>
               </Button>
             </Block>
             <Block
