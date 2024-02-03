@@ -55,6 +55,8 @@ const COLORS: ThemeColors = {
   blurTint: "light",
   /** product link color 🧐*/
   link: "#6782E7",
+  /** List Color */
+  list: "#F6FDFF",
 };
 
 const GRADIENTS: ThemeGradients = {

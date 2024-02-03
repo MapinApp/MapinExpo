@@ -205,6 +205,7 @@ export interface ThemeColors {
   icon: ColorValue;
   blurTint: "light" | "dark" | "default";
   link: ColorValue;
+  list: ColorValue;
 }
 
 export interface ThemeGradients {

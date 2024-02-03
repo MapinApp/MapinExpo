@@ -90,7 +90,7 @@ export default function TabLayout() {
             tabBarLabel: "Components",
             tabBarIcon: ({ color, size, focused }) => (
               <TabBarIcon
-                name={focused ? "logo-android" : "logo-android"}
+                name={focused ? "logo-codepen" : "logo-codepen"}
                 color={color}
                 size={size}
               />

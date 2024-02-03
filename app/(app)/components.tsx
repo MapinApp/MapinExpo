@@ -20,7 +20,7 @@ const Buttons = () => {
   const { assets, colors, gradients, sizes } = theme;
 
   return (
-    <Block marginVertical={sizes.xs} card>
+    <Block marginVertical={sizes.xs} list>
       <Text p semibold marginBottom={sizes.s}>
         Buttons
       </Text>
@@ -123,7 +123,7 @@ const Typography = () => {
   const { sizes, gradients } = useTheme().theme;
 
   return (
-    <Block marginVertical={sizes.xs} card>
+    <Block marginVertical={sizes.xs} list>
       <Text p semibold marginBottom={sizes.s}>
         Typography
       </Text>
@@ -225,7 +225,7 @@ const Inputs = () => {
   const { colors, sizes } = useTheme().theme;
 
   return (
-    <Block marginVertical={sizes.xs} card>
+    <Block marginVertical={sizes.xs} list>
       <Text p semibold marginBottom={sizes.s}>
         Inputs
       </Text>
@@ -253,7 +253,7 @@ const Switches = () => {
   const [switch2, setSwitch2] = useState(false);
 
   return (
-    <Block marginVertical={sizes.xs} card>
+    <Block marginVertical={sizes.xs} list>
       <Text p semibold marginBottom={sizes.s}>
         Switches
       </Text>
@@ -288,7 +288,7 @@ const Social = () => {
   const { sizes } = useTheme().theme;
 
   return (
-    <Block marginVertical={sizes.xs} card>
+    <Block marginVertical={sizes.xs} list>
       <Text p semibold marginBottom={sizes.s}>
         Social
       </Text>
@@ -369,7 +369,7 @@ const Carousel = () => {
       {article.map((option, index) => {
         return (
           <Block
-            card
+            list
             width={CARD_WIDTH - sizes.sm}
             marginLeft={index === 0 ? sizes.sm : 0}
             marginRight={sizes.sm}
@@ -466,7 +466,7 @@ const Album = () => {
     (sizes.width - (IMAGE_VERTICAL_SIZE + sizes.sm) * 2) / 2;
 
   return (
-    <Block marginVertical={sizes.xs} card>
+    <Block marginVertical={sizes.xs} list>
       <Block row align="center" justify="space-between">
         <Text h5>Album</Text>
         <Button>
@@ -534,7 +534,7 @@ const Cards = () => {
       </Text>
       {/* single card */}
       <Block>
-        <Block card row>
+        <Block list row>
           <Image source={assets.og} height={"100%"} width={"33%"} />
           <Block padding={sizes.s} justify="space-between">
             <Text p marginBottom={15}>
@@ -577,7 +577,7 @@ const Cards = () => {
             </TouchableOpacity>
           </Block>
         </Block>
-        <Block card>
+        <Block list>
           <Image contentFit="cover" source={assets?.og} height={100} />
           <Block padding={sizes.s} justify="space-between">
             <Text p marginBottom={sizes.s}>
@@ -644,7 +644,7 @@ const Header = () => {
   const { sizes, gradients } = theme;
 
   return (
-    <Block marginVertical={sizes.xs} card>
+    <Block marginVertical={sizes.xs} list>
       <Text h1 uppercase gradient={gradients.primary}>
         Mapin
       </Text>
@@ -685,7 +685,7 @@ export default function Components() {
   const { colors, sizes } = theme;
 
   return (
-    <Block color={isDark ? colors.black : colors.white}>
+    <Block color={colors.list}>
       <Block safe>
         <Block
           scroll
