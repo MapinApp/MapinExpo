@@ -79,41 +79,40 @@ export default function LogIn() {
 
   return (
     <>
-      <Block color={colors.background}>
-        <Block safe marginTop={sizes.l} paddingHorizontal={sizes.s}>
-          <Block flex={0} style={{ zIndex: 0 }}>
-            <Image
-              background
-              contentFit="cover"
-              padding={sizes.sm}
-              radius={sizes.blockRadius}
-              source={assets.og}
-              height={sizes.height * 0.3}
-            >
-              <Text h1 center white size={sizes.h1 * 1.2} marginTop={sizes.m}>
-                Join Mapin
-              </Text>
-            </Image>
-          </Block>
+      <Block background>
+        <Block safe paddingVertical={"15%"} paddingHorizontal={"10%"}>
           {/* login form */}
-          <Block scroll marginTop={-(sizes.height * 0.2 - sizes.l)}>
-            <Block
-              flex={0}
-              radius={sizes.blockRadius}
-              marginHorizontal="8%"
-              shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
-            >
+          <Block
+            card
+            outlined
+            flex={0}
+            radius={sizes.cardRadius}
+            overflow="hidden"
+            justify="flex-start"
+            paddingVertical={sizes.sm}
+            shadow={true}
+            height={"100%"}
+            width={"100%"}
+            marginTop={sizes.sm}
+          >
+            <Block flex={0}>
               <Block
-                blur
-                outlined
-                flex={0}
-                intensity={90}
-                radius={sizes.blockRadius}
-                overflow="hidden"
-                justify="space-evenly"
-                tint={colors.blurTint}
-                paddingVertical={sizes.sm}
+                row
+                center
+                justify="center"
+                align="center"
+                paddingVertical={"20%"}
+                marginBottom={sizes.sm}
               >
+                <Image
+                  padding={sizes.sm}
+                  source={assets.logo}
+                  height={130}
+                  width={130}
+                  disableTransition={true}
+                />
+              </Block>
+              <Block scroll flex={0} marginBottom={"45%"}>
                 <Text medium p center>
                   Register with
                 </Text>
@@ -186,7 +185,7 @@ export default function LogIn() {
                 <Block paddingHorizontal={sizes.sm}>
                   <Input
                     label="Email"
-                    marginBottom={sizes.xl}
+                    marginBottom={sizes.sm}
                     success={Boolean(email && isValid.email)}
                     danger={Boolean(email && !isValid.email)}
                     onChangeText={(text) => setEmail(text)}
@@ -200,7 +199,7 @@ export default function LogIn() {
                   <Input
                     secureTextEntry
                     label="Password"
-                    marginBottom={sizes.xl}
+                    marginBottom={sizes.sm}
                     success={Boolean(password && isValid.password)}
                     danger={Boolean(password && !isValid.password)}
                     onChangeText={(text) => setPassword(text)}
@@ -213,7 +212,7 @@ export default function LogIn() {
                     secureTextEntry
                     label="Confirm Password"
                     value={passwordConfirm}
-                    marginBottom={sizes.m * 1.45}
+                    marginBottom={sizes.xs}
                     autoCorrect={false}
                     success={Boolean(
                       passwordConfirm && isValid.passwordConfirm
@@ -235,7 +234,7 @@ export default function LogIn() {
                     isLoading
                   }
                   marginBottom={sizes.s}
-                  marginTop={sizes.s * 1.4}
+                  marginTop={sizes.sm}
                   marginHorizontal={sizes.sm}
                   gradient={gradients.primary}
                 >
@@ -247,7 +246,9 @@ export default function LogIn() {
                   Already have an account?
                 </Text>
                 <Button onPress={() => router.back()}>
-                  <Text p>Login Instead</Text>
+                  <Text p underline primary>
+                    Login Instead
+                  </Text>
                 </Button>
               </Block>
             </Block>

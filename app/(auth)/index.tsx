@@ -51,7 +51,7 @@ export default function LogIn() {
             flex={0}
             radius={sizes.cardRadius}
             overflow="hidden"
-            justify="space-evenly"
+            justify="flex-start"
             paddingVertical={sizes.sm}
             shadow={true}
             height={"100%"}
@@ -70,11 +70,12 @@ export default function LogIn() {
                 <Image
                   padding={sizes.sm}
                   source={assets.logo}
-                  height={90}
-                  width={90}
+                  height={130}
+                  width={130}
+                  disableTransition={true}
                 />
               </Block>
-              <Block scroll flex={0}>
+              <Block scroll flex={0} marginBottom={"45%"}>
                 <Text medium p center>
                   Sign in with
                 </Text>
@@ -198,7 +199,9 @@ export default function LogIn() {
                   </Text>
                 </Button>
                 <Button onPress={() => router.push("/forgot-password")}>
-                  <Text p>Forgot Password?</Text>
+                  <Text p underline primary>
+                    Forgot Password?
+                  </Text>
                 </Button>
               </Block>
             </Block>

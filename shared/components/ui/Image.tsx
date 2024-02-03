@@ -40,6 +40,7 @@ const Image = ({
   marginLeft,
   marginTop,
   marginBottom,
+  disableTransition,
   ...props
 }: IImageProps) => {
   const { theme } = useTheme();
@@ -97,7 +98,7 @@ const Image = ({
       {...props}
       {...imageID}
       placeholder={blurhash}
-      transition={1000}
+      transition={disableTransition ? 0 : 1000}
     />
   );
 };
@@ -160,4 +161,6 @@ interface IImageProps extends ImageProps, ISpacing {
   style?: StyleProp<ImageStyle>;
   /** Renders the ImageBackground content */
   children?: React.ReactNode;
+  /** Transition duration */
+  disableTransition?: boolean;
 }

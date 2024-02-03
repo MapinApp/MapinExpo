@@ -40,41 +40,40 @@ export default function ForgotPassword() {
 
   return (
     <>
-      <Block color={colors.background}>
-        <Block safe marginTop={sizes.l} paddingHorizontal={sizes.s}>
-          <Block flex={0} style={{ zIndex: 0 }}>
-            <Image
-              background
-              contentFit="cover"
-              padding={sizes.sm}
-              radius={sizes.blockRadius}
-              source={assets.og}
-              height={sizes.height * 0.2}
-            >
-              <Text h1 center white size={sizes.h1 * 1.2} marginTop={sizes.sm}>
-                Whoops!
-              </Text>
-            </Image>
-          </Block>
-          {/* Forgot Password form */}
-          <Block scroll marginTop={-(sizes.height * 0.11 - sizes.l)}>
-            <Block
-              flex={0}
-              radius={sizes.blockRadius}
-              marginHorizontal="8%"
-              shadow={!isAndroid} // disabled shadow on Android due to blur overlay + elevation issue
-            >
+      <Block background>
+        <Block safe paddingVertical={"15%"} paddingHorizontal={"10%"}>
+          {/* login form */}
+          <Block
+            card
+            outlined
+            flex={0}
+            radius={sizes.cardRadius}
+            overflow="hidden"
+            justify="flex-start"
+            paddingVertical={sizes.sm}
+            shadow={true}
+            height={"100%"}
+            width={"100%"}
+            marginTop={sizes.sm}
+          >
+            <Block flex={0}>
               <Block
-                outlined
-                blur
-                flex={0}
-                intensity={90}
-                radius={sizes.blockRadius}
-                overflow="hidden"
-                justify="space-evenly"
-                tint={colors.blurTint}
-                paddingVertical={sizes.sm}
+                row
+                center
+                justify="center"
+                align="center"
+                paddingVertical={"20%"}
+                marginBottom={sizes.sm}
               >
+                <Image
+                  padding={sizes.sm}
+                  source={assets.logo}
+                  height={130}
+                  width={130}
+                  disableTransition={true}
+                />
+              </Block>
+              <Block scroll flex={0} marginBottom={"45%"}>
                 <Text p center medium>
                   Forgotten your Password?
                 </Text>
@@ -83,7 +82,7 @@ export default function ForgotPassword() {
                 <Block paddingHorizontal={sizes.sm} marginTop={sizes.sm}>
                   <Input
                     label="Email"
-                    marginBottom={sizes.xl}
+                    marginBottom={sizes.xs}
                     success={Boolean(email && isValid.email)}
                     danger={Boolean(email && !isValid.email)}
                     onChangeText={(text) => setEmail(text)}
@@ -100,7 +99,8 @@ export default function ForgotPassword() {
                   onPress={() => {
                     ForgotPassManageDisabled();
                   }}
-                  marginVertical={sizes.s}
+                  marginBottom={sizes.s}
+                  marginTop={sizes.sm}
                   marginHorizontal={sizes.sm}
                   gradient={gradients.primary}
                   disabled={Object.values(isValid).includes(false) || isLoading}
@@ -111,7 +111,9 @@ export default function ForgotPassword() {
                 </Button>
 
                 <Button onPress={() => router.back()}>
-                  <Text p>Login Instead</Text>
+                  <Text p underline primary>
+                    Login Instead
+                  </Text>
                 </Button>
               </Block>
             </Block>
