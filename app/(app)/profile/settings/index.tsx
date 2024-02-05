@@ -70,7 +70,31 @@ const Account = () => {
         Account Management
       </Text>
       <Block>
-        <Block row flex={0} align="center" justify="space-between">
+        <Block
+          row
+          flex={0}
+          align="center"
+          justify="space-between"
+          marginVertical={sizes.s}
+        >
+          <Text>Feedback</Text>
+
+          <Link href="/(app)/profile/settings/feedback">
+            <Ionicons
+              name="chevron-forward-outline"
+              size={18}
+              color={colors.text}
+            />
+          </Link>
+        </Block>
+
+        <Block
+          row
+          flex={0}
+          align="center"
+          justify="space-between"
+          marginTop={sizes.s}
+        >
           <Text>Log Out</Text>
           <Button
             onPress={() => {

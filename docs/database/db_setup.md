@@ -184,24 +184,22 @@ create trigger before_delete_user
 
 ```sql
 -- Create the table
- CREATE TABLE contact (
+ CREATE TABLE feedback (
  id SERIAL PRIMARY KEY,
- name VARCHAR (255),
- email VARCHAR (255),
+ user UUID,
  message TEXT,
- src VARCHAR (255),
  marketing BOOLEAN DEFAULT false,
  dt TIMESTAMP DEFAULT NOW()
  );
 -- enable RLS
-ALTER TABLE contact ENABLE ROW LEVEL SECURITY;
+ALTER TABLE feedback ENABLE ROW LEVEL SECURITY;
 -- Policy Insert for public
-CREATE POLICY "Enable insert for all public roles" ON "public"."contact"
+CREATE POLICY "Enable insert for all public roles" ON "public"."feedback"
 AS PERMISSIVE FOR INSERT
 TO public
 WITH CHECK (true);
 -- Read access to service role only
-CREATE POLICY "Enable read access for service role" ON "public"."contact"
+CREATE POLICY "Enable read access for service role" ON "public"."feedback"
 AS PERMISSIVE FOR SELECT
 TO service_role
 USING (true);
