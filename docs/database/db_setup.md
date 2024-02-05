@@ -186,7 +186,7 @@ create trigger before_delete_user
 -- Create the table
  CREATE TABLE feedback (
  id SERIAL PRIMARY KEY,
- user UUID,
+ user_id uuid REFERENCES public.profiles(id),
  message TEXT,
  marketing BOOLEAN DEFAULT false,
  dt TIMESTAMP DEFAULT NOW()
@@ -212,3 +212,5 @@ Install the additional dependencies: supabase-js
 ```bash
 npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-elements react-native-url-polyfill
 ```
+
+# Lists and Pins
