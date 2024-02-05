@@ -56,7 +56,7 @@ const COLORS: ThemeColors = {
   /** product link color 🧐*/
   link: "#6782E7",
   /** List Color */
-  list: "#F6FDFF",
+  list: "#f2f4f9",
 };
 
 const GRADIENTS: ThemeGradients = {

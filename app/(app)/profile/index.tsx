@@ -1,20 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert } from "react-native";
 import { useTheme } from "@/context/theme";
 import { useAuth } from "@/context/auth";
 import { supabase } from "@/lib/supabase";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  Block,
-  Button,
-  Input,
-  Image,
-  Switch,
-  Modal,
-  Text,
-} from "@/components/ui";
+import { Block, Button, Text } from "@/components/ui";
 import Constants from "expo-constants";
-import ProfilePicture from "@/components/ProfilePicture";
+import ProfilePicture from "@/components/profile/ProfilePicture";
 import { useRouter } from "expo-router";
 import { Link } from "expo-router";
 

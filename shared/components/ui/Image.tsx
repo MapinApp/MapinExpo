@@ -15,6 +15,7 @@ const Image = ({
   style,
   children,
   avatar,
+  largeAvatar,
   shadow,
   rounded,
   background,
@@ -84,6 +85,14 @@ const Image = ({
         borderWidth: 0.8,
         borderColor: colors.gray,
       }),
+      ...(largeAvatar && {
+        height: 100,
+        width: 100,
+        borderRadius: sizes.avatarRadius,
+        overflow: "hidden",
+        borderWidth: 0.8,
+        borderColor: colors.gray,
+      }),
     },
   ]) as ImageStyle;
 
@@ -127,6 +136,7 @@ interface IImageProps extends ImageProps, ISpacing {
    * @see https://reactnative.dev/docs/image#width
    */
   avatar?: boolean;
+  largeAvatar?: boolean;
   /**
    * Generates a shadow style
    * @see https://reactnative.dev/docs/shadow-props

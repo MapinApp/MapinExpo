@@ -144,8 +144,9 @@ const Block = (props: IBlockProps) => {
       ...(list && {
         backgroundColor: colors.card,
         padding: sizes.cardPadding,
-        borderTopWidth: 0.8,
-        borderBottomWidth: 0.8,
+        paddingBottom: sizes.sm,
+        borderTopWidth: 0.5,
+        borderBottomWidth: 0.5,
         borderLeftWidth: 0,
         borderRightWidth: 0,
         borderColor: colors.border,
