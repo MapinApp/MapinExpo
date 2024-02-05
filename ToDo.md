@@ -1,14 +1,14 @@
 ## 🚀 ToDo
 
 - [x] Get Theme & Components Working Properly
-- [ ] Come up with Sign up Design
+- [x] Come up with Sign up Design
   - [X](https://dribbble.com/shots/13845336-Sign-in-UI)
 - [ ] Get Layouts Working Properly
 - [ ] Get Router Working Properly
   - Including Lists ToDo Starter Code
-- [ ] Get Auth Working
+- [x] Get Auth Working
 - [ ] Get Data Layer Working
-- [ ] Check ifg username is taken
+- [x] Check ifg username is taken
 - [x] Typography and Fonts
 - [ ] Add In the Chat UI
 - [ ] Use the Booking UI to start off the List UI
@@ -25,6 +25,7 @@
   - [Docs](https://docs.expo.dev/guides/linking/)
 - [ ] When Ready, test on a [Development Build](https://docs.expo.dev/develop/development-builds/introduction/). Wil need to test Deep Linking, Permissions etc.
 - [ ] Add [Splash Screen](https://docs.expo.dev/router/appearance/#splash-screen) Until Posts are loaded
+- [ ] Configure a [Custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp) Server for Email
 
 ## 📚 Resources
 
