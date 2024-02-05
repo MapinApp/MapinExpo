@@ -26,6 +26,11 @@
 - [ ] When Ready, test on a [Development Build](https://docs.expo.dev/develop/development-builds/introduction/). Wil need to test Deep Linking, Permissions etc.
 - [ ] Add [Splash Screen](https://docs.expo.dev/router/appearance/#splash-screen) Until Posts are loaded
 - [ ] Configure a [Custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp) Server for Email
+- [ ] Register people via refferal only. This will emphasise the importance of the community.
+- [ ] Reach out to influencers to get them to use the app, and advertiser
+- [ ] Soft Deletes and Activity Logs
+- [ ] Update RLS for Private Pins and Lists
+- [ ] Audituing Trails for Data Science later down the line
 
 ## 📚 Resources
 
@@ -40,6 +45,11 @@
 
 - [UI from Tiny Tim](https://www.creative-tim.com/product/soft-ui-pro-react-native)
 - [Style Ref]()
+
+### Google Places
+
+- [Google Places API](https://developers.google.com/maps/documentation/places/web-service/place-data-fields)
+- [Types](https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult)
 
 ## 📝 Docs
 

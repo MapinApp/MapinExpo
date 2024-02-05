@@ -4,67 +4,70 @@ tables: "Main Tables" {
     shape: sql_table
     id: uuid {constraint: primary_key}
     updated_at: timestamptz
-    username: varchar {constraint: unique}
-    first_name: varchar
-    last_name: varchar
-    email: varchar {constraint: unique}
-    gender: varchar
+    username: text {constraint: unique}
+    first_name: text
+    last_name: text
+    email: text {constraint: unique}
+    gender: text
     bio: text
     date_of_birth: date
     created_date: timestamptz
     last_login: timestamptz
     avatar_url: text {constraint: foreign_key}
-    account_status: varchar
+    account_status: text
   }
 
   pins: {
     shape: sql_table
     pin_id: uuid {constraint: primary_key}
-    places_id: varchar
+    places_id: text {constraint: foreign_key}
     user_id: uuid {constraint: foreign_key}
-    pin_photo_id: uuid {constraint: foreign_key}
-    pin_name: varchar
-    address_str: varchar
-    lat: decimal
-    lng: decimal
+    pin_photo_url: text {constraint: foreign_key}
+    pin_name: text
+    address_str: text
+    category: text
+    lat: decimal(9,6)
+    lng: decimal(9,6)
     notes: text
-    label_id: int {constraint: foreign_key}
-    created_at: timestamptz
-    updated_at: timestamptz
-    visited: boolean
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz {constraint: default(now())}
+    visited: boolean {constraint: default(false)}
     visited_at: timestamptz
     copied_from_pin_id: uuid {constraint: foreign_key}
     deviation_count: int
-  }
-
-  reviews: {
-    shape: sql_table
-    id: uuid {constraint: primary_key}
-    created_at: timestamptz
-    user_id: uuid {constraint: foreign_key}
-    pin_id: uuid {constraint: foreign_key}
     review: text
     rating: int8
-  }
-
-  labels: {
-    shape: sql_table
-    label_id: int {constraint: primary_key}
-    label_name: varchar
-    color: hex
-    label_icon: varchar
+    review_updated_at: timestamptz
   }
 
   lists: {
     shape: sql_table
     list_id: uuid {constraint: primary_key}
     user_id: uuid {constraint: foreign_key}
-    name: varchar
-    description: varchar
+    name: text
+    description: text
     created_at: timestamptz
     updated_at: timestamptz
     private: boolean
-    list_photo_id: uuid {constraint: foreign_key}
+    list_photo_url: text {constraint: foreign_key}
+    followers_count: int {constraint: default(0)}
+  }
+
+  places: {
+    shape: sql_table
+    places_id: text {constraint: primary_key}
+    name: text
+    formatted_address: text
+    lat: decimal(9,6)
+    lng: decimal(9,6)
+    types: "text[]"
+    maps_url: text
+    website: text
+    price_level: int
+    opening_hours: jsonb
+    phone_number: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz {constraint: default(now())}
   }
 
   comments: {
@@ -72,8 +75,9 @@ tables: "Main Tables" {
     id: uuid {constraint: primary_key}
     user_id: uuid {constraint: foreign_key}
     pin_id: uuid {constraint: foreign_key}
-    comment: varchar
-    created_at: timestamptz
+    comment: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz
   }
 
   notifications: {
@@ -82,51 +86,40 @@ tables: "Main Tables" {
     created_at: timestamptz
     # User to be Notified
     user_id: uuid {constraint: foreign_key}
-    notification_type: varchar
-    notification_text: varchar
-    read: boolean
+    notification_type: text
+    notification_text: text
+    read: boolean {constraint: default(false)}
     read_at: timestamptz
-  }
-
-  settings: {
-    shape: sql_table
-    id: uuid {constraint: primary_key}
-    user_id: uuid {constraint: foreign_key}
-    push_notifications: boolean
-    dark_mode: boolean
   }
 
   search_history: {
     shape: sql_table
     id: uuid {constraint: primary_key}
     user_id: uuid {constraint: foreign_key}
-    search_term: varchar
+    search_term: text
     created_at: timestamptz
   }
 
   pins.user_id -> profiles.id
-  pins.label_id -> labels.label_id
   pins.copied_from -> pins.pin_id
-  reviews.user_id -> profiles.id
-  reviews.pin_id -> pins.pin_id
   lists.user_id -> profiles.id
   comments.user_id -> profiles.id
   comments.pin_id -> pins.pin_id
   notifications.user_id -> profiles.id
-  settings.user_id -> profiles.id
   search_history.user_id -> profiles.id
+  pins.places_id -> places.id
 }
 
-tables.profiles.avatar_url -> images.profile_photos.avatar_url
-tables.pins.pin_photo_id -> images.pin_photos.pin_photo_id
-tables.lists.list_photo_id -> images.list_cover_photos.list_photo_id
+tables.profiles.avatar_url -> images.avatars.avatar_url
+tables.pins.pin_photo_url -> images.pin_photos.pin_photo_url
+tables.lists.list_photo_url -> images.list_cover_photos.list_photo_url
 
 # Join Tables
 joins: "Join Tables" {
   list_pin: {
     shape: sql_table
-    id: int {constraint: primary_key}
-    dt: timestamptz
+    id: serial {constraint: primary_key}
+    dt: timestamptz {constraint: default(now())}
     list_id: uuid {constraint: foreign_key}
     pin_id: uuid {constraint: foreign_key}
   }
@@ -134,21 +127,19 @@ joins: "Join Tables" {
   bookmarks: {
     shape: sql_table
     id: int {constraint: primary_key}
-    dt: timestamptz
+    dt: timestamptz {constraint: default(now())}
     # The user who Bookmarked the Pin
     user_id: uuid {constraint: foreign_key}
     pin_id: uuid {constraint: foreign_key}
-    active: boolean
   }
 
   follows: {
     shape: sql_table
     id: int {constraint: primary_key}
-    dt: timestamptz
+    dt: timestamptz {constraint: default(now())}
     # User who is following the list
     user_id: uuid {constraint: foreign_key}
     list_id: uuid {constraint: foreign_key}
-    active: boolean
   }
 }
 
@@ -159,37 +150,33 @@ joins.bookmarks.pin_id -> tables.pins.pin_id
 joins.follows.list_id -> tables.lists.list_id
 joins.follows.user_id -> tables.profiles.id
 
-# Images
-images: "Images" {
+# Image Storage Buckets
+images: "Image Storage Buckets" {
   pin_photos: {
-    shape: sql_table
-    pin_photo_id: uuid {constraint: primary_key}
-    url: varchar
+    shape: cylinder
+    pin_photo_url
   }
 
-  profile_photos: {
-    shape: sql_table
-    avatar_url: uuid {constraint: primary_key}
-    url: varchar
+  avatars: {
+    shape: cylinder
+    avatar_url
   }
 
   list_cover_photos: {
-    shape: sql_table
-    list_photo_id: uuid {constraint: primary_key}
-    url: varchar
+    shape: cylinder
+    list_photo_url
   }
 }
 
 misc: "Misc Tables" {
   # Table to store Contact Submissions
-  contact: {
+  feedback: {
     shape: sql_table
-    id: int {constraint: primary_key}
-    dt: timestamptz
-    name: varchar
-    email: varchar
+    id: serial {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
     message: text,
-    src: varchar
-    marketing: boolean,
+    dt: timestamptz {constraint: default(now())}
   }
 }
+
+misc.feedback.user_id -> tables.profiles.id

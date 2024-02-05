@@ -1,0 +1,171 @@
+{
+  "html_attributions": [],
+  "result": {
+    "address_components": [
+      { "long_name": "46", "short_name": "46", "types": ["street_number"] },
+      {
+        "long_name": "Muesmattstrasse",
+        "short_name": "Muesmattstrasse",
+        "types": ["route"]
+      },
+      {
+        "long_name": "Muesmatt",
+        "short_name": "Muesmatt",
+        "types": ["sublocality_level_2", "sublocality", "political"]
+      },
+      {
+        "long_name": "Länggasse-Felsenau",
+        "short_name": "Länggasse-Felsenau",
+        "types": ["sublocality_level_1", "sublocality", "political"]
+      },
+      {
+        "long_name": "Bern",
+        "short_name": "Bern",
+        "types": ["locality", "political"]
+      },
+      {
+        "long_name": "Bern",
+        "short_name": "Bern",
+        "types": ["administrative_area_level_2", "political"]
+      },
+      {
+        "long_name": "Bern",
+        "short_name": "BE",
+        "types": ["administrative_area_level_1", "political"]
+      },
+      {
+        "long_name": "Switzerland",
+        "short_name": "CH",
+        "types": ["country", "political"]
+      },
+      { "long_name": "3012", "short_name": "3012", "types": ["postal_code"] }
+    ],
+    "adr_address": "<span class='street-address'>Muesmattstrasse 46</span>, <span class='postal-code'>CH-3012</span> <span class='locality'>Bern</span>, <span class='country-name'>Switzerland</span>",
+    "formatted_address": "Muesmattstrasse 46, 3012 Bern, Switzerland",
+    "formatted_phone_number": "031 301 62 22",
+    "geometry": { "location": { "lat": 46.954447, "lng": 7.429129 } },
+    "icon": "http://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png",
+    "id": "2388120ff47e1457ecd9b06c87e017e6d4e62683",
+    "international_phone_number": "+41 31 301 62 22",
+    "name": "Restaurant Länggass Stübli da Massimo",
+    "opening_hours": {
+      "open_now": "True",
+      "periods": [
+        {
+          "close": { "day": 1, "time": "2300" },
+          "open": { "day": 1, "time": "0800" }
+        },
+        {
+          "close": { "day": 2, "time": "2300" },
+          "open": { "day": 2, "time": "0800" }
+        },
+        {
+          "close": { "day": 3, "time": "2300" },
+          "open": { "day": 3, "time": "0800" }
+        },
+        {
+          "close": { "day": 4, "time": "2300" },
+          "open": { "day": 4, "time": "0800" }
+        },
+        {
+          "close": { "day": 5, "time": "2300" },
+          "open": { "day": 5, "time": "0800" }
+        },
+        {
+          "close": { "day": 6, "time": "2300" },
+          "open": { "day": 6, "time": "1800" }
+        }
+      ],
+      "weekday_text": [
+        "Monday: 8:00 am – 11:00 pm",
+        "Tuesday: 8:00 am – 11:00 pm",
+        "Wednesday: 8:00 am – 11:00 pm",
+        "Thursday: 8:00 am – 11:00 pm",
+        "Friday: 8:00 am – 11:00 pm",
+        "Saturday: 6:00 – 11:00 pm",
+        "Sunday: Closed"
+      ]
+    },
+    "photos": [
+      {
+        "height": 416,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAAOJnTk-m4JRkDttRg_xz493DNZIBSXja6E5rEwgg8optMb_piOB6bc5DcY9FtgQj_cKsF_xnUa6cs6gem6YS4bCfk5qHXA9A9WB5gqFO94MAwCx0OAjeWESL8Z82y9nHY3YHRWvVY7dxsDRzzdbPiThIQUGqymJ6TGWFZxoQFZE91xBoUj4PR_Ozs6HT1g8amL2e0Cx3l2tg",
+        "width": 637
+      },
+      {
+        "height": 337,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAA4Yv22kYBM8wKIA6qfL5Mxe7L0GtHATL9gtH2_zjANvum6g4_U3h_cJKLNmxj2domUTAyu-ZCPDAaiYyraJGr5m9Iyrwn-kd-TbPYGYI9gwh4Aqf38zFHHsarYngRsRraGdObtBTFsN7ua9xgRJ3vihIQq_R5KXs68DPoente3MWF0hoU2U_603YkLCZa2ALs-LyzSX1Ei5Q",
+        "width": 726
+      },
+      {
+        "height": 478,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAAEbynGDy5Wg_dmiVmwj1ekmpoGFMoIF8L78rVJ1QDKTPdKWCDcIstbKzMwJeiwoFNoKYzMCgTAmd6AYXECb5Tw07v-aCxaiRPMel1jL09-0wCiXvF_kUqydNNS4c7wOSfq9v3oGsVgCK7crXtpztc2BIQSLNzFuONVUry8NVHZJ2ZChoUDTJYgCdjC7uK3X0Y6krsQOVKdEs",
+        "width": 637
+      },
+      {
+        "height": 287,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAA75M0ompU3NZDvNX95iktPYatKYi0nISzsyYuGeBDy6RQruATJngvuqQwaajgk42XZ8ymoenXnD8jayj7ij-8ExkLjW2915B5ZQv8rbjCQZSeEPA3ETpY-dXZeLNJnRMAFOtv75EYrmbqXFgEhhxeuxIQeqc98DPPkz15FGT3qrMjeRoUa_koadN_H5jDp-iGEbyIii_FStI",
+        "width": 314
+      },
+      {
+        "height": 203,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAAGYnA2uzd2twuKluUf9_-mPakO1LM6HcPYvrE5LCiTRHqPgZWyjya0h57COwT05mSyABwmMhA-K9vS1KQr4cKhAugcy0nRV33Y-OKzbXJv1xG4yf4_dcqykJoNZWQod0yKewoeExdGCyljq4oCiCftxIQz3MXmt7rFwEq1ULMSXTDRhoUjzwudtuj1-eo7jxKbTuwOXsBs6E",
+        "width": 183
+      },
+      {
+        "height": 418,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAA8ALksa-b4K5d9G_LdkMyp_BWl6jxq39wXcw8QfFKXzOx6_DPzGKhVT7cv_wYqFb3pY_ymLFmWbPG62suY9a6Ln8rR42Ql6F2YI42TfnXqKN2cdxxk6KiNRQ1itE0DH1I7y3yt1_dKTr3RC9zMY70VhIQXAAGupkodfDXee5nP5dQXBoUOXfW5HB0_KJ12gz10nrsb7YFqOk",
+        "width": 637
+      },
+      {
+        "height": 522,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAAKb707Xr718sA8Kq432jA_lE00NFYs87m3PVS-SURr1qrtEMhZr6d3GCw7SazPfc-mcDRjHXD__UTOngaI3tO2kC7PHKBUA3qtFtpLha_QvlH8mXHKHBwSUwRJw6BwSPNO4i-QsfrebbO6BgvE6PRGhIQyHNX82iLKQiGt3b8yLEWehoUj5x0f64B2cIMd-2PYMUQl1PkBOs",
+        "width": 378
+      },
+      {
+        "height": 534,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAAD0sav7zd5SdExW44sj__f7uy-_tfgsEADyzyoHUAktCt4sN2Cixs-qtj4_fpI3sPrOmcAFKjhROn7hyVpweD4WFwJnlj5dhlSInkbWIcDFhXqzhxsEJPwj7g4CtIosDPYl34K8WhAh8V1egPb5Bu6RIQ2apPX5Fb5yPi6KZrXHF4nRoUyCHJx5-3n3_2OJPRJR2N3vaKg4o",
+        "width": 713
+      },
+      {
+        "height": 190,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAANWrhcBe8Go5qYX04xPOcvb_YtddlDg9u7hF4AtI3I2J3t2fZ7vZGXKf8ZykzsEuxkA85VWPC0s3955U8h7ryNd_1xKww5SdOVhz37NQCZLrbkQwzu5090wJPVW0UHkVmE5rKh7kafNl4x_4gu1iJchIQ_F7mV_UNZakLXZ6Mvu7OeRoUl6B2g8fmPWWIcnALOcACFDHdWhw",
+        "width": 178
+      },
+      {
+        "height": 396,
+        "html_attributions": [],
+        "photo_reference": "CnRnAAAA0NPHhjYZZuqdZ81VAJ3o6Fqqrhjy2Yg5KlDZBFnlpqSFdQ2jGnkhk406Ss86nhNIM0ZJhFEKrAqCszCE3v2IqdsKsYDc0LwnUeps9viOf6sNkB9aUss1gU1deW3A0KqLQM89auwJU3KN6T_pZjaSnBIQLXHvfBmKaAp6B6NRUH_MtBoU1DyRt49ztHIpkjRINri7bMmmBGQ",
+        "width": 727
+      }
+    ],
+    "place_id": "ChIJfUtQfZg5jkcRsdkNm90qosc",
+    "reference": "CoQBewAAAKzUiADWKWthe8O2gttoJYxxaF6Fm65O-qkq192imRLTg1GJKkntxQw_UQ05BJ9gfR1dPslFX75D0tYY2CuM8sOi0AS08EHG6Ib69MKwGwss3Bkj6XBCy4iE02O5vrL7akwCCzFCCdBREsSOwP5qvrSg_It5Tt-jbZElZuA9JdnZEhCIKDn4SKBH7TnisTUTqaQpGhQ5zznwST-PUdwOHh5hDCT3t_80wQ",
+    "reviews": [
+      {
+        "aspects": [{ "rating": 3, "type": "overall" }],
+        "author_name": "A Google User",
+        "rating": 5,
+        "text": "",
+        "time": 1291186930
+      }
+    ],
+    "scope": "GOOGLE",
+    "types": ["restaurant", "food", "establishment"],
+    "url": "https://plus.google.com/103880176915790775728/about?hl=en",
+    "user_ratings_total": 1,
+    "utc_offset": 120,
+    "vicinity": "Muesmattstrasse 46, Bern",
+    "website": "http://www.laenggass-stuebli.ch/"
+  },
+  "status": "OK"
+}

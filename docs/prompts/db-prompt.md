@@ -1,17 +1,290 @@
-# Database Setup
+This is an overview of "Mapin", an app I am building:
 
-This [tutorial](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native?database-method=sql&auth-store=async-storage) demonstrates how to build a basic user management app. The app authenticates and identifies the user, stores their profile information in the database, and allows the user to log in, update their profile details, and upload a profile photo. The app uses:
+## Problem Statement: What Problem am I Solving?
 
-```bash
-npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-elements react-native-url-polyfill
+The problem is that people, including myself, struggle to organize, view and share lists of places they want to visit. If you're in a location and happen to become hungry for example, how can you easily see the restaurants recommendations you've always wanted to go to that also happen to be nearby?
+
+Mapin is a social media allows users to create lists of places they want to visit, categorize them (e.g. restaurants, museums, parks), and then view those lists based on their current location or search for specific places on the list. This would make it easy for users to quickly find and visit places they've been wanting to go to, without having to spend time searching for them each time they're in a new location.
+
+The note section is the quickest, and what people use, but lacks 2 things: organization as well as community. Mapin provides both, while also prioritizing the speed and ease the notes section provides.
+
+**UVP**: A **quick**, at-hand app to jot down, sort, **organize, view** and **share** places to visit.
+
+Mapin: The social app to organize and explore your desired destinations. Quickly and easily create, categorize, and access your lists based on your location or search, share them with friends, and discover new places with the community.
+
+Mapin is the ultimate solution for organizing, sharing, and exploring places to visit. With Mapin, users can easily create categorized lists of places they want to visit, and access them instantly based on their current location or search for specific places on the list. Mapin provides a community-driven platform for discovering and sharing recommendations with like-minded travelers. Say goodbye to disorganized notes and hello to hassle-free travel planning with Mapin
+
+## MVP Features
+
+The main premise is adding "Pins" which are Locations, with Notes, and organising them into "Lists". We want to hone in on the social aspect to leverage Network Effects.
+
+- **Explore:** A search bar for specific locations/categories, rather than just browsing through a feed.
+- **Profile:** Includes user reviews & ratings of the places they've visited.
+  - Adds a layer of social interaction and community engagement to the app, as well as providing valuable feedback for other users.
+- Users will have lists and pins. We want to keep track of users lists, and the pins they have allocated to each list.
+- A single pin cannot be in multiple lists.
+- Users can follow other lists
+- Pins can have comments from people
+- User can add notes to a Pin they add
+- Users can mark Pins as visited, at which point they can put up a review which will be visible on their profile
+- A pin can be bookmarked in addition to the option to add them to lists. This would allow users to easily save pins they're interested in without having to create a new list every time. The Bookmarked List is Private by default.
+- All locations will be mapped to locations from the Google API.
+- 'Create Deviation' feature
+  - encourage user engagement and community building
+  - users can replicate a pin they see in their feed and edit it how they want. The original pin will have a 'variants' counter, similar to likes, to see how many times the pin and its derivations were replicated.
+  - The "derivations" counter could also be a useful metric for measuring the popularity and influence of a particular pin. This could help users discover new pins and lists that are trending or have a high level of engagement. It could also help with the reccomendation engine down the line
+- Google Maps/Yelp API to provide additional information and context for pins.
+  - ratings & reviews for restaurants
+  - How busy a park is in real-time.
+- **Discover:** Recommends lists or pins based on a user's location & interests.
+  - This could help users discover new places they might not have otherwise known about.
+- By default, all pins are private, unless they are put into a public list
+- Analytics features to track user behavior and engagement with the app
+  - **User acquisition:** Tracking the source of new users (e.g. social media, search engines, app stores, etc.) can help to identify which marketing channels are most effective
+  - **Feature usage:** Knowing which features of the app are being used most frequently and which are being ignored can help to prioritize development efforts and improve the user experience
+  - **User demographics:** Collecting data on user demographics such as age, gender, location, and occupation can help to understand the app's user base and tailor the app's content and features to their needs.
+- Push notifications for different actions such as when someone follows their list or comments on a pin
+- Offline mode allows users to view and edit their pins and lists when they don't have an internet connection.
+- Home:
+  - more like Instagram, where at the top there is a toggle between a users feed, and explore. In the feed, users are able to scroll through pins and lists updates from lists they are following. This way, when they come across a pin they are interested in, they are able to create a 'Deviation'. In the explore mode, there is a search bar for specific locations/categories, rather than just browsing through a feed, as well as recommended pins similar to Instagram's explore page.
+
+## Screens
+
+### Screens Features
+
+1.  Feed
+    - 2 types of Content:
+      - x Visted & Sent a Review
+      - x Added Pin to list 1. Option to create Variant
+    - Notifications
+      - People Following your Lists
+      - People Commenting on your Pins
+2.  Explore
+3.  Map
+    - Filter by:
+      - All (Including Bookmarks)
+      - All My Own
+      - List (My own and Followed Lists)
+4.  Add Pin
+    - Mainly Autofill from Google Maps
+    - Optional to add to list
+      - Auto pull cover from google.
+      - Notes
+      - Add Auto Tags & Let Edit
+    - Quick
+      - By default, pins are private
+      - Can add Optional Tags
+5.  Derivation of Pin
+    - Increase Derivation Number - no notification for these
+    - Can edit details / notes
+6.  Pins
+    - Analogous to Notes page
+    - View all, edit, delete, sort, filter, add to list
+    - Can set a pin as visited ONCE
+7.  Pin
+    - Notes, location and
+8.  Lists
+    - public or private list
+    - New List
+9.  Profile
+    - See lists with follow count
+    - Cum Followers of all lists (inc duplicate users)
+    - Lists followed
+    - Pins, Followers, Following
+10. - Import
+    - From CSV
+11. help develop this app section
+    - User Feedback
+
+I am building out the database at the moment. Here is the schema for the database. It is a diagram entity-relationship diagram (ERDs). Each key of a SQL Table shape defines a row. The primary value (the thing after the colon) of each row defines its type. The constraint value of each row defines its SQL constraint.I define a foreign key connection between two tables by using the `->` operator between two rows.
+
+```
+# Main Tables
+tables: "Main Tables" {
+  profiles: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    updated_at: timestamptz
+    username: text {constraint: unique}
+    first_name: text
+    last_name: text
+    email: text {constraint: unique}
+    gender: text
+    bio: text
+    date_of_birth: date
+    created_date: timestamptz
+    last_login: timestamptz
+    avatar_url: text {constraint: foreign_key}
+    account_status: text
+  }
+
+  pins: {
+    shape: sql_table
+    pin_id: uuid {constraint: primary_key}
+    places_id: text {constraint: foreign_key}
+    user_id: uuid {constraint: foreign_key}
+    pin_photo_url: text {constraint: foreign_key}
+    pin_name: text
+    address_str: text
+    category: text
+    lat: decimal(9,6)
+    lng: decimal(9,6)
+    notes: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz {constraint: default(now())}
+    visited: boolean {constraint: default(false)}
+    visited_at: timestamptz
+    copied_from_pin_id: uuid {constraint: foreign_key}
+    deviation_count: int
+    review: text
+    rating: int8
+    review_updated_at: timestamptz
+  }
+
+  lists: {
+    shape: sql_table
+    list_id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    name: text
+    description: text
+    created_at: timestamptz
+    updated_at: timestamptz
+    private: boolean
+    list_photo_url: text {constraint: foreign_key}
+    followers_count: int {constraint: default(0)}
+  }
+
+  places: {
+    shape: sql_table
+    places_id: text {constraint: primary_key}
+    name: text
+    formatted_address: text
+    lat: decimal(9,6)
+    lng: decimal(9,6)
+    types: "text[]"
+    maps_url: text
+    website: text
+    price_level: int
+    opening_hours: jsonb
+    phone_number: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz {constraint: default(now())}
+  }
+
+  comments: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+    comment: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz
+  }
+
+  notifications: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    created_at: timestamptz
+    # User to be Notified
+    user_id: uuid {constraint: foreign_key}
+    notification_type: text
+    notification_text: text
+    read: boolean {constraint: default(false)}
+    read_at: timestamptz
+  }
+
+  search_history: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    search_term: text
+    created_at: timestamptz
+  }
+
+  pins.user_id -> profiles.id
+  pins.copied_from -> pins.pin_id
+  lists.user_id -> profiles.id
+  comments.user_id -> profiles.id
+  comments.pin_id -> pins.pin_id
+  notifications.user_id -> profiles.id
+  search_history.user_id -> profiles.id
+  pins.places_id -> places.id
+}
+
+tables.profiles.avatar_url -> images.avatars.avatar_url
+tables.pins.pin_photo_url -> images.pin_photos.pin_photo_url
+tables.lists.list_photo_url -> images.list_cover_photos.list_photo_url
+
+# Join Tables
+joins: "Join Tables" {
+  list_pin: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    dt: timestamptz {constraint: default(now())}
+    list_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+  }
+
+  bookmarks: {
+    shape: sql_table
+    id: int {constraint: primary_key}
+    dt: timestamptz {constraint: default(now())}
+    # The user who Bookmarked the Pin
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+  }
+
+  follows: {
+    shape: sql_table
+    id: int {constraint: primary_key}
+    dt: timestamptz {constraint: default(now())}
+    # User who is following the list
+    user_id: uuid {constraint: foreign_key}
+    list_id: uuid {constraint: foreign_key}
+  }
+}
+
+joins.list_pin.list_id -> tables.lists.list_id
+joins.list_pin.pin_id -> tables.pins.pin_id
+joins.bookmarks.user_id -> tables.profiles.id
+joins.bookmarks.pin_id -> tables.pins.pin_id
+joins.follows.list_id -> tables.lists.list_id
+joins.follows.user_id -> tables.profiles.id
+
+# Image Storage Buckets
+images: "Image Storage Buckets" {
+  pin_photos: {
+    shape: cylinder
+    pin_photo_url
+  }
+
+  avatars: {
+    shape: cylinder
+    avatar_url
+  }
+
+  list_cover_photos: {
+    shape: cylinder
+    list_photo_url
+  }
+}
+
+misc: "Misc Tables" {
+  # Table to store Contact Submissions
+  feedback: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    message: text,
+    dt: timestamptz {constraint: default(now())}
+  }
+}
+
+misc.feedback.user_id -> tables.profiles.id
+
 ```
 
-## 1. SupaBase
-
-Set up our Database and API. Start a new Project in Supabase
-
-## 2. DB Schema
-
+This is what i have written so far.
 Set up DB Schema in Supabase. This is the SQL to set up the database schema:
 
 ```sql
@@ -277,7 +550,7 @@ CREATE TABLE pins (
     copied_from_pin_id uuid REFERENCES public.pins(pin_id) ON DELETE SET NULL,
     deviation_count int DEFAULT 0,
     review text,
-    rating smallint,
+    rating int8,
     review_updated_at timestamptz,
     private boolean DEFAULT FALSE,
     price_level int
@@ -699,3 +972,7 @@ CREATE TABLE search_history (
     created_at timestamptz DEFAULT NOW()
 );
 ```
+
+# The task
+
+Review and correct any mistakes in the SQL code. Are there any oversights or potential issues with the schema? Are there any improvements that could be made to the schema? Are there any additional features that could be added to the schema to improve the application?
