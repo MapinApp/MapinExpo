@@ -134,7 +134,7 @@ stateDiagram-v2
 
 ### Schema
 
-![Mapin Database](/docs/database/img/mapin_v11.svg)
+![Mapin Database](/docs/database/img/mapin_v12.svg)
 
 ### API Structure
 
