@@ -516,7 +516,7 @@ CREATE TABLE bookmarks (
     id SERIAL PRIMARY KEY,
     dt timestamptz DEFAULT NOW(),
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
-    pin_id uuid REFERENCES public.pins(pin_id) ON DELETE CASCADE NOT NULL,
+    pin_id uuid REFERENCES public.pins(pin_id) ON DELETE CASCADE NOT NULL
 );
 
 -- Create table for follows
@@ -524,7 +524,7 @@ CREATE TABLE follows (
     id SERIAL PRIMARY KEY,
     dt timestamptz DEFAULT NOW(),
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
-    list_id uuid REFERENCES public.lists(list_id) ON DELETE CASCADE NOT NULL,
+    list_id uuid REFERENCES public.lists(list_id) ON DELETE CASCADE NOT NULL
 );
 
 
@@ -576,11 +576,8 @@ CREATE TRIGGER update_following_counts_trigger AFTER INSERT OR DELETE ON follows
 ```
 
 ```sql
--- Add followers to list
-ALTER TABLE public.lists ADD COLUMN followers_count int DEFAULT 0;
-
 -- Trigger to automatically update 'followers_count'
-CREATE OR REPLACE FUNCTION update_followers_counts()
+CREATE OR REPLACE FUNCTION update_followers_counts_lists()
 RETURNS TRIGGER AS $$
 BEGIN
     UPDATE lists
@@ -590,7 +587,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Apply this function to follows table
-CREATE TRIGGER update_followers_counts_trigger AFTER INSERT OR DELETE ON follows FOR EACH ROW EXECUTE FUNCTION update_followers_counts();
+CREATE TRIGGER update_followers_counts_lists_trigger AFTER INSERT OR DELETE ON follows FOR EACH ROW EXECUTE FUNCTION update_followers_counts_lists();
 ```
 
 We will also want to update the bookmark number on pins:
