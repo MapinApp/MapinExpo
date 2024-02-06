@@ -116,6 +116,7 @@ export default function TabLayout() {
           name="map"
           options={{
             tabBarLabel: "Map",
+            headerShown: false,
             tabBarIcon: ({ color, size, focused }) => (
               <TabBarIcon
                 name={focused ? "map" : "map-outline"}

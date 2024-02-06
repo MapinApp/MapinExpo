@@ -171,3 +171,16 @@ npm install expo@latest
 # Upgrade all dependencies to match the installed SDK version.
 npx expo install --fix
 ```
+
+## Types
+
+To [generate Supabase Types](https://supabase.com/docs/guides/api/rest/generating-types), I use:
+
+```bash
+# install the CLI
+npm i supabase@">=1.8.1" --save-dev
+# Login
+npx supabase login
+# Generate types for your project to produce the types/supabase.ts file:
+npx supabase gen types typescript --project-id "zcydoiuuwfvixtzslhke" --schema public > shared/types/supabase.ts
+```

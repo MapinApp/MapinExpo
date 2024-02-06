@@ -1,17 +1,16 @@
-import { View, Text } from "react-native";
-import { useRouter } from "expo-router";
+import React from "react";
+import MapView from "react-native-maps";
+import { Block } from "@/components/ui";
 
-export default function Details() {
-  const router = useRouter();
+export default function App() {
   return (
-    <View>
-      <Text
-        onPress={() => {
-          router.back();
+    <Block>
+      <MapView
+        style={{
+          width: "100%",
+          height: "100%",
         }}
-      >
-        Map Screen
-      </Text>
-    </View>
+      />
+    </Block>
   );
 }

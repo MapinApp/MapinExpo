@@ -3,10 +3,16 @@
 - [x] Get Theme & Components Working Properly
 - [x] Come up with Sign up Design
   - [X](https://dribbble.com/shots/13845336-Sign-in-UI)
-- [ ] Get Layouts Working Properly
+- [x] Get Layouts Working Properly
 - [ ] Get Router Working Properly
   - Including Lists ToDo Starter Code
+- [ ] Add the SQL for the Lists Data. This will be replacement for the data context that i used before.
+  - [Good Blog](https://www.jsparling.com/using-hooks-and-context-with-sqlite-for-expo-in-react-native/)
+- [ ] Add Map component
 - [x] Get Auth Working
+- [ ] Implement OAuth
+  - [Twitter Expo Example](https://github.com/expo/examples/tree/master/with-twitter-auth)
+  - [Facebook Expo Example](https://github.com/expo/examples/tree/master/with-facebook-auth)
 - [ ] Get Data Layer Working
 - [x] Check ifg username is taken
 - [x] Typography and Fonts
@@ -32,6 +38,10 @@
 - [ ] Update RLS for Private Pins and Lists
 - [ ] Audituing Trails for Data Science later down the line
 - [ ] Generative AI for List Pictures
+- [ ] Push Notifications
+- [ ] Deep linking for References
+- [ ] Use [API Routes for Google Places](https://docs.expo.dev/router/reference/api-routes/)
+  - [OpenAI Example](https://github.com/expo/examples/tree/master/with-openai)
 
 ## 📚 Resources
 

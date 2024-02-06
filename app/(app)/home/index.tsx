@@ -1,156 +1,17 @@
-import { useState, useEffect } from "react";
-import { Alert } from "react-native";
-import { useTheme } from "@/context/theme";
-import Avatar from "@/components/UploadWidget";
-import { useAuth } from "@/context/auth";
-import { supabase } from "@/lib/supabase";
-import {
-  Block,
-  Button,
-  Input,
-  Image,
-  Switch,
-  Modal,
-  Text,
-} from "@/components/ui";
+import { View, Text } from "react-native";
+import { useRouter } from "expo-router";
 
-export default function Account() {
-  const [loading, setLoading] = useState(true);
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const { session, signOut } = useAuth();
-  const { theme, isDark, handleIsDark } = useTheme();
-  const { assets, colors, gradients, sizes } = theme;
-
-  useEffect(() => {
-    if (session) getProfile();
-  }, [session]);
-
-  async function getProfile() {
-    try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
-
-      const { data, error, status } = await supabase
-        .from("profiles")
-        .select(`username, bio, avatar_url`)
-        .eq("id", session?.user.id)
-        .single();
-      if (error && status !== 406) {
-        throw error;
-      }
-
-      if (data) {
-        setUsername(data.username);
-        setBio(data.bio);
-        setAvatarUrl(data.avatar_url);
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function updateProfile({
-    username,
-    bio,
-    avatar_url,
-  }: {
-    username: string;
-    bio: string;
-    avatar_url: string;
-  }) {
-    try {
-      setLoading(true);
-      if (!session?.user) throw new Error("No user on the session!");
-
-      const updates = {
-        id: session?.user.id,
-        username,
-        bio,
-        avatar_url,
-        updated_at: new Date(),
-      };
-
-      const { error } = await supabase.from("profiles").upsert(updates);
-
-      if (error) {
-        throw error;
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert(error.message);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
+export default function Details() {
+  const router = useRouter();
   return (
-    <Block background>
-      <Block safe>
-        <Block margin={sizes.xs} card scroll>
-          <Avatar
-            size={200}
-            url={avatarUrl}
-            onUpload={(url: string) => {
-              setAvatarUrl(url);
-              updateProfile({ username, bio, avatar_url: url });
-            }}
-          />
-          <Input
-            label="Email"
-            value={session?.user?.email}
-            disabled
-            marginBottom={20}
-          />
-          <Input
-            label="Username"
-            value={username || ""}
-            onChangeText={(text) => setUsername(text)}
-            marginBottom={20}
-          />
-          <Input
-            label="Bio"
-            value={bio || ""}
-            onChangeText={(text) => setBio(text)}
-            marginBottom={20}
-          />
-
-          <Button
-            onPress={() =>
-              updateProfile({ username, bio, avatar_url: avatarUrl })
-            }
-            disabled={loading}
-            marginBottom={sizes.s}
-            marginTop={sizes.sm}
-            marginHorizontal={sizes.sm}
-            gradient={gradients.primary}
-          >
-            <Text medium size={sizes.p} white uppercase>
-              {loading ? "Loading ..." : "Update"}
-            </Text>
-          </Button>
-          <Button
-            onPress={() => {
-              // The `app/(app)/_layout.tsx` will redirect to the sign-in screen.
-              signOut();
-            }}
-            marginBottom={sizes.s}
-            marginTop={sizes.sm}
-            marginHorizontal={sizes.sm}
-            gradient={gradients.primary}
-          >
-            <Text medium size={sizes.p} white uppercase>
-              Sign Out
-            </Text>
-          </Button>
-        </Block>
-      </Block>
-    </Block>
+    <View>
+      <Text
+        onPress={() => {
+          router.back();
+        }}
+      >
+        Home
+      </Text>
+    </View>
   );
 }

@@ -1,232 +1,213 @@
-// // React Context Provider for creating, storing, and deleting Mapin Data i.e Lists and Pins with IDs
-// import { useAsyncStorage } from "@react-native-async-storage/async-storage";
-// import { createContext, useContext, useEffect, useState } from "react";
-// import { useAuth } from "./auth";
-// import type { List, Pin, User } from "@/types/data";
+import { createContext, useContext, useEffect } from "react";
+import * as FileSystem from "expo-file-system";
+import * as SQLite from "expo-sqlite";
+import { Asset } from "expo-asset";
 
-// const emptyUser: User = {
-//   dob: "",
-//   email: "",
-//   first_name: "",
-//   last_name: "",
-//   created_at: "",
-//   gender: "",
-//   username: "",
-//   profile_photo_url: "https://picsum.photos/600/600",
-//   stats: {
-//     posts: 0,
-//     followers: 0,
-//     following: 0,
-//   },
-//   bio: "Hello World!",
-// };
+// lists
+// pins
+// addPin
+// addList
+// deletePin
+// deleteList
 
-// type DataContext = {
-//   user: User;
-//   lists: List[];
-//   pins: Pin[];
-//   addPin: (props: {
-//     pin_name: string;
-//     address_str: string;
-//     lat: number;
-//     lng: number;
-//     notes: string;
-//   }) => void;
-//   addList: (props: {
-//     name: string;
-//     description: string;
-//     private: boolean;
-//     cover_image_url: string;
-//     pinIds: number[];
-//   }) => void;
-//   deletePin: (id: number) => void;
-//   deleteList: (id: number) => void;
-//   setUser: (user: User) => void;
-//   clearUser: () => void;
-// };
+const DataContext = createContext<DataContext | undefined>(undefined);
 
-// const DataContext = createContext<DataContext | undefined>(undefined);
+export const DataProvider = async ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  // Use the following function to open the database
+  async function openDatabase(
+    pathToDatabaseFile: string
+  ): Promise<SQLite.SQLiteDatabase> {
+    if (
+      !(await FileSystem.getInfoAsync(FileSystem.documentDirectory + "SQLite"))
+        .exists
+    ) {
+      await FileSystem.makeDirectoryAsync(
+        FileSystem.documentDirectory + "SQLite"
+      );
+    }
+    await FileSystem.downloadAsync(
+      Asset.fromModule(require(pathToDatabaseFile)).uri,
+      FileSystem.documentDirectory + "SQLite/mapin.db"
+    );
+    // opens the database named mapin.db
+    return SQLite.openDatabase("mapin.db");
+  }
 
-// export const DataProvider = ({ children }: { children: React.ReactNode }) => {
-//   const [user, setUser] = useState<User>(emptyUser);
-//   const [lists, setLists] = useState<List[] | null>(null);
-//   const [pins, setPins] = useState<Pin[] | null>(null);
+  const db = await openDatabase("/sqlite/mapin");
+  const readOnly = true;
 
-//   const { session } = useAuth();
-//   // useAsyncStorage for MAPIN_PIN_DATA
-//   // prettier-ignore
-//   const { getItem: getUser, setItem: setAsyncUser } =  useAsyncStorage("MAPIN_USER_DATA");
-//   // prettier-ignore
-//   const { getItem: getList, setItem: setAsyncLists } =  useAsyncStorage("MAPIN_LIST_DATA");
-//   // prettier-ignore
-//   const { getItem: getPin, setItem: setAsyncPins } =  useAsyncStorage("MAPIN_PIN_DATA");
+  // Not Async as we don't need to wait for the result
+  // For getUsers, we pass in a function that takes the array that the query returns as its parameter. We will pass in a function that can take the users from the query and set the state.
+  const getUsers = (setUserFunc) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("select * from users", [], (_, { rows: { _array } }) => {
+          setUserFunc(_array);
+        });
+      },
+      // Error callback
+      (t, error) => {
+        console.log("db error load users");
+        console.log(error);
+      },
+      // Success callback
+      (_t, _success) => {
+        console.log("loaded users");
+      }
+    );
+  };
 
-//   // Load Mapin Data from storage on first load
-//   useEffect(() => {
-//     let isMounted = true;
-//     // Get List Data
-//     getList().then((json) => {
-//       if (!isMounted) return;
-//       if (json != null) {
-//         const loadedLists = JSON.parse(json);
-//         setLists(loadedLists ?? []);
-//       } else {
-//         setLists([]);
-//       }
-//     });
-//     // Get Pin Data
-//     getPin().then((json) => {
-//       if (!isMounted) return;
-//       if (json != null) {
-//         const loadedPins = JSON.parse(json);
-//         setPins(loadedPins ?? []);
-//       } else {
-//         setPins([]);
-//       }
-//     });
+  // For insertUser, we pass in a successFunc that will be called after the insert has happened. In our case, we are passing in the function to refresh the users from the database. This way we know that our state will reflect what is in the database.
+  const insertUser = (userName, successFunc) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("insert into users (name) values (?)", [userName]);
+      },
+      (t, error) => {
+        console.log("db error insertUser");
+        console.log(error);
+      },
+      (t, success) => {
+        successFunc();
+      }
+    );
+  };
 
-//     // Get User Data if session is null
-//     getUser().then((json) => {
-//       if (!isMounted) return;
-//       if (json != null && !session) {
-//         const loadedUser = JSON.parse(json);
-//         setUser(loadedUser ?? {});
-//       }
-//     });
+  const dropDatabaseTablesAsync = async () => {
+    return new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "drop table users",
+          [],
+          // Error callback
+          (_, result) => {
+            resolve(result);
+          },
+          // Success callback
+          (_, error) => {
+            console.log("error dropping users table");
+            reject(error);
+          }
+        );
+      });
+    });
+  };
 
-//     return () => {
-//       isMounted = false;
-//     };
-//   }, []);
+  const setupUsersAsync = async () => {
+    return new Promise((resolve, _reject) => {
+      db.transaction(
+        (tx) => {
+          tx.executeSql("insert into users (id, name) values (?,?)", [
+            1,
+            "john",
+          ]);
+        },
+        // Error callback
+        (t, error) => {
+          console.log("db error insertUser");
+          console.log(error);
+          resolve();
+        },
+        // Success callback
+        (t, success) => {
+          resolve(success);
+        }
+      );
+    });
+  };
 
-//   // Persist User to storage
-//   useEffect(() => {
-//     if (!user) return;
-//     setAsyncUser(JSON.stringify(user));
-//   }, [user]);
+  const executeSqlAsync = async () => {
+    await db.transactionAsync(async (tx) => {
+      const result = await tx.executeSqlAsync("SELECT COUNT(*) FROM USERS", []);
+      console.log("Count:", result.rows[0]["COUNT(*)"]);
+    }, readOnly);
+  };
 
-//   // Persist Lists to storage
-//   useEffect(() => {
-//     if (!lists) return;
-//     setAsyncLists(JSON.stringify(lists));
-//   }, [lists]);
+  // Load Data from Supabase on LoadS
+  useEffect(() => {
+    let isMounted = true;
+    // Get List Data
+    getList().then((json) => {
+      if (!isMounted) return;
+      if (json != null) {
+        const loadedLists = JSON.parse(json);
+        setLists(loadedLists ?? []);
+      } else {
+        setLists([]);
+      }
+    });
+    // Get Pin Data
+    getPin().then((json) => {
+      if (!isMounted) return;
+      if (json != null) {
+        const loadedPins = JSON.parse(json);
+        setPins(loadedPins ?? []);
+      } else {
+        setPins([]);
+      }
+    });
 
-//   // Persist Pins to storage
-//   useEffect(() => {
-//     if (!pins) return;
-//     setAsyncPins(JSON.stringify(pins));
-//   }, [pins]);
+    // Get User Data if session is null
+    getUser().then((json) => {
+      if (!isMounted) return;
+      if (json != null && !session) {
+        const loadedUser = JSON.parse(json);
+        setUser(loadedUser ?? {});
+      }
+    });
 
-//   // Each time session changes, update user
-//   useEffect(() => {
-//     if (!session) return;
-//     let userData = {
-//       ...user, // Keep existing user data
-//       dob:
-//         session.user.user_metadata.date_of_birth ??
-//         session.user.user_metadata.date_of_birth,
-//       email: session.user.email ?? session.user.email,
-//       first_name:
-//         session.user.user_metadata.first_name ??
-//         session.user.user_metadata.first_name,
-//       last_name:
-//         session.user.user_metadata.last_name ??
-//         session.user.user_metadata.last_name,
-//       created_at: session.user.created_at ?? session.user.created_at,
-//       gender:
-//         session.user.user_metadata.gender ?? session.user.user_metadata.gender,
-//       username:
-//         session.user.user_metadata.username ??
-//         session.user.user_metadata.username,
-//     };
-//     setUser(userData);
-//   }, [session]);
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-//   const addList = (props: {
-//     name: string;
-//     description: string;
-//     private: boolean;
-//     cover_image_url: string;
-//     pinIds: number[];
-//   }) => {
-//     // Create sequential ID
-//     const id = Math.floor(Math.random() * 1000);
-//     // Ensure props.name is not empty
-//     if (!props.name) {
-//       alert("List name cannot be empty");
-//       return;
-//     }
-//     const list = {
-//       list_id: id,
-//       user_id: 1,
-//       name: props.name,
-//       description: props.description,
-//       created_at: new Date().toISOString(),
-//       updated_at: new Date().toISOString(),
-//       private: props.private,
-//       cover_image_url: props.cover_image_url,
-//       pinIds: props.pinIds,
-//     };
-//     setLists((lists) => [...lists, list]);
-//   };
+  return (
+    <DataContext.Provider
+      value={{
+        user,
+        lists,
+        pins,
+        addList,
+        addPin,
+        deleteList,
+        deletePin,
+        setUser,
+        clearUser,
+      }}
+    >
+      {children}
+    </DataContext.Provider>
+  );
+};
 
-//   const addPin = (props: {
-//     pin_name: string;
-//     address_str: string;
-//     lat: number;
-//     lng: number;
-//     notes: string;
-//   }) => {
-//     const id = Math.random();
-//     const pin = {
-//       pin_id: id,
-//       user_id: 1,
-//       pin_photo_id: 1,
-//       pin_name: props.pin_name,
-//       address_str: props.address_str,
-//       lat: props.lat,
-//       lng: props.lng,
-//       notes: props.notes,
-//       created_at: new Date().toISOString(),
-//     };
-//     setPins((pins) => [...pins, pin]);
-//   };
+export const useData = () => {
+  // The component manages its own state (isDBLoadingComplete) to indicate when the database loading is complete.
+  const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
 
-//   const deleteList = (id: number) => {
-//     setLists((lists) => lists.filter((list) => list.list_id !== id));
-//   };
+  // When the app starts up, we want to set up the database tables if they haven’t already been setup, and insert some initial data. When working in dev, we may want to drop the existing tables to start clean, so we include a function call for that, which we can comment out in prod.
+  useEffect(() => {
+    async function loadDataAsync() {
+      try {
+        await database.dropDatabaseTablesAsync();
+        await database.setupDatabaseAsync();
+        await database.setupUsersAsync();
+        setDBLoadingComplete(true);
+      } catch (e) {
+        console.warn(e);
+      }
+    }
 
-//   const deletePin = (id: number) => {
-//     setPins((pins) => pins.filter((pin) => pin.pin_id !== id));
-//   };
+    loadDataAsync();
+  }, []);
 
-//   const clearUser = () => {
-//     setUser(emptyUser);
-//   };
+  const context = useContext(DataContext);
+  if (!context) {
+    throw new Error("useData must be used within a DataProvider");
+  }
 
-//   return (
-//     <DataContext.Provider
-//       value={{
-//         user,
-//         lists,
-//         pins,
-//         addList,
-//         addPin,
-//         deleteList,
-//         deletePin,
-//         setUser,
-//         clearUser,
-//       }}
-//     >
-//       {children}
-//     </DataContext.Provider>
-//   );
-// };
-
-// export const useData = () => {
-//   const context = useContext(DataContext);
-//   if (!context) {
-//     throw new Error("useData must be used within a DataProvider");
-//   }
-//   return context;
-// };
+  return context;
+};
