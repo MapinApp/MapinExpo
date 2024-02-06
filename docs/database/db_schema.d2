@@ -149,9 +149,9 @@ tables: "Main Tables" {
 }
 
 tables.profiles.avatar_url -> images.avatars.avatar_url
-tables.pins.pin_photo_url -> images.pin_photos.pin_photo_url
-tables.lists.list_photo_url -> images.list_cover_photos.list_photo_url
-tables.places.places_photo_url -> images.places_photos.places_photo_url
+tables.pins.pin_photo_url -> images.pins.pin_photo_url
+tables.lists.list_photo_url -> images.lists.list_photo_url
+tables.places.places_photo_url -> images.places.places_photo_url
 
 # Join Tables
 joins: "Join Tables" {
@@ -207,7 +207,7 @@ joins.bookmarks.user_id -> tables.notifications.notification_type: "Bookmarked" 
 
 # Image Storage Buckets
 images: "Image Storage Buckets" {
-  pin_photos: {
+  pins: {
     shape: cylinder
     pin_photo_url
   }
@@ -217,12 +217,12 @@ images: "Image Storage Buckets" {
     avatar_url
   }
 
-  list_cover_photos: {
+  lists: {
     shape: cylinder
     list_photo_url
   }
 
-  places_photos: {
+  places: {
     shape: cylinder
     places_photo_url
   }

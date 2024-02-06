@@ -6,11 +6,11 @@ This [tutorial](https://supabase.com/docs/guides/getting-started/tutorials/with-
 npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-elements react-native-url-polyfill
 ```
 
-## 1. SupaBase
+## SupaBase
 
 Set up our Database and API. Start a new Project in Supabase
 
-## 2. DB Schema
+## DB Schema
 
 Set up DB Schema in Supabase. This is the SQL to set up the database schema:
 
@@ -205,7 +205,7 @@ TO service_role
 USING (true);
 ```
 
-## 3. Auth
+## Auth
 
 Install the additional dependencies: supabase-js
 
@@ -337,12 +337,6 @@ Given the operations, indexes on `user_id`, `places_id`, and `copied_from_pin_id
 CREATE INDEX idx_pins_user_id ON pins(user_id);
 CREATE INDEX idx_pins_places_id ON pins(places_id);
 CREATE INDEX idx_pins_copied_from_pin_id ON pins(copied_from_pin_id);
-```
-
-For geospatial queries (e.g., finding pins near a user's location), consider using a GiST index on lat and lng if your queries are based on geographic coordinates.
-
-```sql
-CREATE INDEX idx_pins_lat_lng ON pins USING GIST (ll_to_earth(lat, lng));
 ```
 
 ## Lists
