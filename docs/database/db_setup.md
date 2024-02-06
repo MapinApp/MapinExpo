@@ -286,6 +286,7 @@ CREATE TABLE pins (
     pin_id uuid PRIMARY KEY,
     places_id TEXT REFERENCES public.places(places_id) ON DELETE SET NULL,
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    list_id uuid REFERENCES public.lists(list_id) ON DELETE SET NULL,
     pin_photo_url TEXT,
     pin_name TEXT NOT NULL,
     notes text,

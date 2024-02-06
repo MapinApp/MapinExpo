@@ -6,6 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { useTheme } from "@/context/theme";
 import { useAuth } from "@/context/auth";
 import { Text } from "@/components/ui";
+import { DataProvider, useData } from "@/context/data";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -20,6 +21,7 @@ export default function TabLayout() {
   const { theme, isDark } = useTheme();
   const { colors } = theme;
   const { session, isLoading } = useAuth();
+  const { isDBLoadingComplete } = useData();
 
   // You can keep the splash screen open, or render a loading screen like we do here.
   if (isLoading) {
@@ -35,7 +37,7 @@ export default function TabLayout() {
   }
 
   return (
-    <>
+    <DataProvider>
       <Tabs
         detachInactiveScreens={true}
         screenOptions={{
@@ -167,6 +169,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-    </>
+    </DataProvider>
   );
 }

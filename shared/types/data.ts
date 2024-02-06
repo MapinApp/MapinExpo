@@ -1,40 +1,52 @@
-export interface User {
-  dob: string;
-  email: string;
-  first_name: string;
-  last_name: string;
-  created_at: string;
-  gender: string;
-  username: string;
-  profile_photo_url: string;
-  stats: {
-    posts: number;
-    followers: number;
-    following: number;
-  };
-  bio: string;
-}
-
-export interface List {
-  list_id: number;
-  user_id: number;
-  name: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-  private: boolean;
-  cover_image_url: string;
-  pinIds: number[];
-}
-
-export interface Pin {
-  pin_id: number;
-  user_id: number;
-  pin_photo_id: number;
+export interface PinPlace {
+  pin_id: string;
+  places_id: string;
+  user_id: string;
   pin_name: string;
-  address_str: string;
+  name: string;
+  notes: string;
+  places_photo_url: string;
+  pin_photo_url: string | null;
+  bookmark_count: number;
   lat: number;
   lng: number;
-  notes: string;
+  formatted_address: string;
+  maps_url: string;
   created_at: string;
+  visited: boolean;
+  visited_at: string | null;
+  rating: number | null;
+  review: string | null;
+  review_updated_at: string | null;
+  copied_from_pin_id: string | null;
+  deviation_count: number;
+  isPrivate: boolean;
+  updated_at: string | null;
+  opening_hours: {} | null;
+  phone_number: string | null;
+  price_level: number | null;
+  types: string[];
+  website: string | null;
+}
+
+type ListID = string;
+
+export interface List {
+  list_id: ListID;
+  user_id: string;
+  name: string;
+  description: string;
+  list_photo_url: string;
+  followers_count: number;
+  isPrivate: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ListPins extends List {
+  pins: PinPlace[];
+}
+
+export interface Lists {
+  [key: ListID]: ListPins;
 }
