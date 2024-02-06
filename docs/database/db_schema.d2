@@ -1,43 +1,54 @@
+classes: {
+  trigger: {
+    style: {
+      stroke-dash: 3
+      stroke: red
+    }
+  }
+}
+
 # Main Tables
 tables: "Main Tables" {
   profiles: {
     shape: sql_table
     id: uuid {constraint: primary_key}
-    updated_at: timestamptz
+    updated_at: timestamptz {constraint: default(now())}
     username: text {constraint: unique}
     first_name: text
     last_name: text
     email: text {constraint: unique}
     gender: text
-    bio: text
+    bio: text {constraint: default('Hello!')}
     date_of_birth: date
-    created_date: timestamptz
-    last_login: timestamptz
-    avatar_url: text {constraint: foreign_key}
+    created_date: timestamptz {constraint: default(now())}
+    last_login: timestamptz {constraint: default(now())}
+    avatar_url: text
     account_status: text
+    # Profile Stats
+    pin_count: int {constraint: default(0)}
+    followers_count: int {constraint: default(0)}
+    following_count: int {constraint: default(0)}
   }
 
   pins: {
     shape: sql_table
     pin_id: uuid {constraint: primary_key}
-    places_id: text {constraint: foreign_key}
-    user_id: uuid {constraint: foreign_key}
-    pin_photo_url: text {constraint: foreign_key}
+    places_id: text {constraint: foreign_key -> places.places_id}
+    user_id: uuid {constraint: foreign_key -> profiles.id}
+    pin_photo_url: text
     pin_name: text
-    address_str: text
-    category: text
-    lat: decimal(9,6)
-    lng: decimal(9,6)
     notes: text
     created_at: timestamptz {constraint: default(now())}
     updated_at: timestamptz {constraint: default(now())}
     visited: boolean {constraint: default(false)}
     visited_at: timestamptz
-    copied_from_pin_id: uuid {constraint: foreign_key}
-    deviation_count: int
+    copied_from_pin_id: uuid {constraint: foreign_key -> pins.pin_id}
+    deviation_count: int {constraint: default(0)}
     review: text
-    rating: int8
+    rating: smallint
     review_updated_at: timestamptz
+    private: boolean {constraint: default(false)}
+    bookmark_count: int {constraint: default(0)}
   }
 
   lists: {
@@ -49,7 +60,7 @@ tables: "Main Tables" {
     created_at: timestamptz
     updated_at: timestamptz
     private: boolean
-    list_photo_url: text {constraint: foreign_key}
+    list_photo_url: text
     followers_count: int {constraint: default(0)}
   }
 
@@ -68,6 +79,7 @@ tables: "Main Tables" {
     phone_number: text
     created_at: timestamptz {constraint: default(now())}
     updated_at: timestamptz {constraint: default(now())}
+    places_photo_url: text
   }
 
   comments: {
@@ -100,6 +112,19 @@ tables: "Main Tables" {
     created_at: timestamptz
   }
 
+  user_preferences: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key -> profiles.id}
+    dark_mode: boolean {constraint: default(false)}
+    notification_enabled: boolean {constraint: default(true)}
+    notification_frequency: text {constraint: default('daily')}
+    location_sharing_enabled: boolean {constraint: default(false)}
+    language: text {constraint: default('English')}
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz {constraint: default(now())}
+  }
+
   pins.user_id -> profiles.id
   pins.copied_from -> pins.pin_id
   lists.user_id -> profiles.id
@@ -107,12 +132,26 @@ tables: "Main Tables" {
   comments.pin_id -> pins.pin_id
   notifications.user_id -> profiles.id
   search_history.user_id -> profiles.id
-  pins.places_id -> places.id
+  pins.places_id -> places.places_id
+  # Triggers
+  pins.pin_id -> profiles.pin_count: {
+    class: trigger
+  }
+  lists.followers_count -> profiles.followers_count: {
+    class: trigger
+  }
+  pins.pin_id -> notifications.notification_type: "Deviation" {
+    class: trigger
+  }
+  comments.pin_id -> notifications.notification_type: "Comment" {
+    class: trigger
+  }
 }
 
 tables.profiles.avatar_url -> images.avatars.avatar_url
 tables.pins.pin_photo_url -> images.pin_photos.pin_photo_url
 tables.lists.list_photo_url -> images.list_cover_photos.list_photo_url
+tables.places.places_photo_url -> images.places_photos.places_photo_url
 
 # Join Tables
 joins: "Join Tables" {
@@ -126,7 +165,7 @@ joins: "Join Tables" {
 
   bookmarks: {
     shape: sql_table
-    id: int {constraint: primary_key}
+    id: serial {constraint: primary_key}
     dt: timestamptz {constraint: default(now())}
     # The user who Bookmarked the Pin
     user_id: uuid {constraint: foreign_key}
@@ -135,7 +174,7 @@ joins: "Join Tables" {
 
   follows: {
     shape: sql_table
-    id: int {constraint: primary_key}
+    id: serial {constraint: primary_key}
     dt: timestamptz {constraint: default(now())}
     # User who is following the list
     user_id: uuid {constraint: foreign_key}
@@ -149,6 +188,22 @@ joins.bookmarks.user_id -> tables.profiles.id
 joins.bookmarks.pin_id -> tables.pins.pin_id
 joins.follows.list_id -> tables.lists.list_id
 joins.follows.user_id -> tables.profiles.id
+# Triggers 
+joins.bookmarks.pin_id -> tables.pins.bookmark_count: {
+  class: trigger
+}
+joins.follows.list_id -> tables.lists.followers_count: {
+  class: trigger
+}
+joins.follows.user_id -> tables.profiles.following_count: {
+  class: trigger
+}
+joins.follows.user_id -> tables.notifications.notification_type: "Followed" {
+  class: trigger
+}
+joins.bookmarks.user_id -> tables.notifications.notification_type: "Bookmarked" {
+  class: trigger
+}
 
 # Image Storage Buckets
 images: "Image Storage Buckets" {
@@ -166,6 +221,11 @@ images: "Image Storage Buckets" {
     shape: cylinder
     list_photo_url
   }
+
+  places_photos: {
+    shape: cylinder
+    places_photo_url
+  }
 }
 
 misc: "Misc Tables" {
@@ -180,3 +240,72 @@ misc: "Misc Tables" {
 }
 
 misc.feedback.user_id -> tables.profiles.id
+
+audit: "Audit & Analytics" {
+  # Table to store Audit Logs
+  audit_log: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    table_name: text
+    column_name: text
+    row_id: text
+    old_value: text
+    new_value: text
+    operation_type: text {constraint: check(operation_type in ('INSERT', 'UPDATE', 'DELETE'))}
+    changed_by: uuid {constraint: foreign_key}
+    changed_at: timestamptz {constraint: default(now())}
+  }
+
+  user_interactions: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+    list_id: uuid {constraint: foreign_key}
+    interaction_type: text {constraint: check(interaction_type in ('VIEW', 'LIKE', 'COMMENT', 'BOOKMARK', 'FOLLOW'))}
+    duration: integer
+    interacted_at: timestamptz {constraint: default(now())}
+  }
+
+  content_shares: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    pin_id: uuid {constraint: foreign_key}
+    list_id: uuid {constraint: foreign_key}
+    shared_by: uuid {constraint: foreign_key}
+    shared_to_platform: text
+    shared_at: timestamptz {constraint: default(now())}
+    resulted_in_signup: boolean {constraint: default(false)}
+    resulted_in_interaction: boolean {constraint: default(false)}
+  }
+}
+
+audit.audit_log.changed_by -> tables.profiles.id
+audit.user_interactions.user_id -> tables.profiles.id
+audit.user_interactions.pin_id -> tables.pins.pin_id
+audit.user_interactions.list_id -> tables.lists.list_id
+audit.content_shares.pin_id -> tables.pins.pin_id
+audit.content_shares.list_id -> tables.lists.list_id
+audit.content_shares.shared_by -> tables.profiles.id
+# Audit Triggers
+tables.pins -> audit.audit_log: {
+  class: trigger
+}
+tables.lists -> audit.audit_log: {
+  class: trigger
+}
+tables.places -> audit.audit_log: {
+  class: trigger
+}
+tables.profiles -> audit.audit_log: {
+  class: trigger
+}
+tables.comments -> audit.audit_log: {
+  class: trigger
+}
+joins.list_pin -> audit.audit_log: {
+  class: trigger
+}
+joins.bookmarks -> audit.audit_log: {
+  class: trigger
+}

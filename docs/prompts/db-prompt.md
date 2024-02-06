@@ -493,7 +493,7 @@ npx expo install @supabase/supabase-js @react-native-async-storage/async-storage
 
 ## Google Places
 
-Table for places. Here we will store the Google Data:
+Table for places. Here we will store the Google Data. any pin will be linked to a place, and shared information about that place is stored only once in the places table:
 
 ```sql
 CREATE TABLE places (
@@ -509,7 +509,8 @@ CREATE TABLE places (
     opening_hours jsonb,
     phone_number text,
     created_at timestamptz DEFAULT NOW(),
-    updated_at timestamptz DEFAULT NOW()
+    updated_at timestamptz DEFAULT NOW(),
+    places_photo_url text
 );
 
 -- Index for quickly querying places by type
@@ -528,7 +529,21 @@ CREATE TRIGGER update_places_timestamp BEFORE UPDATE ON places
 FOR EACH ROW EXECUTE FUNCTION update_places_timestamp();
 ```
 
+We also want to store images as the default for each pin. A user can update these manually if they want:
+
+```sql
+-- Set up Storage Bucket for place images
+INSERT INTO storage.buckets (id, name) VALUES ('places', 'places');
+
+-- Set up access controls for place storage
+CREATE POLICY "Place images are publicly accessible." on storage.objects FOR SELECT USING (bucket_id = 'places');
+CREATE POLICY "Anyone can upload a place image." on storage.objects FOR INSERT WITH CHECK (bucket_id = 'places');
+CREATE POLICY "Users cannot update place images" on storage.objects FOR UPDATE USING (false);
+```
+
 ## Pins
+
+The pins table should reference the places table through places_id for extra info like address, price level, etc.
 
 ```sql
 -- Create table for pins
@@ -538,10 +553,6 @@ CREATE TABLE pins (
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
     pin_photo_url TEXT,
     pin_name TEXT NOT NULL,
-    address_str TEXT,
-    category TEXT,
-    lat decimal(9,6) NOT NULL, -- Latitude, decimal degrees format
-    lng decimal(9,6) NOT NULL, -- Longitude, decimal degrees format
     notes text,
     created_at timestamptz DEFAULT NOW(),
     updated_at timestamptz DEFAULT NOW(),
@@ -550,10 +561,9 @@ CREATE TABLE pins (
     copied_from_pin_id uuid REFERENCES public.pins(pin_id) ON DELETE SET NULL,
     deviation_count int DEFAULT 0,
     review text,
-    rating int8,
+    rating smallint,
     review_updated_at timestamptz,
-    private boolean DEFAULT FALSE,
-    price_level int
+    private boolean DEFAULT FALSE
 );
 
 -- Set up Row Level Security (RLS)
@@ -584,6 +594,43 @@ $$ LANGUAGE plpgsql;
 
 -- Apply this function to tables with 'pin_count' column
 CREATE TRIGGER update_pin_count_trigger AFTER INSERT OR DELETE ON pins FOR EACH ROW EXECUTE FUNCTION update_pin_count();
+```
+
+We also want to notify the original user when the pin is derived. Improve this SQL code for the function and trigger:
+
+```sql
+-- Trigger to automatically notify the original user when a pin is derived
+-- Use the "copied_from_pin_id" column to track the original pin
+-- Find the user from the original pin and insert a notification
+-- We also want to increment the deviation_count for the original pin
+
+CREATE OR REPLACE FUNCTION notify_original_user_and_increment_deviation()
+RETURNS TRIGGER AS $$
+DECLARE
+    original_user_id uuid;
+BEGIN
+    -- Find the original pin's user ID
+    SELECT user_id INTO original_user_id FROM pins WHERE pin_id = NEW.copied_from_pin_id;
+
+    -- Insert a notification for the original pin owner
+    INSERT INTO notifications (user_id, notification_type, notification_text)
+    VALUES (original_user_id, 'pin_derived', 'Your pin has been derived: ' || (SELECT pin_name FROM pins WHERE pin_id = NEW.copied_from_pin_id));
+
+    -- Increment the deviation_count for the original pin
+    UPDATE pins SET deviation_count = deviation_count + 1 WHERE pin_id = NEW.copied_from_pin_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to execute the function after a new pin is inserted
+CREATE TRIGGER notify_original_user_derivation_trigger
+AFTER INSERT ON pins
+FOR EACH ROW
+-- Conditional Execution: The trigger now includes a WHEN condition to ensure it only executes when NEW.copied_from_pin_id IS NOT NULL, meaning it only triggers for derived pins.
+WHEN (NEW.copied_from_pin_id IS NOT NULL)
+EXECUTE FUNCTION notify_original_user_and_increment_deviation();
+
 ```
 
 ## Lists
@@ -973,6 +1020,98 @@ CREATE TABLE search_history (
 );
 ```
 
-# The task
+## Data Science, Audit & Analytics
 
-Review and correct any mistakes in the SQL code. Are there any oversights or potential issues with the schema? Are there any improvements that could be made to the schema? Are there any additional features that could be added to the schema to improve the application?
+We want to ensure that your database can track changes over time, store enough data for analysis, and support complex queries for recommendations. An audit logging system will track changes to critical data in your application. This can be accomplished by creating an audit table and triggers to log changes.
+
+```sql
+CREATE TABLE audit_logs (
+    id SERIAL PRIMARY KEY,
+    table_name TEXT NOT NULL,
+    column_name TEXT,
+    row_id TEXT NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    operation_type TEXT NOT NULL CHECK (operation_type IN ('INSERT', 'UPDATE', 'DELETE')),
+    changed_by uuid REFERENCES profiles(id),
+    changed_at timestamptz DEFAULT NOW()
+);
+
+-- Create a generic audit trigger function that can be applied to multiple tables. This function dynamically captures table name, operation type, and the changing user's ID.
+
+CREATE OR REPLACE FUNCTION log_generic_changes()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'UPDATE' THEN
+        INSERT INTO audit_logs (table_name, column_name, row_id, old_value, new_value, operation_type, changed_by, changed_at)
+        SELECT TG_TABLE_NAME, column_name, NEW.id::TEXT, OLD.value, NEW.value, TG_OP, NEW.user_id, NOW()
+        FROM jsonb_each_text(to_jsonb(OLD)) AS OLD(column_name, value)
+        JOIN jsonb_each_text(to_jsonb(NEW)) AS NEW(column_name, value) ON OLD.column_name = NEW.column_name
+        WHERE OLD.value IS DISTINCT FROM NEW.value;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
+        VALUES (TG_TABLE_NAME, OLD.id::TEXT, TG_OP, OLD.user_id, NOW());
+    ELSIF TG_OP = 'INSERT' THEN
+        INSERT INTO audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
+        VALUES (TG_TABLE_NAME, NEW.id::TEXT, TG_OP, NEW.user_id, NOW());
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- apply triggers to your other tables (pins, lists, places, etc.) using the generic audit function. You'll need to create a trigger for each table.
+
+-- pins
+CREATE TRIGGER pins_audit
+AFTER INSERT OR UPDATE OR DELETE ON pins
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- lists
+CREATE TRIGGER lists_audit
+AFTER INSERT OR UPDATE OR DELETE ON lists
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- places
+CREATE TRIGGER places_audit
+AFTER INSERT OR UPDATE OR DELETE ON places
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- follows
+CREATE TRIGGER follows_audit
+AFTER INSERT OR UPDATE OR DELETE ON follows
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- bookmarks
+CREATE TRIGGER bookmarks_audit
+AFTER INSERT OR UPDATE OR DELETE ON bookmarks
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- Trigger to capture changes
+CREATE TRIGGER profile_changes_audit
+AFTER INSERT OR UPDATE OR DELETE ON profiles
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+```
+
+Store user interactions and behaviors in a more granular way.
+
+```sql
+CREATE TABLE user_interactions (
+    id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES profiles(id) NOT NULL,
+    pin_id uuid REFERENCES pins(pin_id),
+    list_id uuid REFERENCES lists(list_id),
+    interaction_type TEXT CHECK (interaction_type IN ('view', 'click', 'time_spent')),
+    duration INTEGER, -- Time spent in seconds, applicable for 'time_spent' interaction_type
+    interacted_at timestamptz DEFAULT NOW()
+);
+```
+
+To track how content spreads and its virality, tracking each share, including the platform it was shared to and whether those shares lead to new users or interactions.
+
+```sql
+CREATE TABLE content_shares (
+    id SERIAL PRIMARY KEY,
+    pin_id uuid REFERENCES pins(pin_id),
+    list_id uuid REFERENCES lists(list_id),
+    shared_by uuid REFERENCES profiles(id),
+    shared_to_platform TEXT, -- e.g., 'Facebook', 'Twitter', 'WhatsApp'
+    shared_at timestamptz DEFAULT NOW(),
+    resulted_in_signup BOOLEAN DEFAULT FALSE,
+    resulted_in_interaction BOOLEAN DEFAULT FALSE
+);
+```

@@ -1,18 +1,6 @@
-# Database Setup
+I am setting up the DB Schema in Supabase. This is the SQL to set up the database schema:
 
-This [tutorial](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native?database-method=sql&auth-store=async-storage) demonstrates how to build a basic user management app. The app authenticates and identifies the user, stores their profile information in the database, and allows the user to log in, update their profile details, and upload a profile photo. The app uses:
-
-```bash
-npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-elements react-native-url-polyfill
-```
-
-## 1. SupaBase
-
-Set up our Database and API. Start a new Project in Supabase
-
-## 2. DB Schema
-
-Set up DB Schema in Supabase. This is the SQL to set up the database schema:
+## Auth
 
 ```sql
 -- Create a table for public profiles
@@ -842,14 +830,6 @@ FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
 CREATE TRIGGER places_audit
 AFTER INSERT OR UPDATE OR DELETE ON places
 FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
--- Trigger to capture changes
-CREATE TRIGGER profile_changes_audit
-AFTER INSERT OR UPDATE OR DELETE ON profiles
-FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
--- Trigger to capture comments
-CREATE TRIGGER comments_audit
-AFTER INSERT OR UPDATE OR DELETE ON comments
-FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
 -- follows
 CREATE TRIGGER follows_audit
 AFTER INSERT OR UPDATE OR DELETE ON follows
@@ -857,6 +837,10 @@ FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
 -- bookmarks
 CREATE TRIGGER bookmarks_audit
 AFTER INSERT OR UPDATE OR DELETE ON bookmarks
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- Trigger to capture changes
+CREATE TRIGGER profile_changes_audit
+AFTER INSERT OR UPDATE OR DELETE ON profiles
 FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
 ```
 
@@ -868,7 +852,389 @@ CREATE TABLE user_interactions (
     user_id uuid REFERENCES profiles(id) NOT NULL,
     pin_id uuid REFERENCES pins(pin_id),
     list_id uuid REFERENCES lists(list_id),
-    interaction_type TEXT CHECK (interaction_type IN ('VIEW', 'LIKE', 'COMMENT', 'BOOKMARK', 'FOLLOW')),
+    interaction_type TEXT CHECK (interaction_type IN ('view', 'click', 'time_spent')),
+    duration INTEGER, -- Time spent in seconds, applicable for 'time_spent' interaction_type
+    interacted_at timestamptz DEFAULT NOW()
+);
+```
+
+To track how content spreads and its virality, tracking each share, including the platform it was shared to and whether those shares lead to new users or interactions.
+
+```sql
+CREATE TABLE content_shares (
+    id SERIAL PRIMARY KEY,
+    pin_id uuid REFERENCES pins(pin_id),
+    list_id uuid REFERENCES lists(list_id),
+    shared_by uuid REFERENCES profiles(id),
+    shared_to_platform TEXT, -- e.g., 'Facebook', 'Twitter', 'WhatsApp'
+    shared_at timestamptz DEFAULT NOW(),
+    resulted_in_signup BOOLEAN DEFAULT FALSE,
+    resulted_in_interaction BOOLEAN DEFAULT FALSE
+);
+```
+
+## User Preferences
+
+```sql
+CREATE TABLE user_preferences (
+    id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    dark_mode BOOLEAN DEFAULT FALSE,
+    notification_enabled BOOLEAN DEFAULT TRUE,
+    notification_frequency TEXT DEFAULT 'daily', -- Options might include 'never', 'daily', 'weekly'
+    location_sharing_enabled BOOLEAN DEFAULT FALSE,
+    language TEXT DEFAULT 'English',
+    created_at timestamptz DEFAULT NOW(),
+    updated_at timestamptz DEFAULT NOW()
+);
+
+-- Enable Row Level Security (RLS) for user preferences
+ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for RLS
+CREATE POLICY user_preferences_view ON user_preferences
+    FOR SELECT
+    USING (auth.uid() = user_id);
+
+CREATE POLICY user_preferences_update ON user_preferences
+    FOR UPDATE
+    USING (auth.uid() = user_id);
+
+-- Trigger to automatically update 'updated_at' timestamp
+CREATE OR REPLACE FUNCTION update_user_preferences_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_user_preferences_timestamp
+BEFORE UPDATE ON user_preferences
+FOR EACH ROW EXECUTE FUNCTION update_user_preferences_timestamp();
+```
+
+# Task
+
+Here is an out-dated schema for the database. It is a diagram entity-relationship diagram (ERDs). Each key of a SQL Table shape defines a row. The primary value (the thing after the colon) of each row defines its type. The constraint value of each row defines its SQL constraint. I define a foreign key connection between two tables by using the `->` operator between two rows.
+
+```
+classes: {
+  trigger: {
+    style: {
+      stroke-dash: 3
+      stroke: red
+    }
+  }
+}
+
+# Main Tables
+tables: "Main Tables" {
+  profiles: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    updated_at: timestamptz {constraint: default(now())}
+    username: text {constraint: unique}
+    first_name: text
+    last_name: text
+    email: text {constraint: unique}
+    gender: text
+    bio: text {constraint: default('Hello!')}
+    date_of_birth: date
+    created_date: timestamptz {constraint: default(now())}
+    last_login: timestamptz {constraint: default(now())}
+    avatar_url: text
+    account_status: text
+    # Profile Stats
+    pin_count: int {constraint: default(0)}
+    followers_count: int {constraint: default(0)}
+    following_count: int {constraint: default(0)}
+  }
+
+  pins: {
+    shape: sql_table
+    pin_id: uuid {constraint: primary_key}
+    places_id: text {constraint: foreign_key -> places.places_id}
+    user_id: uuid {constraint: foreign_key -> profiles.id}
+    pin_photo_url: text
+    pin_name: text
+    notes: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz {constraint: default(now())}
+    visited: boolean {constraint: default(false)}
+    visited_at: timestamptz
+    copied_from_pin_id: uuid {constraint: foreign_key -> pins.pin_id}
+    deviation_count: int {constraint: default(0)}
+    review: text
+    rating: smallint
+    review_updated_at: timestamptz
+    private: boolean {constraint: default(false)}
+    bookmark_count: int {constraint: default(0)}
+  }
+
+  lists: {
+    shape: sql_table
+    list_id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    name: text
+    description: text
+    created_at: timestamptz
+    updated_at: timestamptz
+    private: boolean
+    list_photo_url: text
+    followers_count: int {constraint: default(0)}
+  }
+
+  places: {
+    shape: sql_table
+    places_id: text {constraint: primary_key}
+    name: text
+    formatted_address: text
+    lat: decimal(9,6)
+    lng: decimal(9,6)
+    types: "text[]"
+    maps_url: text
+    website: text
+    price_level: int
+    opening_hours: jsonb
+    phone_number: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz {constraint: default(now())}
+    places_photo_url: text
+  }
+
+  comments: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+    comment: text
+    created_at: timestamptz {constraint: default(now())}
+    updated_at: timestamptz
+  }
+
+  notifications: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    created_at: timestamptz
+    # User to be Notified
+    user_id: uuid {constraint: foreign_key}
+    notification_type: text
+    notification_text: text
+    read: boolean {constraint: default(false)}
+    read_at: timestamptz
+  }
+
+  search_history: {
+    shape: sql_table
+    id: uuid {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    search_term: text
+    created_at: timestamptz
+  }
+
+  pins.user_id -> profiles.id
+  pins.copied_from -> pins.pin_id
+  lists.user_id -> profiles.id
+  comments.user_id -> profiles.id
+  comments.pin_id -> pins.pin_id
+  notifications.user_id -> profiles.id
+  search_history.user_id -> profiles.id
+  pins.places_id -> places.places_id
+  # Triggers
+  pins.pin_id -> profiles.pin_count: {
+    class: trigger
+  }
+  lists.followers_count -> profiles.followers_count: {
+    class: trigger
+  }
+  pins.pin_id -> notifications.notification_type: "Deviation" {
+    class: trigger
+  }
+  comments.pin_id -> notifications.notification_type: "Comment" {
+    class: trigger
+  }
+}
+
+tables.profiles.avatar_url -> images.avatars.avatar_url
+tables.pins.pin_photo_url -> images.pin_photos.pin_photo_url
+tables.lists.list_photo_url -> images.list_cover_photos.list_photo_url
+tables.places.places_photo_url -> images.places_photos.places_photo_url
+
+# Join Tables
+joins: "Join Tables" {
+  list_pin: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    dt: timestamptz {constraint: default(now())}
+    list_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+  }
+
+  bookmarks: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    dt: timestamptz {constraint: default(now())}
+    # The user who Bookmarked the Pin
+    user_id: uuid {constraint: foreign_key}
+    pin_id: uuid {constraint: foreign_key}
+  }
+
+  follows: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    dt: timestamptz {constraint: default(now())}
+    # User who is following the list
+    user_id: uuid {constraint: foreign_key}
+    list_id: uuid {constraint: foreign_key}
+  }
+}
+
+joins.list_pin.list_id -> tables.lists.list_id
+joins.list_pin.pin_id -> tables.pins.pin_id
+joins.bookmarks.user_id -> tables.profiles.id
+joins.bookmarks.pin_id -> tables.pins.pin_id
+joins.follows.list_id -> tables.lists.list_id
+joins.follows.user_id -> tables.profiles.id
+# Triggers
+joins.bookmarks.pin_id -> tables.pins.bookmark_count: {
+  class: trigger
+}
+joins.follows.list_id -> tables.lists.followers_count: {
+  class: trigger
+}
+joins.follows.user_id -> tables.profiles.following_count: {
+  class: trigger
+}
+joins.follows.user_id -> tables.notifications.notification_type: "Followed" {
+  class: trigger
+}
+joins.bookmarks.user_id -> tables.notifications.notification_type: "Bookmarked" {
+  class: trigger
+}
+
+# Image Storage Buckets
+images: "Image Storage Buckets" {
+  pin_photos: {
+    shape: cylinder
+    pin_photo_url
+  }
+
+  avatars: {
+    shape: cylinder
+    avatar_url
+  }
+
+  list_cover_photos: {
+    shape: cylinder
+    list_photo_url
+  }
+
+  places_photos: {
+    shape: cylinder
+    places_photo_url
+  }
+}
+
+misc: "Misc Tables" {
+  # Table to store Contact Submissions
+  feedback: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    message: text,
+    dt: timestamptz {constraint: default(now())}
+  }
+}
+
+misc.feedback.user_id -> tables.profiles.id
+
+audit: "Audit & Analytics" {
+  # Table to store Audit Logs
+  audit_log: {
+    shape: sql_table
+    id: serial {constraint: primary_key}
+    user_id: uuid {constraint: foreign_key}
+    action: text
+    dt: timestamptz {constraint: default(now())}
+  }
+}
+```
+
+Add in these tables:
+
+```sql
+CREATE TABLE audit_logs (
+    id SERIAL PRIMARY KEY,
+    table_name TEXT NOT NULL,
+    column_name TEXT,
+    row_id TEXT NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    operation_type TEXT NOT NULL CHECK (operation_type IN ('INSERT', 'UPDATE', 'DELETE')),
+    changed_by uuid REFERENCES profiles(id),
+    changed_at timestamptz DEFAULT NOW()
+);
+
+-- Create a generic audit trigger function that can be applied to multiple tables. This function dynamically captures table name, operation type, and the changing user's ID.
+
+CREATE OR REPLACE FUNCTION log_generic_changes()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF TG_OP = 'UPDATE' THEN
+        INSERT INTO audit_logs (table_name, column_name, row_id, old_value, new_value, operation_type, changed_by, changed_at)
+        SELECT TG_TABLE_NAME, column_name, NEW.id::TEXT, OLD.value, NEW.value, TG_OP, NEW.user_id, NOW()
+        FROM jsonb_each_text(to_jsonb(OLD)) AS OLD(column_name, value)
+        JOIN jsonb_each_text(to_jsonb(NEW)) AS NEW(column_name, value) ON OLD.column_name = NEW.column_name
+        WHERE OLD.value IS DISTINCT FROM NEW.value;
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
+        VALUES (TG_TABLE_NAME, OLD.id::TEXT, TG_OP, OLD.user_id, NOW());
+    ELSIF TG_OP = 'INSERT' THEN
+        INSERT INTO audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
+        VALUES (TG_TABLE_NAME, NEW.id::TEXT, TG_OP, NEW.user_id, NOW());
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- apply triggers to your other tables (pins, lists, places, etc.) using the generic audit function. You'll need to create a trigger for each table.
+
+-- pins
+CREATE TRIGGER pins_audit
+AFTER INSERT OR UPDATE OR DELETE ON pins
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- lists
+CREATE TRIGGER lists_audit
+AFTER INSERT OR UPDATE OR DELETE ON lists
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- places
+CREATE TRIGGER places_audit
+AFTER INSERT OR UPDATE OR DELETE ON places
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- follows
+CREATE TRIGGER follows_audit
+AFTER INSERT OR UPDATE OR DELETE ON follows
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- bookmarks
+CREATE TRIGGER bookmarks_audit
+AFTER INSERT OR UPDATE OR DELETE ON bookmarks
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+-- Trigger to capture changes
+CREATE TRIGGER profile_changes_audit
+AFTER INSERT OR UPDATE OR DELETE ON profiles
+FOR EACH ROW EXECUTE FUNCTION log_generic_changes();
+```
+
+Store user interactions and behaviors in a more granular way.
+
+```sql
+CREATE TABLE user_interactions (
+    id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES profiles(id) NOT NULL,
+    pin_id uuid REFERENCES pins(pin_id),
+    list_id uuid REFERENCES lists(list_id),
+    interaction_type TEXT CHECK (interaction_type IN ('view', 'click', 'time_spent')),
     duration INTEGER, -- Time spent in seconds, applicable for 'time_spent' interaction_type
     interacted_at timestamptz DEFAULT NOW()
 );

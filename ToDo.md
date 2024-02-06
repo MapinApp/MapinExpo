@@ -31,6 +31,7 @@
 - [ ] Soft Deletes and Activity Logs
 - [ ] Update RLS for Private Pins and Lists
 - [ ] Audituing Trails for Data Science later down the line
+- [ ] Generative AI for List Pictures
 
 ## 📚 Resources
 

@@ -47,6 +47,8 @@ By understanding the data needed for each screen, you can identify the entities 
 
 - Design the database with scalability in mind, allowing for the addition of new features like collaborative lists or advanced search filters.
 
+###
+
 # Design Prompt
 
 To get ChatGPT to understand D2:
