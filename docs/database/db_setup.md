@@ -32,7 +32,8 @@ create table profiles (
   account_status TEXT,
   pin_count int DEFAULT 0 NOT NULL,
   followers_count int DEFAULT 0 NOT NULL,
-  following_count int DEFAULT 0 NOT NULL
+  following_count int DEFAULT 0 NOT NULL,
+  referral_key text NOT NULL default substring(md5(random()::text), 1, 6) UNIQUE;
   CONSTRAINT username_length CHECK (char_length(username) >= 3)
 );
 -- Set up Row Level Security (RLS)

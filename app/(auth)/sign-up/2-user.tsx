@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, FlatList, Pressable } from "react-native";
+import { FlatList, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 
 import { Block, Button, Input, Image, Text, Modal } from "@/components/ui";
@@ -7,29 +7,34 @@ import { useAuth } from "@/context/auth";
 import { useTheme } from "@/context/theme";
 import * as regex from "@/lib/regex";
 
-const isAndroid = Platform.OS === "android";
-
 export default function LogIn() {
   const router = useRouter();
-  const { registerData, setRegisterData, isLoading, isUsernameUnique } =
-    useAuth();
+  const {
+    registerData,
+    setRegisterData,
+    isLoading,
+    isUsernameUnique,
+    doesReferralExist,
+  } = useAuth();
   const { theme } = useTheme();
 
-  const { colors, sizes, assets, gradients } = theme;
+  const { sizes, assets, gradients } = theme;
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const [showModal, setModal] = useState(false);
+  const [referral, setReferral] = useState("");
   const [gender, setGender] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [showModal, setModal] = useState(false);
 
   const [isValid, setIsValid] = useState<ILoginValidation>({
     firstName: false,
     lastName: false,
     username: false,
     gender: false,
+    referral: false,
   });
 
   useEffect(() => {
@@ -38,9 +43,10 @@ export default function LogIn() {
       firstName: regex.name.test(firstName),
       lastName: regex.name.test(lastName),
       username: regex.username.test(username),
+      referral: regex.referral.test(referral),
       gender: gender !== "",
     }));
-  }, [firstName, lastName, username, gender, setIsValid]);
+  }, [firstName, lastName, username, referral, gender, setIsValid]);
 
   const handleRegister = async () => {
     if (
@@ -49,12 +55,21 @@ export default function LogIn() {
       !isLoading
     ) {
       setLoading(true);
-      const isUnique = await isUsernameUnique(username.toLocaleLowerCase());
+      const [isUnique, doesReferralExistBool] = await Promise.all([
+        isUsernameUnique(username.toLocaleLowerCase()),
+        doesReferralExist(referral),
+      ]);
       if (!isUnique) {
         alert("Username already exists...");
         setLoading(false);
         return;
       }
+      if (!doesReferralExistBool) {
+        alert("Referral code seems incorrect...");
+        setLoading(false);
+        return;
+      }
+
       setRegisterData({
         ...registerData,
         username,
@@ -62,7 +77,7 @@ export default function LogIn() {
         lastName,
         gender,
       });
-      // console.log(registerData);
+
       setLoading(false);
       router.push("/sign-up/3-dob");
     } else {
@@ -182,6 +197,18 @@ export default function LogIn() {
                     keyboardType="default"
                     placeholder="Enter username"
                   />
+                  <Input
+                    marginBottom={sizes.sm}
+                    label="Referral Code"
+                    success={Boolean(referral && isValid.referral)}
+                    danger={Boolean(referral && !isValid.referral)}
+                    onChangeText={(text) => setReferral(text)}
+                    value={referral}
+                    autoCapitalize={"none"}
+                    autoCorrect={false}
+                    keyboardType="default"
+                    placeholder="Enter referral code"
+                  />
                   <Pressable onPressIn={() => setModal(true)}>
                     <Input
                       marginBottom={sizes.xs}
@@ -252,4 +279,5 @@ interface ILoginValidation {
   lastName: boolean;
   username: boolean;
   gender: boolean;
+  referral: boolean;
 }

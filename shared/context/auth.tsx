@@ -23,6 +23,7 @@ const AuthContext = React.createContext<{
   // Utils
   isUsernameUnique: (username: string) => Promise<boolean>;
   isEmailUnique: (email: string) => Promise<boolean>;
+  doesReferralExist: (referral: string) => Promise<boolean>;
 }>({
   signIn: () => null,
   signUp: () => null,
@@ -43,6 +44,7 @@ const AuthContext = React.createContext<{
   // Utils
   isUsernameUnique: () => Promise.resolve(false),
   isEmailUnique: () => Promise.resolve(false),
+  doesReferralExist: () => Promise.resolve(false),
 });
 
 // Export the auth context
@@ -201,6 +203,31 @@ export function AuthProvider(props: React.PropsWithChildren) {
     }
   }
 
+  async function doesReferralExist(referral: string): Promise<boolean> {
+    // If referral exists, return true, else return false
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("referral_key")
+        .eq("referral_key", referral);
+      if (error) {
+        alert(error.message);
+        // throw new Error(error.message);
+      }
+      if (data) {
+        if (data.length > 0) {
+          return true;
+        }
+        return false;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Error checking if email exists:", error);
+      return false; // In case of error, conservatively return false to prevent false negatives
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -227,6 +254,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
         // Utils
         isUsernameUnique,
         isEmailUnique,
+        doesReferralExist,
       }}
     >
       {props.children}

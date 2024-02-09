@@ -35,3 +35,12 @@ export const password: RegExp =
  * $ matches the end of the string.
  */
 export const username: RegExp = /^[a-zA-Z0-9]([a-zA-Z0-9._]){4,28}[a-zA-Z0-9]$/;
+
+/*
+ * Referral code validation
+ *`^` asserts the start of the string.
+ *`[0-9a-f]` matches any hexadecimal character (both lowercase letters and numbers).
+ *`{6}` specifies exactly 6 occurrences of the preceding element (hexadecimal characters).
+ *`$` asserts the end of the string.
+ */
+export const referral: RegExp = /^[0-9a-z]{6}$/;
