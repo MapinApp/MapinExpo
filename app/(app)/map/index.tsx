@@ -29,12 +29,91 @@ export default function App() {
   }>({
     latitude: 51.510067,
     longitude: -0.133869,
-    latitudeDelta: 0.0022,
-    longitudeDelta: 0.0021,
+    latitudeDelta: 0.022,
+    longitudeDelta: 0.021,
   });
 
+  const generatePhotoDetails = (photo: {
+    html_attributions: string[];
+    photo_reference: string;
+    width: number;
+  }) => {
+    // Default values in case keys are missing or null
+    const defaultName = "Unknown";
+    const defaultHref = "#";
+    const defaultWidth = 400; // Default width if not provided
+
+    // Check if html_attributions is present and has at least one element
+    let name = defaultName;
+    let href = defaultHref;
+    let photoUrl = null;
+
+    // Check if photos, html_attributions are present and valid
+    if (photo.html_attributions && photo.html_attributions.length > 0) {
+      const hrefRegex = /href="([^"]*)"/;
+      const nameRegex = />([^<]+)</;
+
+      const hrefMatches = hrefRegex.exec(photo.html_attributions[0]);
+      const nameMatches = nameRegex.exec(photo.html_attributions[0]);
+
+      href = hrefMatches ? hrefMatches[1] : defaultHref;
+      name = nameMatches ? nameMatches[1] : defaultName;
+    }
+
+    return {
+      photo_attribution_href: href,
+      photo_attribution_name: name,
+      places_photo_url: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${photo.width}&photoreference=${photo.photo_reference}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`,
+    };
+  };
+
   const onResultClick = (details: any) => {
-    console.log(util.inspect(details, false, null, true /* enable colors */));
+    // console.log(util.inspect(details, false, null, true /* enable colors */));
+    // We want to check of this places_id exists in the database
+    // If yes, retrieve the data and display it
+    // If no, then we want to store the data in the database in supabase and then display it
+
+    let href = "#";
+    let name = "Unknown";
+    let photoUrl = null;
+
+    if (details.photos && details.photos.length > 0) {
+      const {
+        photo_attribution_href,
+        photo_attribution_name,
+        places_photo_url,
+      } = generatePhotoDetails(details.photos[0]);
+
+      href = photo_attribution_href;
+      name = photo_attribution_name;
+      photoUrl = places_photo_url;
+    }
+
+    let data = {
+      places_id: details.place_id || null,
+      name: details.name || null,
+      formatted_address: details.formatted_address || null,
+      lat: details.geometry.location.lat || null,
+      lng: details.geometry.location.lng || null,
+      types: details.types || [],
+      maps_url: details.url || null,
+      website: details.website || null,
+      price_level: details.price_level || null,
+      opening_hours: details.opening_hours.periods || null,
+      phone_number: details.formatted_phone_number || null,
+      editorial_summary: details.editorial_summary.overview || null,
+      business_status: details.business_status || null,
+      viewport_lat_delta:
+        details.geometry?.viewport?.northeast.lat -
+          details.geometry?.viewport?.southwest.lat || 0,
+      viewport_lng_delta:
+        details.geometry?.viewport?.northeast.lng -
+          details.geometry?.viewport?.southwest.lng || 0,
+      photo_attribution_href: href,
+      photo_attribution_name: name,
+      places_photo_url: photoUrl,
+    };
+    console.log(util.inspect(data, false, null, true /* enable colors */));
   };
 
   const mapRef = React.createRef<MapView>();
