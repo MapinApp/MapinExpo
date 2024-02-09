@@ -296,6 +296,15 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_places_timestamp BEFORE UPDATE ON places
 FOR EACH ROW EXECUTE FUNCTION update_places_timestamp();
+
+--- Enable RLS for tables
+ALTER TABLE places ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public places are viewable by everyone." on places FOR SELECT USING (true);
+CREATE POLICY "Users can't update a place." ON places FOR UPDATE USING (false);
+-- nobody can delete a place
+CREATE POLICY "Users cannot delete places" ON places FOR DELETE USING (false);
+-- Anyone can insert a place
+CREATE POLICY "Anyone can insert a place." ON places FOR INSERT WITH CHECK (true);
 ```
 
 We also want to store images as the default for each place. A user can update these manually later if they want:

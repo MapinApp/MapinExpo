@@ -1,6 +1,7 @@
 import React from "react";
 import { Stack } from "expo-router";
 // Components
+import { View } from "react-native";
 import { Block } from "@/components/ui";
 import { StatusBar } from "expo-status-bar";
 import { useTheme } from "@/context/theme";
@@ -16,14 +17,17 @@ export default function Layout() {
         backgroundColor={String(colors.background)}
       />
       {/* Add view so it doesn't flicker white between screens. */}
-      <Block background flex={1} justify={"center"}>
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
         <Stack
           screenOptions={{
             // hide header
             headerShown: false,
+            headerStyle: {
+              backgroundColor: String(colors.background),
+            },
           }}
         />
-      </Block>
+      </View>
     </>
   );
 }

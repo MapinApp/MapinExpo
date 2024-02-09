@@ -28,7 +28,6 @@ export default function Layout() {
               fontFamily: "MontserratRegular",
             },
             title: "Settings",
-
             headerStyle: {
               backgroundColor: String(colors.background),
             },
