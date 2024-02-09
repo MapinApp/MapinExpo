@@ -122,8 +122,7 @@ export function AuthProvider(props: React.PropsWithChildren) {
       } else {
         alert(error.message);
       }
-    }
-    if (!session)
+    } else if (!session)
       alert(
         "Mapin account created! Check your email for the verification link"
       );
@@ -184,8 +183,6 @@ export function AuthProvider(props: React.PropsWithChildren) {
         .from("profiles")
         .select("email")
         .eq("email", email);
-
-      console.log(data);
       if (error) {
         alert(error.message);
         // throw new Error(error.message);

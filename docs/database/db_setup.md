@@ -803,7 +803,7 @@ CREATE TABLE search_history (
 );
 ```
 
-## Data Science, Audit & Analytics
+## ⚠️ Data Science, Audit & Analytics
 
 We want to ensure that your database can track changes over time, store enough data for analysis, and support complex queries for recommendations. An audit logging system will track changes to critical data in your application. This can be accomplished by creating an audit table and triggers to log changes.
 
@@ -826,16 +826,16 @@ CREATE OR REPLACE FUNCTION log_generic_changes()
 RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'UPDATE' THEN
-        INSERT INTO audit_logs (table_name, column_name, row_id, old_value, new_value, operation_type, changed_by, changed_at)
+        INSERT INTO public.audit_logs (table_name, column_name, row_id, old_value, new_value, operation_type, changed_by, changed_at)
         SELECT TG_TABLE_NAME, column_name, NEW.id::TEXT, OLD.value, NEW.value, TG_OP, NEW.user_id, NOW()
         FROM jsonb_each_text(to_jsonb(OLD)) AS OLD(column_name, value)
         JOIN jsonb_each_text(to_jsonb(NEW)) AS NEW(column_name, value) ON OLD.column_name = NEW.column_name
         WHERE OLD.value IS DISTINCT FROM NEW.value;
     ELSIF TG_OP = 'DELETE' THEN
-        INSERT INTO audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
+        INSERT INTO public.audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
         VALUES (TG_TABLE_NAME, OLD.id::TEXT, TG_OP, OLD.user_id, NOW());
     ELSIF TG_OP = 'INSERT' THEN
-        INSERT INTO audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
+        INSERT INTO public.audit_logs (table_name, row_id, operation_type, changed_by, changed_at)
         VALUES (TG_TABLE_NAME, NEW.id::TEXT, TG_OP, NEW.user_id, NOW());
     END IF;
     RETURN NEW;

@@ -65,7 +65,6 @@ export default function LogIn() {
         ...registerData,
         dob: date,
       });
-      console.log(registerData);
       signUp();
       router.replace("/(auth)/");
     } else {

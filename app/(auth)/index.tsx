@@ -194,7 +194,7 @@ export default function LogIn() {
                   marginHorizontal={sizes.sm}
                   onPress={() => router.push("/sign-up/1-details")}
                 >
-                  <Text medium size={sizes.p} primary uppercase>
+                  <Text medium size={sizes.p} white uppercase>
                     Sign Up
                   </Text>
                 </Button>

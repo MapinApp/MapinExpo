@@ -34,4 +34,4 @@ export const password: RegExp =
  * [a-zA-Z0-9] matches any letter or digit, and it must be the last character of the username.
  * $ matches the end of the string.
  */
-export const username: RegExp = /^[a-zA-Z0-9]([a-zA-Z0-9._]){1,28}[a-zA-Z0-9]$/;
+export const username: RegExp = /^[a-zA-Z0-9]([a-zA-Z0-9._]){4,28}[a-zA-Z0-9]$/;
