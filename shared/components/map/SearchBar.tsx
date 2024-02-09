@@ -1,14 +1,22 @@
-import React, { useState, useCallback } from "react";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import React, { useState, useCallback, useRef } from "react";
+import {
+  GooglePlacesAutocomplete,
+  GooglePlacesAutocompleteRef,
+} from "react-native-google-places-autocomplete";
 import { useTheme } from "@/context/theme";
+import Constants from "expo-constants";
+import { Ionicons } from "@expo/vector-icons";
+// Components
+import { Button } from "@/components/ui";
 
-const searchBar = ({
+const SearchBar = ({
   deviceLocation,
   funOnPress,
 }: {
   deviceLocation: { latitude: number; longitude: number };
   funOnPress: (details: any) => void;
 }) => {
+  const ref = useRef<GooglePlacesAutocompleteRef>();
   const { colors, sizes } = useTheme().theme;
   const [value, setValue] = useState("");
   const [isFocused, setFocused] = useState(false);
@@ -23,22 +31,25 @@ const searchBar = ({
   return (
     <>
       <GooglePlacesAutocomplete
+        ref={ref as React.RefObject<GooglePlacesAutocompleteRef>}
         placeholder="Search here"
         disableScroll={false}
         fetchDetails={true}
         GooglePlacesSearchQuery={{
           rankby: "distance",
         }}
-        onPress={(details) => {
+        onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
           //console.log(data, details);
           funOnPress(details);
           setValue("");
+          ref.current?.clear();
+          ref.current?.blur();
         }}
         query={{
-          key: "AIzaSyDOSkytRpgdQE4rfh0p0epWTLPIsC79Ed8",
+          key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY,
           language: "en",
-          // components: "country:uk",
+          components: "country:uk",
           location: `${deviceLocation.latitude}, ${deviceLocation.longitude}`,
         }}
         textInputProps={{
@@ -58,29 +69,45 @@ const searchBar = ({
           },
           value: value,
         }}
-        // renderLeftButton={()  => <Text>Custom text after the input</Text>}
-        // renderRightButton={() => <Text>Custom text after the input</Text>}
-
+        renderRightButton={() => (
+          <Button
+            onPress={() => {
+              ref.current?.clear();
+              ref.current?.blur();
+            }}
+            flex={0}
+            align="center"
+            justify="center"
+            height={"50%"}
+            paddingLeft={12}
+          >
+            <Ionicons
+              name="close-circle-outline"
+              size={20}
+              color={colors.text}
+            />
+          </Button>
+        )}
         enablePoweredByContainer={true}
-        // listEmptyComponent
-        // onFail
         styles={{
           container: {
             flex: 0,
             position: "absolute",
             width: "100%",
             zIndex: 1,
+            marginTop: Constants.statusBarHeight,
             // paddingHorizontal: 7, marginTop: 7
           },
           textInputContainer: {
             flexDirection: "row",
             color: colors.text,
             paddingHorizontal: 15,
+            paddingTop: 10,
             backgroundColor: colors.card,
           },
           textInput: {
             color: colors.text,
-            fontFamily: "JosefinSansLight",
+            fontFamily: "MontserratRegular",
             backgroundColor: colors.card,
             height: 44,
             paddingVertical: 5,
@@ -93,28 +120,27 @@ const searchBar = ({
           poweredContainer: {
             justifyContent: "flex-end",
             alignItems: "center",
-            borderBottomRightRadius: 15,
-            borderBottomLeftRadius: 15,
+            borderBottomRightRadius: 10,
+            borderBottomLeftRadius: 10,
             borderTopWidth: 0,
             backgroundColor: colors.card,
             borderColor: colors.text,
           },
           powered: {},
           listView: {
-            marginHorizontal: 10,
-            marginTop: 10,
+            marginTop: 0,
           },
           row: {
             backgroundColor: colors.card,
             flexDirection: "row",
           },
           separator: {
-            height: 1,
-            backgroundColor: colors.text,
+            height: 0.5,
+            backgroundColor: colors.border,
           },
           description: {
             color: colors.text,
-            fontFamily: "JosefinSansLight",
+            fontFamily: "MontserratRegular",
             fontSize: 15,
             marginBottom: -5,
           },
@@ -129,4 +155,4 @@ const searchBar = ({
   );
 };
 
-export default searchBar;
+export default SearchBar;

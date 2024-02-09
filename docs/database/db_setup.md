@@ -30,6 +30,9 @@ create table profiles (
   last_login TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC'),
   avatar_url TEXT,
   account_status TEXT,
+  pin_count int DEFAULT 0 NOT NULL,
+  followers_count int DEFAULT 0 NOT NULL,
+  following_count int DEFAULT 0 NOT NULL
   CONSTRAINT username_length CHECK (char_length(username) >= 3)
 );
 -- Set up Row Level Security (RLS)
@@ -186,9 +189,9 @@ create trigger before_delete_user
 -- Create the table
  CREATE TABLE feedback (
  id SERIAL PRIMARY KEY,
- user_id uuid REFERENCES public.public.profiles(id),
- message TEXT,
- dt TIMESTAMP DEFAULT NOW()
+ user_id uuid REFERENCES public.profiles(id) NOT NULL,
+ message TEXT NOT NULL,
+ dt TIMESTAMP DEFAULT NOW() NOT NULL
  );
 
 -- enable RLS
@@ -220,24 +223,62 @@ npx expo install @supabase/supabase-js @react-native-async-storage/async-storage
 
 ## Google Places
 
-Table for places. Here we will store the Google Data. any pin will be linked to a place, and shared information about that place is stored only once in the places table:
+Table for places. Here we will store the Google Data. any pin will be linked to a place, and shared information about that place is stored only once in the places table.
+
+Mapping from the [PlaceResult Interface](https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult):
+
+| Column Name            | SQL Type                                                         | API Places Result Key                           | API Optional | API Types                                                                         | description                                                                |
+| ---------------------- | ---------------------------------------------------------------- | ----------------------------------------------- | ------------ | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| places_id              | TEXT NOT NULL                                                    | `place_id`                                      | false        | string                                                                            |                                                                            |
+| name                   | TEXT NOT NULL                                                    | `name`                                          | true         | string                                                                            |                                                                            |
+| formatted_address      | TEXT                                                             | `formatted_address`                             | true         | string                                                                            |                                                                            |
+| lat                    | DECIMAL(9,6) NOT NULL                                            | `geometry.location.lat`                         | true         | number                                                                            |                                                                            |
+| lng                    | DECIMAL(9,6) NOT NULL                                            | `geometry.location.lng`                         | true         | number                                                                            |                                                                            |
+| types                  | TEXT[]                                                           | `types`                                         | true         | list[string]                                                                      |                                                                            |
+| maps_url               | TEXT                                                             | `url`                                           | true         | string                                                                            |                                                                            |
+| website                | TEXT                                                             | `website`                                       | true         | string                                                                            |                                                                            |
+| price_level            | int (0-4)                                                        | `price_level`                                   | true         | INT 0 to 4. 0: Free, 1: Inexpensive, 2: Moderate, 3: Expensive, 4: Very Expensive | The price level of the Place, on a scale of 0-4                            |
+| opening_hours          | JSONB                                                            | `opening_hours.periods`                         | true         | list of objects, chronological starting from Sunday. See object below             |                                                                            |
+| phone_number           | TEXT                                                             | `formatted_phone_number`                        | true         | string                                                                            |                                                                            |
+| editorial_summary      | TEXT                                                             | `editorial_summary.overview`                    | true         | string                                                                            |                                                                            |
+| business_status        | TEXT [`CLOSED_PERMANENTLY`, `CLOSED_TEMPORARILY`, `OPERATIONAL`] | `business_status`                               | true         | `CLOSED_PERMANENTLY`, `CLOSED_TEMPORARILY`, `OPERATIONAL`                         | A flag indicating the operational status of the Place, if it is a business |
+| viewport_lat_delta     | DECIMAL(9,6) NOT NULL                                            | `geometry.viewport.[northeast - southwest].lat` | true         |                                                                                   |                                                                            |
+| viewport_lng_delta     | DECIMAL(9,6) NOT NULL                                            | `geometry.viewport.[northeast - southwest].lng` | true         |                                                                                   |                                                                            |
+| photo_attribution_href | TEXT                                                             | `photos[0].html_attributions`                   | true         |                                                                                   |                                                                            |
+| photo_attribution_name | TEXT                                                             | `photos[0].html_attributions`                   | true         |                                                                                   |                                                                            |
+| places_photo_url       | TEXT                                                             | `photos[0].photo_reference`                     | true         |                                                                                   |                                                                            |
+
+`opening_hours.periods`:
+
+```json
+{
+  "close": { "day": 0, "time": "2100" },
+  "open": { "day": 0, "time": "1200" }
+}
+```
 
 ```sql
 CREATE TABLE places (
-    places_id text PRIMARY KEY,
-    name text,
-    formatted_address text,
-    lat decimal(9,6), -- Latitude, decimal degrees format
-    lng decimal(9,6), -- Longitude, decimal degrees format
-    types text[] NOT NULL,
-    maps_url text,
-    website text,
-    price_level int,
+    places_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    formatted_address TEXT,
+    lat decimal(9,6) NOT NULL,
+    lng decimal(9,6) NOT NULL,
+    types TEXT[],
+    maps_url TEXT,
+    website TEXT,
+    price_level int CHECK (price_level >= 0 AND price_level <= 4),
     opening_hours jsonb,
-    phone_number text,
-    created_at timestamptz DEFAULT NOW(),
-    updated_at timestamptz DEFAULT NOW(),
-    places_photo_url text
+    phone_number TEXT,
+    editorial_summary TEXT,
+    business_status TEXT CHECK (business_status IN ('CLOSED_PERMANENTLY', 'CLOSED_TEMPORARILY', 'OPERATIONAL')),
+    viewport_lat_delta decimal(9,6) NOT NULL,
+    viewport_lng_delta decimal(9,6) NOT NULL,
+    photo_attribution_href TEXT,
+    photo_attribution_name TEXT,
+    places_photo_url TEXT,
+    created_at timestamptz DEFAULT NOW() NOT NULL,
+    updated_at timestamptz DEFAULT NOW() NOT NULL
 );
 
 -- Index for quickly querying places by type
@@ -256,7 +297,7 @@ CREATE TRIGGER update_places_timestamp BEFORE UPDATE ON places
 FOR EACH ROW EXECUTE FUNCTION update_places_timestamp();
 ```
 
-We also want to store images as the default for each pin. A user can update these manually if they want:
+We also want to store images as the default for each place. A user can update these manually later if they want:
 
 ```sql
 -- Set up Storage Bucket for place images
@@ -268,12 +309,57 @@ CREATE POLICY "Anyone can upload a place image." on storage.objects FOR INSERT W
 CREATE POLICY "Users cannot update place images" on storage.objects FOR UPDATE USING (false);
 ```
 
-Since places could be frequently searched by name, types, or geolocation, indexes on these columns would improve search performance.
+## Lists
 
 ```sql
-CREATE INDEX idx_places_name ON places(name);
-CREATE INDEX idx_places_types ON places USING gin(types);
-CREATE INDEX idx_places_lat_lng ON places USING GIST (ll_to_earth(lat, lng));
+-- Create table for lists
+CREATE TABLE lists (
+    list_id uuid PRIMARY KEY,
+    user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    created_at timestamptz DEFAULT NOW() NOT NULL,
+    updated_at timestamptz DEFAULT NOW() NOT NULL,
+    is_private boolean DEFAULT FALSE NOT NULL,
+    list_photo_url TEXT,
+    followers_count int DEFAULT 0 NOT NULL -- Number of users following this list
+);
+
+-- Set up Row Level Security (RLS)
+ALTER TABLE lists ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public lists are viewable by everyone." on lists FOR SELECT USING (true);
+CREATE POLICY "Users can only update their own lists." ON lists FOR UPDATE USING (auth.uid() = user_id);
+
+-- Set up Storage Bucket for list images
+INSERT INTO storage.buckets (id, name) VALUES ('lists', 'lists');
+
+-- Set up access controls for list storage
+CREATE POLICY "List images are publicly accessible." on storage.objects FOR SELECT USING (bucket_id = 'lists');
+CREATE POLICY "Anyone can upload a list image." on storage.objects FOR INSERT WITH CHECK (bucket_id = 'lists');
+CREATE POLICY "Anyone can update their own list image." on storage.objects FOR UPDATE USING (auth.uid() = owner) WITH CHECK (bucket_id = 'lists');
+```
+
+Add Follow count to profiles:
+
+```sql
+-- Trigger to automatically update 'followers_count' column when lists are updated
+CREATE OR REPLACE FUNCTION update_followers_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE profiles
+    SET followers_count = (SELECT COUNT(*) FROM lists WHERE user_id = NEW.user_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Apply this function to tables with 'followers_count' column
+CREATE TRIGGER update_followers_count_trigger AFTER INSERT OR DELETE ON lists FOR EACH ROW EXECUTE FUNCTION update_followers_count();
+```
+
+An index on user_id would help in quickly retrieving all lists created by a specific user.
+
+```sql
+CREATE INDEX idx_lists_user_id ON lists(user_id);
 ```
 
 ## Pins
@@ -286,20 +372,21 @@ CREATE TABLE pins (
     pin_id uuid PRIMARY KEY,
     places_id TEXT REFERENCES public.places(places_id) ON DELETE SET NULL,
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
-    list_id uuid REFERENCES public.lists(list_id) ON DELETE SET NULL,
+    list_id uuid REFERENCES public.lists(list_id) ON DELETE CASCADE NOT NULL,
     pin_photo_url TEXT,
     pin_name TEXT NOT NULL,
     notes text,
-    created_at timestamptz DEFAULT NOW(),
-    updated_at timestamptz DEFAULT NOW(),
-    visited boolean DEFAULT FALSE,
-    visited_at timestamptz,
+    created_at timestamptz DEFAULT NOW() NOT NULL,
+    updated_at timestamptz DEFAULT NOW() NOT NULL,
+    visited boolean DEFAULT FALSE NOT NULL,
+    visited_at timestamptz NOT NULL,
     copied_from_pin_id uuid REFERENCES public.pins(pin_id) ON DELETE SET NULL,
-    deviation_count int DEFAULT 0,
+    deviation_count int DEFAULT 0 NOT NULL,
     review text,
-    rating smallint,
+    rating smallint CHECK (rating >= 0 AND rating <= 5),
     review_updated_at timestamptz,
-    private boolean DEFAULT FALSE
+    bookmark_count int DEFAULT 0 NOT NULL, -- Number of times this pin has been bookmarked
+    is_private boolean DEFAULT FALSE  NOT NULL
 );
 
 -- Set up Row Level Security (RLS)
@@ -314,9 +401,6 @@ INSERT INTO storage.buckets (id, name) VALUES ('pins', 'pins');
 CREATE POLICY "Pin images are publicly accessible." on storage.objects FOR SELECT USING (bucket_id = 'pins');
 CREATE POLICY "Anyone can upload a pin image." on storage.objects FOR INSERT WITH CHECK (bucket_id = 'pins');
 CREATE POLICY "Anyone can update their own pin image." on storage.objects FOR UPDATE USING (auth.uid() = owner) WITH CHECK (bucket_id = 'pins');
-
--- Adding Pin Count to Profiles
-ALTER TABLE public.profiles ADD COLUMN pin_count int DEFAULT 0;
 
 -- Trigger to automatically update 'pin_count' column
 CREATE OR REPLACE FUNCTION update_pin_count()
@@ -338,62 +422,6 @@ Given the operations, indexes on `user_id`, `places_id`, and `copied_from_pin_id
 CREATE INDEX idx_pins_user_id ON pins(user_id);
 CREATE INDEX idx_pins_places_id ON pins(places_id);
 CREATE INDEX idx_pins_copied_from_pin_id ON pins(copied_from_pin_id);
-```
-
-## Lists
-
-```sql
--- Create table for lists
-CREATE TABLE lists (
-    list_id uuid PRIMARY KEY,
-    user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
-    name TEXT NOT NULL,
-    description TEXT,
-    created_at timestamptz DEFAULT NOW(),
-    updated_at timestamptz DEFAULT NOW(),
-    private boolean DEFAULT FALSE,
-    list_photo_url TEXT,
-    followers_count int DEFAULT 0
-);
-
--- Set up Row Level Security (RLS)
-ALTER TABLE lists ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public lists are viewable by everyone." on lists FOR SELECT USING (true);
-CREATE POLICY "Users can only update their own lists." ON lists FOR UPDATE USING (auth.uid() = user_id);
-
--- Set up Storage Bucket for list images
-INSERT INTO storage.buckets (id, name) VALUES ('lists', 'lists');
-
--- Set up access controls for list storage
-CREATE POLICY "List images are publicly accessible." on storage.objects FOR SELECT USING (bucket_id = 'lists');
-CREATE POLICY "Anyone can upload a list image." on storage.objects FOR INSERT WITH CHECK (bucket_id = 'lists');
-CREATE POLICY "Anyone can update their own list image." on storage.objects FOR UPDATE USING (auth.uid() = owner) WITH CHECK (bucket_id = 'lists');
-```
-
-Add Follow count to profiles:
-
-```sql
--- Adding Pin Count to Profiles
-ALTER TABLE public.profiles ADD COLUMN followers_count int DEFAULT 0;
-
--- Trigger to automatically update 'followers_count' column when lists are updated
-CREATE OR REPLACE FUNCTION update_followers_count()
-RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE profiles
-    SET followers_count = (SELECT COUNT(*) FROM lists WHERE user_id = NEW.user_id);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Apply this function to tables with 'followers_count' column
-CREATE TRIGGER update_followers_count_trigger AFTER INSERT OR DELETE ON lists FOR EACH ROW EXECUTE FUNCTION update_followers_count();
-```
-
-An index on user_id would help in quickly retrieving all lists created by a specific user.
-
-```sql
-CREATE INDEX idx_lists_user_id ON lists(user_id);
 ```
 
 ## Pins and Lists Images Handling
@@ -507,7 +535,7 @@ create trigger before_list_img_changes
 -- Create join table for list_pin
 CREATE TABLE list_pin (
     id SERIAL PRIMARY KEY,
-    dt timestamptz DEFAULT NOW(),
+    dt timestamptz DEFAULT NOW() NOT NULL,
     list_id uuid REFERENCES public.lists(list_id) ON DELETE CASCADE NOT NULL,
     pin_id uuid REFERENCES public.pins(pin_id) ON DELETE CASCADE NOT NULL
 );
@@ -515,7 +543,7 @@ CREATE TABLE list_pin (
 -- Create table for bookmarks
 CREATE TABLE bookmarks (
     id SERIAL PRIMARY KEY,
-    dt timestamptz DEFAULT NOW(),
+    dt timestamptz DEFAULT NOW() NOT NULL,
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
     pin_id uuid REFERENCES public.pins(pin_id) ON DELETE CASCADE NOT NULL
 );
@@ -523,7 +551,7 @@ CREATE TABLE bookmarks (
 -- Create table for follows
 CREATE TABLE follows (
     id SERIAL PRIMARY KEY,
-    dt timestamptz DEFAULT NOW(),
+    dt timestamptz DEFAULT NOW() NOT NULL,
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
     list_id uuid REFERENCES public.lists(list_id) ON DELETE CASCADE NOT NULL
 );
@@ -559,9 +587,6 @@ CREATE POLICY delete_follows_policy ON follows FOR DELETE USING (auth.uid() = us
 Following and Followers Count:
 
 ```sql
--- Adding Following Count to Profiles
-ALTER TABLE public.profiles ADD COLUMN following_count int DEFAULT 0;
-
 -- Trigger to automatically update 'following_count'
 CREATE OR REPLACE FUNCTION update_following_counts()
 RETURNS TRIGGER AS $$
@@ -594,9 +619,6 @@ CREATE TRIGGER update_followers_counts_lists_trigger AFTER INSERT OR DELETE ON f
 We will also want to update the bookmark number on pins:
 
 ```sql
--- Adding Bookmark Count to Pins
-ALTER TABLE public.pins ADD COLUMN bookmark_count int DEFAULT 0;
-
 -- Trigger to automatically update 'bookmark_count'
 CREATE OR REPLACE FUNCTION update_bookmark_counts()
 RETURNS TRIGGER AS $$
@@ -629,8 +651,8 @@ CREATE TABLE comments (
     user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
     pin_id uuid REFERENCES public.pins(pin_id) ON DELETE CASCADE NOT NULL,
     comment TEXT NOT NULL,
-    created_at timestamptz DEFAULT NOW(),
-    updated_at timestamptz DEFAULT NOW()
+    created_at timestamptz DEFAULT NOW() NOT NULL,
+    updated_at timestamptz DEFAULT NOW() NOT NULL
 );
 
 -- Enable RLS for tables
@@ -667,12 +689,12 @@ CREATE INDEX idx_comments_user_id ON comments(user_id);
 -- Create table for notifications
 CREATE TABLE notifications (
     id SERIAL PRIMARY KEY,
-    created_at timestamptz DEFAULT NOW(),
+    created_at timestamptz DEFAULT NOW() NOT NULL,
     -- User to be Notified
-    user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
-    notification_type text,
-    notification_text text,
-    read boolean DEFAULT FALSE,
+    user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    notification_type text NOT NULL,
+    notification_text text NOT NULL,
+    read boolean DEFAULT FALSE NOT NULL,
     read_at timestamptz DEFAULT NULL
 );
 
@@ -775,9 +797,9 @@ For search History:
 ```sql
 CREATE TABLE search_history (
     id SERIAL PRIMARY KEY,
-    user_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
-    search_term text,
-    created_at timestamptz DEFAULT NOW()
+    user_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+    search_term text NOT NULL,
+    created_at timestamptz DEFAULT NOW() NOT NULL
 );
 ```
 
@@ -789,12 +811,12 @@ We want to ensure that your database can track changes over time, store enough d
 CREATE TABLE audit_logs (
     id SERIAL PRIMARY KEY,
     table_name TEXT NOT NULL,
-    column_name TEXT,
-    row_id TEXT NOT NULL,
-    old_value TEXT,
-    new_value TEXT,
+    column_name TEXT NOT NULL,
+    row_id TEXT NOT NULL ,
+    old_value TEXT NOT NULL,
+    new_value TEXT NOT NULL,
     operation_type TEXT NOT NULL CHECK (operation_type IN ('INSERT', 'UPDATE', 'DELETE')),
-    changed_by uuid REFERENCES profiles(id),
+    changed_by uuid REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
     changed_at timestamptz DEFAULT NOW()
 );
 
@@ -857,12 +879,12 @@ Store user interactions and behaviors in a more granular way.
 ```sql
 CREATE TABLE user_interactions (
     id SERIAL PRIMARY KEY,
-    user_id uuid REFERENCES profiles(id) NOT NULL,
-    pin_id uuid REFERENCES pins(pin_id),
-    list_id uuid REFERENCES lists(list_id),
-    interaction_type TEXT CHECK (interaction_type IN ('VIEW', 'LIKE', 'COMMENT', 'BOOKMARK', 'FOLLOW')),
-    duration INTEGER, -- Time spent in seconds, applicable for 'time_spent' interaction_type
-    interacted_at timestamptz DEFAULT NOW()
+    user_id uuid REFERENCES public.profiles(id) NOT NULL,
+    pin_id uuid REFERENCES public.pins(pin_id) NOT NULL,
+    list_id uuid REFERENCES public.lists(list_id) NOT NULL,
+    interaction_type TEXT CHECK (interaction_type IN ('VIEW', 'LIKE', 'COMMENT', 'BOOKMARK', 'FOLLOW')) NOT NULL,
+    duration INTEGER DEFAULT NULL, -- Time spent in seconds, applicable for 'time_spent' interaction_type
+    interacted_at timestamptz DEFAULT NOW() NOT NULL
 );
 ```
 
@@ -871,11 +893,11 @@ To track how content spreads and its virality, tracking each share, including th
 ```sql
 CREATE TABLE content_shares (
     id SERIAL PRIMARY KEY,
-    pin_id uuid REFERENCES pins(pin_id),
-    list_id uuid REFERENCES lists(list_id),
-    shared_by uuid REFERENCES profiles(id),
-    shared_to_platform TEXT, -- e.g., 'Facebook', 'Twitter', 'WhatsApp'
-    shared_at timestamptz DEFAULT NOW(),
+    pin_id uuid REFERENCES public.pins(pin_id),
+    list_id uuid REFERENCES public.lists(list_id),
+    shared_by uuid REFERENCES public.profiles(id),
+    shared_to_platform TEXT , -- e.g., 'Facebook', 'Twitter', 'WhatsApp'
+    shared_at timestamptz DEFAULT NOW() NOT NULL,
     resulted_in_signup BOOLEAN DEFAULT FALSE,
     resulted_in_interaction BOOLEAN DEFAULT FALSE
 );
@@ -887,13 +909,13 @@ CREATE TABLE content_shares (
 CREATE TABLE user_preferences (
     id SERIAL PRIMARY KEY,
     user_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-    dark_mode BOOLEAN DEFAULT FALSE,
-    notification_enabled BOOLEAN DEFAULT TRUE,
+    dark_mode BOOLEAN DEFAULT FALSE NOT NULL,
+    notification_enabled BOOLEAN DEFAULT TRUE NOT NULL,
     notification_frequency TEXT DEFAULT 'daily', -- Options might include 'never', 'daily', 'weekly'
-    location_sharing_enabled BOOLEAN DEFAULT FALSE,
-    language TEXT DEFAULT 'English',
-    created_at timestamptz DEFAULT NOW(),
-    updated_at timestamptz DEFAULT NOW()
+    location_sharing_enabled BOOLEAN DEFAULT FALSE NOT NULL,
+    language TEXT DEFAULT 'English' NOT NULL,
+    created_at timestamptz DEFAULT NOW() NOT NULL,
+    updated_at timestamptz DEFAULT NOW() NOT NULL
 );
 
 -- Enable Row Level Security (RLS) for user preferences

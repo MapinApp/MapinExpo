@@ -47,7 +47,7 @@ tables: "Main Tables" {
     review: text
     rating: smallint
     review_updated_at: timestamptz
-    private: boolean {constraint: default(false)}
+    is_private: boolean {constraint: default(false)}
     bookmark_count: int {constraint: default(0)}
   }
 
@@ -59,7 +59,7 @@ tables: "Main Tables" {
     description: text
     created_at: timestamptz
     updated_at: timestamptz
-    private: boolean
+    is_private: boolean
     list_photo_url: text
     followers_count: int {constraint: default(0)}
   }

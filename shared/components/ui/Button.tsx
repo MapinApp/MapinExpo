@@ -149,9 +149,8 @@ const Button = ({
       ...(height && { height }),
       ...(width && { width }),
       ...(typeof outlined === "boolean" && {
-        borderWidth: sizes.buttonBorder,
-        borderColor: buttonColor,
-        backgroundColor: "transparent",
+        borderWidth: 0.5,
+        borderColor: colors.border,
       }),
       ...(typeof outlined === "string" && {
         borderWidth: sizes.buttonBorder,

@@ -51,7 +51,7 @@ export default function Account() {
         throw error;
       }
 
-      if (data) {
+      if (data?.username && data?.bio) {
         setUsername(data.username);
         setBio(data.bio);
       }

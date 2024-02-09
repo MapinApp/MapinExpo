@@ -15,6 +15,7 @@ export const dummyLists: Lists = {
       {
         pin_id: "8",
         places_id: "8",
+        list_id: "list1",
         pin_name: "Kiln",
         name: "Kiln",
         lat: 51.51140069999999,
@@ -45,6 +46,7 @@ export const dummyLists: Lists = {
       {
         pin_id: "11",
         places_id: "11",
+        list_id: "list1",
         pin_name: "Hoppers King's Cross",
         name: "Hoppers King's Cross",
         lat: 51.53435,
@@ -88,6 +90,7 @@ export const dummyLists: Lists = {
       {
         pin_id: "21",
         places_id: "21",
+        list_id: "list2",
         pin_name: "Patara Fine Thai Cuisine Soho",
         name: "Patara Fine Thai Cuisine Soho",
         lat: 51.5141736,
@@ -118,6 +121,7 @@ export const dummyLists: Lists = {
       {
         pin_id: "25",
         places_id: "25",
+        list_id: "list2",
         pin_name: "Busaba",
         name: "Busaba",
         lat: 51.51378200000001,
@@ -148,6 +152,7 @@ export const dummyLists: Lists = {
       {
         pin_id: "2",
         places_id: "2",
+        list_id: "list2",
         pin_name: "The Ivy Asia St Paul's",
         name: "The Ivy Asia St Paul's",
         lat: 51.5137197,

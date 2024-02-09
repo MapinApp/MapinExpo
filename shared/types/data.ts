@@ -1,6 +1,7 @@
 export interface PinPlace {
   pin_id: string;
   places_id: string;
+  list_id: string;
   user_id: string;
   pin_name: string;
   name: string;

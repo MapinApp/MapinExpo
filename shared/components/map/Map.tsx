@@ -3,30 +3,26 @@ import { Dimensions, StyleSheet, Animated, Platform } from "react-native";
 import MapView from "react-native-maps";
 import * as Location from "expo-location";
 // Custom components
-import lightMapStyle from "@/assets/MapStyles/lightMapStyle.json";
-import darkMapStyle from "@/assets/MapStyles/darkMapStyle.json";
-import Data from "@/constants/mock/list.json";
 import { useTheme } from "@/context/theme";
 import { Block } from "@/components/ui";
+// Map Components
 import SearchBar from "./SearchBar";
-import { ChipScrollView, CardScrollView } from "./";
+import ChipScrollView from "./ChipScrollView";
+import CardScrollView from "./CardScrollView";
+import lightMapStyle from "@/assets/map/lightMapStyle.json";
+import darkMapStyle from "@/assets/map/darkMapStyle.json";
+// Data
+import Data from "@/constants/mock/list.json";
 
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-const Map = () => {
-  const { theme, isDark, handleIsDark } = useTheme();
+const MapComponent = () => {
+  const { isDark } = useTheme();
 
   const [deviceLocation, setDeviceLocation] = useState({
-    latitude: 51.510067,
-    longitude: -0.133869,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-
-  const [pin, setPin] = useState({
     latitude: 51.510067,
     longitude: -0.133869,
     latitudeDelta: 0.0922,
@@ -247,4 +243,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Map;
+export default MapComponent;

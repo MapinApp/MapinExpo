@@ -42,6 +42,7 @@
 - [ ] Deep linking for References
 - [ ] Use [API Routes for Google Places](https://docs.expo.dev/router/reference/api-routes/)
   - [OpenAI Example](https://github.com/expo/examples/tree/master/with-openai)
+- [ ] Account Deletion Option according to [Google Play Policy](https://support.google.com/googleplay/android-developer/answer/13327111)
 
 ## 📚 Resources
 
@@ -61,6 +62,7 @@
 
 - [Google Places API](https://developers.google.com/maps/documentation/places/web-service/place-data-fields)
 - [Types](https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult)
+- [PlaceResults](https://developers.google.com/maps/documentation/javascript/reference/places-service#PlaceResult)
 
 ## 📝 Docs
 

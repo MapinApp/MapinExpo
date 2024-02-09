@@ -6,6 +6,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
 import type { Lists, List, PinPlace } from "@/types/data";
 import { dummyLists } from "./mock/lists";
+import { Asset } from "expo-asset";
+import * as FileSystem from "expo-file-system";
 
 interface DataContextType {
   isDBLoadingComplete: boolean;
@@ -30,140 +32,74 @@ const DataContext = createContext<DataContextType>({
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
   const [lists, setLists] = useState<Lists>({});
-  // Open the SQLite database
-  const db = SQLite.openDatabase("mapin.db");
+  const [db, setDb] = useState<SQLite.SQLiteDatabase | null>(null);
 
-  // Database initialization
-  const initializeDatabase = async () => {
-    // Perform database setup i.e., creating tables
-    db.transaction(
-      (tx) => {
-        tx.executeSql(`
-        CREATE TABLE IF NOT EXISTS pin_place (
-          pin_id TEXT PRIMARY KEY NOT NULL,
-          places_id TEXT,
-          list_id TEXT REFERENCES lists(list_id) ON DELETE SET NULL,
-          user_id TEXT NOT NULL,
-          pin_name TEXT NOT NULL,
-          name TEXT NOT NULL,
-          notes TEXT,
-          places_photo_url TEXT,
-          pin_photo_url TEXT,
-          bookmark_count INTEGER NOT NULL,
-          lat REAL NOT NULL,
-          lng REAL NOT NULL,
-          formatted_address TEXT NOT NULL,
-          maps_url TEXT NOT NULL,
-          created_at TEXT NOT NULL,
-          visited BOOLEAN NOT NULL,
-          visited_at TEXT,
-          rating REAL,
-          review TEXT,
-          review_updated_at TEXT,
-          copied_from_pin_id TEXT,
-          deviation_count INTEGER NOT NULL,
-          private BOOLEAN NOT NULL,
-          updated_at TEXT,
-          opening_hours TEXT, -- Stored as JSON string
-          phone_number TEXT,
-          price_level INTEGER,
-          types TEXT, -- Stored as JSON string (e.g., '["type1", "type2"]')
-          website TEXT
-        );
-      `);
-        // Create the 'lists' table
-        tx.executeSql(`
-        CREATE TABLE IF NOT EXISTS lists (
-          list_id TEXT PRIMARY KEY NOT NULL,
-          user_id TEXT NOT NULL,
-          name TEXT NOT NULL,
-          description TEXT,
-          list_photo_url TEXT,
-          followers_count INTEGER NOT NULL,
-          private BOOLEAN NOT NULL,
-          created_at TEXT NOT NULL,
-          updated_at TEXT NOT NULL
-        );
-      `);
-      },
-      (error) => {
-        console.log("Error setting up database tables", error);
-      },
-      () => {
-        console.log("Database tables set up successfully");
-      }
+  async function openDatabase(): Promise<SQLite.SQLiteDatabase> {
+    if (
+      !(await FileSystem.getInfoAsync(FileSystem.documentDirectory + "SQLite"))
+        .exists
+    ) {
+      await FileSystem.makeDirectoryAsync(
+        FileSystem.documentDirectory + "SQLite"
+      );
+    }
+    await FileSystem.downloadAsync(
+      Asset.fromModule(require("../assets/mapin.db")).uri,
+      FileSystem.documentDirectory + "SQLite/mapin.db"
     );
-  };
+    return SQLite.openDatabase("mapin.db");
+  }
 
   const addList = async (list: List) => {
     // Implement the logic to insert a list into the database
     // and update the lists state
-    db.transaction((tx) => {
-      const {
-        list_id,
-        user_id,
-        name,
-        description,
-        list_photo_url,
-        followers_count,
-        isPrivate,
-        created_at,
-        updated_at,
-      } = list;
-      tx.executeSql(
-        `INSERT INTO lists (list_id, user_id, name, description, list_photo_url, followers_count, private, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-        [
+    db &&
+      db.transaction((tx) => {
+        const {
           list_id,
           user_id,
           name,
           description,
           list_photo_url,
           followers_count,
-          isPrivate ? 1 : 0,
+          isPrivate,
           created_at,
           updated_at,
-        ]
-      );
-    });
+        } = list;
+        tx.executeSql(
+          `INSERT INTO lists (list_id, user_id, name, description, list_photo_url, followers_count, private, created_at, updated_at) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
+        ON CONFLICT(list_id) 
+        DO UPDATE SET 
+          user_id = excluded.user_id, 
+          name = excluded.name, 
+          description = excluded.description, 
+          list_photo_url = excluded.list_photo_url, 
+          followers_count = excluded.followers_count, 
+          private = excluded.private, 
+          created_at = excluded.created_at, 
+          updated_at = excluded.updated_at;`,
+          [
+            list_id,
+            user_id,
+            name,
+            description,
+            list_photo_url,
+            followers_count,
+            isPrivate ? 1 : 0,
+            created_at,
+            updated_at,
+          ]
+        );
+      });
   };
 
   const addPin = async (pin: PinPlace) => {
     // Implement the logic to insert a pin into the database
     // and update the pins state
-    db.transaction((tx) => {
-      const {
-        pin_id,
-        places_id,
-        user_id,
-        pin_name,
-        name,
-        notes,
-        places_photo_url,
-        pin_photo_url,
-        bookmark_count,
-        lat,
-        lng,
-        formatted_address,
-        maps_url,
-        created_at,
-        visited,
-        visited_at,
-        rating,
-        review,
-        review_updated_at,
-        copied_from_pin_id,
-        deviation_count,
-        isPrivate,
-        updated_at,
-        opening_hours,
-        phone_number,
-        price_level,
-        types,
-        website,
-      } = pin;
-      tx.executeSql(
-        `INSERT INTO pin_place (pin_id, places_id, user_id, pin_name, name, notes, places_photo_url, pin_photo_url, bookmark_count, lat, lng, formatted_address, maps_url, created_at, visited, visited_at, rating, review, review_updated_at, copied_from_pin_id, deviation_count, private, updated_at, opening_hours, phone_number, price_level, types, website) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
-        [
+    db &&
+      db.transaction((tx) => {
+        const {
           pin_id,
           places_id,
           user_id,
@@ -178,23 +114,55 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
           formatted_address,
           maps_url,
           created_at,
-          visited ? 1 : 0,
+          visited,
           visited_at,
           rating,
           review,
           review_updated_at,
           copied_from_pin_id,
           deviation_count,
-          isPrivate ? 1 : 0,
+          isPrivate,
           updated_at,
-          JSON.stringify(opening_hours),
+          opening_hours,
           phone_number,
           price_level,
-          JSON.stringify(types),
+          types,
           website,
-        ]
-      );
-    });
+        } = pin;
+        tx.executeSql(
+          `INSERT INTO pin_place (pin_id, places_id, user_id, pin_name, name, notes, places_photo_url, pin_photo_url, bookmark_count, lat, lng, formatted_address, maps_url, created_at, visited, visited_at, rating, review, review_updated_at, copied_from_pin_id, deviation_count, private, updated_at, opening_hours, phone_number, price_level, types, website) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+          [
+            pin_id,
+            places_id,
+            user_id,
+            pin_name,
+            name,
+            notes,
+            places_photo_url,
+            pin_photo_url,
+            bookmark_count,
+            lat,
+            lng,
+            formatted_address,
+            maps_url,
+            created_at,
+            visited ? 1 : 0,
+            visited_at,
+            rating,
+            review,
+            review_updated_at,
+            copied_from_pin_id,
+            deviation_count,
+            isPrivate ? 1 : 0,
+            updated_at,
+            JSON.stringify(opening_hours),
+            phone_number,
+            price_level,
+            JSON.stringify(types),
+            website,
+          ]
+        );
+      });
   };
 
   const deleteList = async (listId: number) => {
@@ -210,20 +178,21 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const fetchLists = async () => {
     // Implement the logic to fetch lists joined with pins from the database
     // and update the lists state
-    db.transaction((tx) => {
-      tx.executeSql(
-        `SELECT * FROM lists LEFT JOIN pin_place ON lists.list_id = pin_place.list_id;`,
-        [],
-        (_, { rows: { _array } }) => {
-          console.log("Fetched lists", _array);
-          // Update the lists state
-        },
-        (_, error) => {
-          console.log("Error fetching lists", error);
-          return false;
-        }
-      );
-    });
+    db &&
+      db.transaction((tx) => {
+        tx.executeSql(
+          `SELECT * FROM lists LEFT JOIN pin_place ON lists.list_id = pin_place.list_id;`,
+          [],
+          (_, { rows: { _array } }) => {
+            console.log("Fetched lists", _array);
+            // Update the lists state
+          },
+          (_, error) => {
+            console.log("Error fetching lists", error);
+            return false;
+          }
+        );
+      });
   };
 
   const populateDatabase = async () => {
@@ -239,11 +208,13 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Perform database initialization
     (async () => {
-      await initializeDatabase();
-      await populateDatabase();
+      // Open the database
+      let db = await openDatabase();
+      setDb(db);
+      // await populateDatabase();
       // Load initial data for lists and pins from the database
       // and set them to state variables
-      await fetchLists();
+      // await fetchLists();
       // Set the loading state to true
       setDBLoadingComplete(true);
     })();

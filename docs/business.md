@@ -9,6 +9,8 @@
 
 The problem is that people, including myself, struggle to organize, view and share lists of places they want to visit. If you're in a location and happen to become hungry for example, how can you easily see the restaurants recommendations you've always wanted to go to that also happen to be nearby?
 
+combines the social media aspect with practical utility, addressing the need for organization, sharing, and discovery of places.
+
 Mapin is a social media allows users to create lists of places they want to visit, categorize them (e.g. restaurants, museums, parks), and then view those lists based on their current location or search for specific places on the list. This would make it easy for users to quickly find and visit places they've been wanting to go to, without having to spend time searching for them each time they're in a new location.
 
 The note section is the quickest, and what people use, but lacks 2 things: organization as well as community. Mapin provides both, while also prioritizing the speed and ease the notes section provides.
