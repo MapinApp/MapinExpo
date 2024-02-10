@@ -128,7 +128,7 @@ export default function Avatar() {
       const updates = {
         id: session?.user.id,
         avatar_url,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(), // Convert Date to string
       };
 
       const { error } = await supabase.from("profiles").upsert(updates);

@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
-import MapView from "react-native-maps";
-import {
-  Dimensions,
-  StyleSheet,
-  Animated,
-  Platform,
-  TouchableOpacity,
-} from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import { Dimensions, StyleSheet, TouchableOpacity } from "react-native";
 import { Alert } from "react-native";
 import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,29 +17,35 @@ import lightMapStyle from "@/assets/map/lightMapStyle.json";
 const util = require("util");
 // console.log(util.inspect(myObject, false, null, true /* enable colors */))
 
+interface DeviceLocation {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
+
+interface Place {
+  name: string;
+  address: string;
+  img_url: string;
+  latitude?: number;
+  longitude?: number;
+}
+
 export default function App() {
   const mapRef = React.createRef<MapView>();
   const { isDark, theme } = useTheme();
-  const { colors, assets, sizes } = theme;
+  const { colors, sizes } = theme;
 
   // Use this for the Location of Search Bar and Map
-  const [location, setLocation] = useState<{
-    latitude: number;
-    longitude: number;
-    latitudeDelta: number;
-    longitudeDelta: number;
-  }>({
+  const [deviceLocation, setDeviceLocation] = useState<DeviceLocation>({
     latitude: 51.510067,
     longitude: -0.133869,
     latitudeDelta: 0.022,
     longitudeDelta: 0.021,
   });
 
-  const [selectedPlace, setSelectedPlace] = useState<{
-    name: string;
-    address: string;
-    img_url: string;
-  }>({
+  const [selectedPlace, setSelectedPlace] = useState<Place>({
     name: "",
     address: "",
     img_url: "",
@@ -130,6 +130,26 @@ export default function App() {
     if (data) {
       console.log("Place already exists in database");
       console.log(data);
+
+      if (
+        data.lat !== null &&
+        data.lng !== null &&
+        data.places_photo_url !== null &&
+        data.name !== null &&
+        data.formatted_address !== null
+      ) {
+        // Go to the location
+        goToLocation(data.lat, data.lng);
+        setSelectedPlace({
+          name: data.name,
+          address: data.formatted_address,
+          img_url: data.places_photo_url,
+          latitude: data.lat,
+          longitude: data.lng,
+        });
+      }
+
+      console.log(util.inspect(data, false, null, true /* enable colors */));
       // If yes, retrieve the data and display it
     } else {
       // If no, then we want to store the data in the database in supabase and then display it
@@ -177,6 +197,8 @@ export default function App() {
         name: data.name,
         address: data.formatted_address,
         img_url: photoDetails?.places_photo_url,
+        latitude: data.lat,
+        longitude: data.lng,
       });
       console.log(util.inspect(data, false, null, true /* enable colors */));
     }
@@ -196,65 +218,96 @@ export default function App() {
         return;
       }
       let locationResp = await Location.getCurrentPositionAsync({});
-      setLocation({
-        ...location,
+      setDeviceLocation((currentLocation) => ({
+        ...currentLocation,
         latitude: locationResp.coords.latitude,
         longitude: locationResp.coords.longitude,
-      });
+      }));
     })();
   }, []);
 
   return (
     <Block paddingTop={Constants.statusBarHeight}>
       <SearchBar
-        deviceLocation={location}
+        deviceLocation={deviceLocation}
         funOnPress={(details) => onResultClick(details)}
       />
       <MapView
         ref={mapRef}
         customMapStyle={isDark ? darkMapStyle : lightMapStyle}
-        region={location}
+        region={deviceLocation}
         showsUserLocation={true}
         showsMyLocationButton={false}
         showsCompass={false}
         showsIndoors={false}
         showsBuildings={false}
+        showsTraffic={false}
+        showsIndoorLevelPicker={false}
         provider="google"
         style={styles.map}
-      />
-      {/* Location Card */}
-      <Block>
-        <Block
-          card
-          row
-          position="absolute"
-          bottom={150}
-          right={0}
-          marginHorizontal={sizes.xs}
-        >
-          <Image source={selectedPlace.img_url} height={"100%"} width={"33%"} />
-          <Block padding={sizes.s} justify="space-between">
-            <Text p marginBottom={15}>
-              {selectedPlace.name}
-            </Text>
-            <TouchableOpacity>
-              <Block row align="center">
-                <Text p semibold marginRight={sizes.s} color={colors.link}>
-                  {selectedPlace.address}
-                </Text>
-                <Ionicons
-                  name="chevron-forward-outline"
-                  size={16}
-                  color={colors.text}
-                />
-              </Block>
-            </TouchableOpacity>
+        loadingBackgroundColor={String(colors.background)}
+      >
+        {/* Markers */}
+        {/* Conditional rendering of Marker */}
+        {selectedPlace.latitude && selectedPlace.longitude && (
+          <Marker
+            coordinate={{
+              latitude: selectedPlace.latitude,
+              longitude: selectedPlace.longitude,
+            }}
+            title={selectedPlace.name}
+            description={selectedPlace.address}
+          />
+        )}
+      </MapView>
+
+      {/* Search Location Card */}
+      {selectedPlace.name && selectedPlace.address && selectedPlace.img_url ? (
+        <Block>
+          <Block
+            card
+            row
+            position="absolute"
+            bottom={150}
+            right={0}
+            marginHorizontal={sizes.xs}
+          >
+            <Image
+              source={selectedPlace.img_url}
+              height={"100%"}
+              width={"33%"}
+            />
+            <Block padding={sizes.s} justify="space-between">
+              <Text p marginBottom={15}>
+                {selectedPlace.name}
+              </Text>
+              <TouchableOpacity>
+                <Block row align="center">
+                  <Text p semibold marginRight={sizes.s} color={colors.link}>
+                    {selectedPlace.address}
+                  </Text>
+                  <Ionicons
+                    name="chevron-forward-outline"
+                    size={16}
+                    color={colors.text}
+                  />
+                </Block>
+              </TouchableOpacity>
+            </Block>
           </Block>
         </Block>
-      </Block>
+      ) : null}
+
       {/* Button to Recenter */}
       <Button
-        onPress={() => goToLocation(location.latitude, location.longitude)}
+        onPress={() => {
+          goToLocation(deviceLocation.latitude, deviceLocation.longitude);
+          setSelectedPlace({
+            name: "",
+            address: "",
+            img_url: "",
+          } as Place);
+        }}
         position="absolute"
         bottom={10}
         right={10}
