@@ -777,6 +777,7 @@ export default function App() {
       ],
     },
   ];
+
   // ============================================================================
   // =========================== On Load ========================================
   // ============================================================================
@@ -890,7 +891,7 @@ export default function App() {
         align="center"
         justify="center"
       >
-        <Ionicons name="locate" size={20} color="white" />
+        <Ionicons name="locate" size={20} color={String(colors.text)} />
       </Button>
 
       {/* List Button */}
@@ -912,7 +913,7 @@ export default function App() {
         align="center"
         justify="center"
       >
-        <Ionicons name="albums-outline" size={20} color="white" />
+        <Ionicons name="albums-outline" size={20} color={String(colors.text)} />
       </Button>
     </Block>
   );
