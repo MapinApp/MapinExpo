@@ -38,6 +38,23 @@ interface PlacePhotoDetails {
   places_photo_url: string | null;
 }
 
+interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface POIClickEvent {
+  coordinate: Coordinate;
+  name: string;
+  placeId: string;
+  position: Position;
+}
+
 export default function App() {
   const mapRef = React.createRef<MapView>();
   const { isDark, theme } = useTheme();
@@ -300,6 +317,23 @@ export default function App() {
   };
 
   // ============================================================================
+  // =========================== POI ==========================================
+  // ============================================================================
+
+  const onPoiClick = async (e: any) => {
+    let clickedData: POIClickEvent = e.nativeEvent;
+    console.log("POI Clicked:", clickedData);
+    // Go to the location
+    goToLocation(
+      clickedData.coordinate.latitude,
+      clickedData.coordinate.longitude
+    );
+    // Check if the place exists in the database
+    let data = await doesPlaceExist(clickedData.placeId);
+    console.log(data);
+    // If false Fetch data from places API
+  };
+  // ============================================================================
   // =========================== Lists ==========================================
   // ============================================================================
 
@@ -345,6 +379,7 @@ export default function App() {
         provider="google"
         style={styles.map}
         loadingBackgroundColor={String(colors.background)}
+        onPoiClick={onPoiClick}
       >
         {/* Markers */}
         {/* Conditional rendering of Marker */}
