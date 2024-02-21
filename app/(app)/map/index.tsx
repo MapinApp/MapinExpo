@@ -74,7 +74,7 @@ export default function App() {
     img_url: "",
   });
 
-  const goToLocation = async (lat: number, lng: number) => {
+  const goToLocation = (lat: number, lng: number) => {
     mapRef?.current?.animateCamera({
       center: { latitude: lat, longitude: lng },
     });
@@ -201,10 +201,92 @@ export default function App() {
     }
   };
 
+  const handleNewPlace = async (details: google.maps.places.PlaceResult) => {
+    // set the selected place
+    setSelectedPlace({
+      name: details?.name || null,
+      address: details?.formatted_address || null,
+      img_url: null,
+      latitude: details?.geometry?.location?.lat || null,
+      longitude: details?.geometry?.location?.lng || null,
+    });
+
+    // If It's a new place,  we want to store the data in the database in supabase
+    let photoDetails = {
+      photo_attribution_href: "#",
+      photo_attribution_name: "Unknown",
+      places_photo_url: null,
+    } as PlacePhotoDetails;
+    const imagePath = `${details.place_id}.jpg`;
+
+    if (details.photos?.length === 0) {
+      // This will catch if there are no photos for the place
+      console.error("No photos found for this place");
+    } else {
+      // Generate the photo details from the first photo
+      photoDetails = generatePhotoDetails(details.photos[0]);
+      /*
+      {
+        "photo_attribution_href": "https://maps.google.com/maps/contrib/110445910939828919089",
+        "photo_attribution_name": "Tandoor Chophouse",
+        "places_photo_url": "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1347&photoreference=ATplDJY-BYQp_kNuJtvIjotbVNMVWBApP0F20N2tmUBFxZyvxLtbE8DYrpmtSW9m85emuUQCANqW4YVQPNV23z0hobEtw2M4ajS0fMRUHdOb6d21FZgTgnzbhr7626tTf0Gd0_bp9hXizh4M1dATNmtug7kb4GwCXZB4R2n5poI1AWzoZuJB&key=AIzaSyAs3vAwusITtRwM6FPSsEWrfArv7r59llg"
+      }
+      */
+      if (photoDetails.places_photo_url !== null) {
+        // Fetch the image from the URL provided by Google Places API if we have a URL
+        const imageArrayBuffer = (await fetch(
+          photoDetails.places_photo_url
+        ).then((r) => r.arrayBuffer())) as ArrayBuffer;
+        // Upload the image to Supabase Storage
+        let result = await uploadPlaceImage(imageArrayBuffer, imagePath);
+        if (result) {
+          setSelectedPlace(
+            (currentPlace) =>
+              ({
+                ...currentPlace,
+                img_url: result,
+              } as Place)
+          );
+        }
+      }
+    }
+
+    // Construct the place data including the URL of the uploaded image
+    let placeData = {
+      places_id: details?.place_id || null,
+      name: details?.name || null,
+      formatted_address: details?.formatted_address || null,
+      lat: details?.geometry?.location?.lat || null,
+      lng: details?.geometry?.location?.lng || null,
+      types: details?.types || [],
+      maps_url: details?.url || null,
+      website: details?.website || null,
+      price_level: details?.price_level || null,
+      opening_hours: details?.opening_hours?.periods || null,
+      phone_number: details?.formatted_phone_number || null,
+      editorial_summary: details?.editorial_summary?.overview || null,
+      business_status: details?.business_status || null,
+      viewport_lat_delta:
+        details?.geometry?.viewport?.northeast?.lat -
+          details?.geometry?.viewport?.southwest?.lat || 0,
+      viewport_lng_delta:
+        details?.geometry?.viewport?.northeast?.lng -
+          details?.geometry?.viewport?.southwest?.lng || 0,
+      ...photoDetails,
+      // If the photo URL is still the google API link, we don't want it in the db
+      // We don't want to overwrite photoDetails, so it is still rendered
+      places_photo_url: imagePath,
+    };
+    // Insert the place data into the "places" table, including the image URL
+    const { error } = await supabase.from("places").insert([placeData]);
+    if (error) throw new Error(error.message);
+  };
+
   const onResultClick = async (details: any) => {
     // console.log(util.inspect(details, false, null, true /* enable colors */));
     // We want to check of this places_id exists in the database
     let data = await doesPlaceExist(details.place_id);
+
     if (data) {
       // If yes, use the retrieved data and display it
       if (
@@ -235,90 +317,28 @@ export default function App() {
         details?.geometry?.location?.lat || null,
         details?.geometry?.location?.lng || null
       );
-      // set the selected place
-      setSelectedPlace({
-        name: details?.name || null,
-        address: details?.formatted_address || null,
-        img_url: null,
-        latitude: details?.geometry?.location?.lat || null,
-        longitude: details?.geometry?.location?.lng || null,
-      });
-
-      // If It's a new place,  we want to store the data in the database in supabase before we display it
-      let photoDetails = {
-        photo_attribution_href: "#",
-        photo_attribution_name: "Unknown",
-        places_photo_url: null,
-      } as PlacePhotoDetails;
-      const imagePath = `${details.place_id}.jpg`;
-
-      if (details.photos?.length === 0) {
-        // This will catch if there are no photos for the place
-        console.error("No photos found for this place");
-      } else {
-        // Generate the photo details from the first photo
-        photoDetails = generatePhotoDetails(details.photos[0]);
-        /*
-        {
-          "photo_attribution_href": "https://maps.google.com/maps/contrib/110445910939828919089",
-          "photo_attribution_name": "Tandoor Chophouse",
-          "places_photo_url": "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1347&photoreference=ATplDJY-BYQp_kNuJtvIjotbVNMVWBApP0F20N2tmUBFxZyvxLtbE8DYrpmtSW9m85emuUQCANqW4YVQPNV23z0hobEtw2M4ajS0fMRUHdOb6d21FZgTgnzbhr7626tTf0Gd0_bp9hXizh4M1dATNmtug7kb4GwCXZB4R2n5poI1AWzoZuJB&key=AIzaSyAs3vAwusITtRwM6FPSsEWrfArv7r59llg"
-        }
-        */
-        if (photoDetails.places_photo_url !== null) {
-          // Fetch the image from the URL provided by Google Places API if we have a URL
-          const imageArrayBuffer = (await fetch(
-            photoDetails.places_photo_url
-          ).then((r) => r.arrayBuffer())) as ArrayBuffer;
-          // Upload the image to Supabase Storage
-          let result = await uploadPlaceImage(imageArrayBuffer, imagePath);
-          if (result) {
-            setSelectedPlace(
-              (currentPlace) =>
-                ({
-                  ...currentPlace,
-                  img_url: result,
-                } as Place)
-            );
-          }
-        }
-      }
-
-      // Construct the place data including the URL of the uploaded image
-      let placeData = {
-        places_id: details?.place_id || null,
-        name: details?.name || null,
-        formatted_address: details?.formatted_address || null,
-        lat: details?.geometry?.location?.lat || null,
-        lng: details?.geometry?.location?.lng || null,
-        types: details?.types || [],
-        maps_url: details?.url || null,
-        website: details?.website || null,
-        price_level: details?.price_level || null,
-        opening_hours: details?.opening_hours?.periods || null,
-        phone_number: details?.formatted_phone_number || null,
-        editorial_summary: details?.editorial_summary?.overview || null,
-        business_status: details?.business_status || null,
-        viewport_lat_delta:
-          details?.geometry?.viewport?.northeast?.lat -
-            details?.geometry?.viewport?.southwest?.lat || 0,
-        viewport_lng_delta:
-          details?.geometry?.viewport?.northeast?.lng -
-            details?.geometry?.viewport?.southwest?.lng || 0,
-        ...photoDetails,
-        // If the photo URL is still the google API link, we don't want it in the db
-        // We don't want to overwrite photoDetails, so it is still rendered
-        places_photo_url: imagePath,
-      };
-      // Insert the place data into the "places" table, including the image URL
-      const { error } = await supabase.from("places").insert([placeData]);
-      if (error) throw new Error(error.message);
+      await handleNewPlace(details);
     }
   };
 
   // ============================================================================
   // =========================== POI ==========================================
   // ============================================================================
+
+  const getPlaceIdFromPOI = async (placeId: string) => {
+    // Get just the place ID from search
+    /*
+    A place id uniquely identifies a place. That doesn't mean that a place only has one id and according to the documentation, it can change at any time.
+    Others Experience this Issue:
+    https://stackoverflow.com/questions/60948252/google-maps-click-on-point-of-interest-returns-different-placeid-on-android-and
+    This is a workaround, but involves an extra API call
+    */
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?fields=place_id&place_id=${placeId}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
+    const response = await fetch(url);
+    const jsonResponse = await response.json();
+    const results = jsonResponse.result;
+    return results.place_id;
+  };
 
   const onPoiClick = async (e: any) => {
     let clickedData: POIClickEvent = e.nativeEvent;
@@ -328,11 +348,55 @@ export default function App() {
       clickedData.coordinate.latitude,
       clickedData.coordinate.longitude
     );
+    // Get Place ID from detail API as it changes from POI and replace it in Clicked Data
+    clickedData.placeId = await getPlaceIdFromPOI(clickedData.placeId);
     // Check if the place exists in the database
     let data = await doesPlaceExist(clickedData.placeId);
-    console.log(data);
-    // If false Fetch data from places API
+    if (data) {
+      // If yes, use the retrieved data and display it
+      if (
+        data.lat !== null &&
+        data.lng !== null &&
+        data.name !== null &&
+        data.formatted_address !== null
+      ) {
+        let imageUrl = null;
+        if (data.places_photo_url !== null) {
+          // Fetch the image from Supabase Storage
+          imageUrl = await downloadPlaceImage(data.places_photo_url);
+        }
+        setSelectedPlace({
+          name: data.name,
+          address: data.formatted_address,
+          latitude: data.lat,
+          longitude: data.lng,
+          img_url: imageUrl,
+        });
+      }
+    } else {
+      // If false Fetch data from places API
+      try {
+        // ToDo: Choose a subset of fields
+        const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${clickedData.placeId}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
+        const response = await fetch(url);
+        const jsonResponse = await response.json();
+        if (jsonResponse.status === "OK") {
+          const details = jsonResponse.result;
+          console.log(details);
+          // Handle the new place
+          await handleNewPlace(details);
+        } else {
+          console.error(
+            "Failed to fetch place details:",
+            jsonResponse.error_message
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching place details:", error);
+      }
+    }
   };
+
   // ============================================================================
   // =========================== Lists ==========================================
   // ============================================================================

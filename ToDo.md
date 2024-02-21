@@ -1,9 +1,10 @@
 ## 🚀 ToDo
 
 - [x] Have Map Component with Search
-- [ ] Need to make pictures saved to db. Find a way to deduplicate the calls to the Google Places Image API. Save the image in a bucket and reference, instead of calling the API every time.
+- [x] Need to make pictures saved to db. Find a way to deduplicate the calls to the Google Places Image API. Save the image in a bucket and reference, instead of calling the API every time.
   - Can use [Serverless Functions](https://docs.expo.dev/guides/serverless-functions/) for this
   - Supabase has [Serverless Functions](https://supabase.com/edge-functions)
+- [ ] On POI Click, show the location`
 - [ ] Create a "add new pin" state in data context
 - [ ] When clicked on a search result, pupulate the context and navigate to page
 - [ ] Create page with initial data. Add in a Search Function to use google search
@@ -26,6 +27,8 @@
 - [ ] On Map page, create the list navigation modal. Use a similar flash list from the profile page
   - [ ] Remove the modal border
 - [ ] Find a way to remove my Google Places API Key from the FrontEnd. Maybe use Serverless functions
+- [ ] Optimise the code
+  - Memoize Components and Hooks: Use React.memo for functional components and React.useCallback, React.useMemo for hooks to prevent unnecessary re-renders. This is particularly useful for components like MapView, Marker, and any custom components like SearchBar that don't need to re-render unless their props change.
 - [ ] Add a SQLite DB for the Lists-Pins Data for Offline Use
   - [Good Blog](https://www.jsparling.com/using-hooks-and-context-with-sqlite-for-expo-in-react-native/)
 - [ ] Implement Local DB fallback for when the user is offline / Supabase is unreachable
