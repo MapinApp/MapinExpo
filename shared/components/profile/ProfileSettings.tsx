@@ -14,7 +14,7 @@ export default function Avatar() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { theme } = useTheme();
-  const { assets, sizes, gradients, colors } = theme;
+  const { assets, sizes, colors } = theme;
 
   async function getUrl() {
     try {
