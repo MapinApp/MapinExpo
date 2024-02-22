@@ -9,65 +9,21 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      audit_logs: {
-        Row: {
-          changed_at: string | null;
-          changed_by: string | null;
-          column_name: string | null;
-          id: number;
-          new_value: string | null;
-          old_value: string | null;
-          operation_type: string;
-          row_id: string;
-          table_name: string;
-        };
-        Insert: {
-          changed_at?: string | null;
-          changed_by?: string | null;
-          column_name?: string | null;
-          id?: number;
-          new_value?: string | null;
-          old_value?: string | null;
-          operation_type: string;
-          row_id: string;
-          table_name: string;
-        };
-        Update: {
-          changed_at?: string | null;
-          changed_by?: string | null;
-          column_name?: string | null;
-          id?: number;
-          new_value?: string | null;
-          old_value?: string | null;
-          operation_type?: string;
-          row_id?: string;
-          table_name?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "audit_logs_changed_by_fkey";
-            columns: ["changed_by"];
-            isOneToOne: false;
-            referencedRelation: "profiles";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
       bookmarks: {
         Row: {
-          dt: string | null;
+          dt: string;
           id: number;
           pin_id: string;
           user_id: string;
         };
         Insert: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
           pin_id: string;
           user_id: string;
         };
         Update: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
           pin_id?: string;
           user_id?: string;
@@ -92,26 +48,26 @@ export type Database = {
       comments: {
         Row: {
           comment: string;
-          created_at: string | null;
+          created_at: string;
           id: number;
           pin_id: string;
-          updated_at: string | null;
+          updated_at: string;
           user_id: string;
         };
         Insert: {
           comment: string;
-          created_at?: string | null;
+          created_at?: string;
           id?: number;
           pin_id: string;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id: string;
         };
         Update: {
           comment?: string;
-          created_at?: string | null;
+          created_at?: string;
           id?: number;
           pin_id?: string;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id?: string;
         };
         Relationships: [
@@ -138,7 +94,7 @@ export type Database = {
           pin_id: string | null;
           resulted_in_interaction: boolean | null;
           resulted_in_signup: boolean | null;
-          shared_at: string | null;
+          shared_at: string;
           shared_by: string | null;
           shared_to_platform: string | null;
         };
@@ -148,7 +104,7 @@ export type Database = {
           pin_id?: string | null;
           resulted_in_interaction?: boolean | null;
           resulted_in_signup?: boolean | null;
-          shared_at?: string | null;
+          shared_at?: string;
           shared_by?: string | null;
           shared_to_platform?: string | null;
         };
@@ -158,7 +114,7 @@ export type Database = {
           pin_id?: string | null;
           resulted_in_interaction?: boolean | null;
           resulted_in_signup?: boolean | null;
-          shared_at?: string | null;
+          shared_at?: string;
           shared_by?: string | null;
           shared_to_platform?: string | null;
         };
@@ -188,25 +144,22 @@ export type Database = {
       };
       feedback: {
         Row: {
-          dt: string | null;
+          dt: string;
           id: number;
-          marketing: boolean | null;
-          message: string | null;
-          user_id: string | null;
+          message: string;
+          user_id: string;
         };
         Insert: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
-          marketing?: boolean | null;
-          message?: string | null;
-          user_id?: string | null;
+          message: string;
+          user_id: string;
         };
         Update: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
-          marketing?: boolean | null;
-          message?: string | null;
-          user_id?: string | null;
+          message?: string;
+          user_id?: string;
         };
         Relationships: [
           {
@@ -220,19 +173,19 @@ export type Database = {
       };
       follows: {
         Row: {
-          dt: string | null;
+          dt: string;
           id: number;
           list_id: string;
           user_id: string;
         };
         Insert: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
           list_id: string;
           user_id: string;
         };
         Update: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
           list_id?: string;
           user_id?: string;
@@ -256,19 +209,19 @@ export type Database = {
       };
       list_pin: {
         Row: {
-          dt: string | null;
+          dt: string;
           id: number;
           list_id: string;
           pin_id: string;
         };
         Insert: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
           list_id: string;
           pin_id: string;
         };
         Update: {
-          dt?: string | null;
+          dt?: string;
           id?: number;
           list_id?: string;
           pin_id?: string;
@@ -292,36 +245,36 @@ export type Database = {
       };
       lists: {
         Row: {
-          created_at: string | null;
+          created_at: string;
           description: string | null;
-          followers_count: number | null;
+          followers_count: number;
+          is_private: boolean;
           list_id: string;
           list_photo_url: string | null;
           name: string;
-          private: boolean | null;
-          updated_at: string | null;
+          updated_at: string;
           user_id: string;
         };
         Insert: {
-          created_at?: string | null;
+          created_at?: string;
           description?: string | null;
-          followers_count?: number | null;
+          followers_count?: number;
+          is_private?: boolean;
           list_id: string;
           list_photo_url?: string | null;
           name: string;
-          private?: boolean | null;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id: string;
         };
         Update: {
-          created_at?: string | null;
+          created_at?: string;
           description?: string | null;
-          followers_count?: number | null;
+          followers_count?: number;
+          is_private?: boolean;
           list_id?: string;
           list_photo_url?: string | null;
           name?: string;
-          private?: boolean | null;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id?: string;
         };
         Relationships: [
@@ -336,31 +289,31 @@ export type Database = {
       };
       notifications: {
         Row: {
-          created_at: string | null;
+          created_at: string;
           id: number;
-          notification_text: string | null;
-          notification_type: string | null;
-          read: boolean | null;
+          notification_text: string;
+          notification_type: string;
+          read: boolean;
           read_at: string | null;
-          user_id: string | null;
+          user_id: string;
         };
         Insert: {
-          created_at?: string | null;
+          created_at?: string;
           id?: number;
-          notification_text?: string | null;
-          notification_type?: string | null;
-          read?: boolean | null;
+          notification_text: string;
+          notification_type: string;
+          read?: boolean;
           read_at?: string | null;
-          user_id?: string | null;
+          user_id: string;
         };
         Update: {
-          created_at?: string | null;
+          created_at?: string;
           id?: number;
-          notification_text?: string | null;
-          notification_type?: string | null;
-          read?: boolean | null;
+          notification_text?: string;
+          notification_type?: string;
+          read?: boolean;
           read_at?: string | null;
-          user_id?: string | null;
+          user_id?: string;
         };
         Relationships: [
           {
@@ -374,61 +327,64 @@ export type Database = {
       };
       pins: {
         Row: {
-          bookmark_count: number | null;
+          bookmark_count: number;
           copied_from_pin_id: string | null;
-          created_at: string | null;
-          deviation_count: number | null;
+          created_at: string;
+          deviation_count: number;
+          is_private: boolean;
+          list_id: string;
           notes: string | null;
           pin_id: string;
           pin_name: string;
           pin_photo_url: string | null;
           places_id: string | null;
-          private: boolean | null;
           rating: number | null;
           review: string | null;
           review_updated_at: string | null;
-          updated_at: string | null;
+          updated_at: string;
           user_id: string;
-          visited: boolean | null;
-          visited_at: string | null;
+          visited: boolean;
+          visited_at: string;
         };
         Insert: {
-          bookmark_count?: number | null;
+          bookmark_count?: number;
           copied_from_pin_id?: string | null;
-          created_at?: string | null;
-          deviation_count?: number | null;
+          created_at?: string;
+          deviation_count?: number;
+          is_private?: boolean;
+          list_id: string;
           notes?: string | null;
           pin_id: string;
           pin_name: string;
           pin_photo_url?: string | null;
           places_id?: string | null;
-          private?: boolean | null;
           rating?: number | null;
           review?: string | null;
           review_updated_at?: string | null;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id: string;
-          visited?: boolean | null;
-          visited_at?: string | null;
+          visited?: boolean;
+          visited_at: string;
         };
         Update: {
-          bookmark_count?: number | null;
+          bookmark_count?: number;
           copied_from_pin_id?: string | null;
-          created_at?: string | null;
-          deviation_count?: number | null;
+          created_at?: string;
+          deviation_count?: number;
+          is_private?: boolean;
+          list_id?: string;
           notes?: string | null;
           pin_id?: string;
           pin_name?: string;
           pin_photo_url?: string | null;
           places_id?: string | null;
-          private?: boolean | null;
           rating?: number | null;
           review?: string | null;
           review_updated_at?: string | null;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id?: string;
-          visited?: boolean | null;
-          visited_at?: string | null;
+          visited?: boolean;
+          visited_at?: string;
         };
         Relationships: [
           {
@@ -437,6 +393,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "pins";
             referencedColumns: ["pin_id"];
+          },
+          {
+            foreignKeyName: "pins_list_id_fkey";
+            columns: ["list_id"];
+            isOneToOne: false;
+            referencedRelation: "lists";
+            referencedColumns: ["list_id"];
           },
           {
             foreignKeyName: "pins_places_id_fkey";
@@ -456,51 +419,69 @@ export type Database = {
       };
       places: {
         Row: {
-          created_at: string | null;
+          business_status: string | null;
+          created_at: string;
+          editorial_summary: string | null;
           formatted_address: string | null;
-          lat: number | null;
-          lng: number | null;
+          lat: number;
+          lng: number;
           maps_url: string | null;
-          name: string | null;
+          name: string;
           opening_hours: Json | null;
           phone_number: string | null;
+          photo_attribution_href: string | null;
+          photo_attribution_name: string | null;
           places_id: string;
           places_photo_url: string | null;
           price_level: number | null;
-          types: string[];
-          updated_at: string | null;
+          types: string[] | null;
+          updated_at: string;
+          viewport_lat_delta: number;
+          viewport_lng_delta: number;
           website: string | null;
         };
         Insert: {
-          created_at?: string | null;
+          business_status?: string | null;
+          created_at?: string;
+          editorial_summary?: string | null;
           formatted_address?: string | null;
-          lat?: number | null;
-          lng?: number | null;
+          lat: number;
+          lng: number;
           maps_url?: string | null;
-          name?: string | null;
+          name: string;
           opening_hours?: Json | null;
           phone_number?: string | null;
+          photo_attribution_href?: string | null;
+          photo_attribution_name?: string | null;
           places_id: string;
           places_photo_url?: string | null;
           price_level?: number | null;
-          types: string[];
-          updated_at?: string | null;
+          types?: string[] | null;
+          updated_at?: string;
+          viewport_lat_delta: number;
+          viewport_lng_delta: number;
           website?: string | null;
         };
         Update: {
-          created_at?: string | null;
+          business_status?: string | null;
+          created_at?: string;
+          editorial_summary?: string | null;
           formatted_address?: string | null;
-          lat?: number | null;
-          lng?: number | null;
+          lat?: number;
+          lng?: number;
           maps_url?: string | null;
-          name?: string | null;
+          name?: string;
           opening_hours?: Json | null;
           phone_number?: string | null;
+          photo_attribution_href?: string | null;
+          photo_attribution_name?: string | null;
           places_id?: string;
           places_photo_url?: string | null;
           price_level?: number | null;
-          types?: string[];
-          updated_at?: string | null;
+          types?: string[] | null;
+          updated_at?: string;
+          viewport_lat_delta?: number;
+          viewport_lng_delta?: number;
           website?: string | null;
         };
         Relationships: [];
@@ -514,13 +495,14 @@ export type Database = {
           date_of_birth: string | null;
           email: string | null;
           first_name: string | null;
-          followers_count: number | null;
-          following_count: number | null;
+          followers_count: number;
+          following_count: number;
           gender: string | null;
           id: string;
           last_login: string | null;
           last_name: string | null;
-          pin_count: number | null;
+          pin_count: number;
+          referral_key: string;
           updated_at: string | null;
           username: string | null;
         };
@@ -532,13 +514,14 @@ export type Database = {
           date_of_birth?: string | null;
           email?: string | null;
           first_name?: string | null;
-          followers_count?: number | null;
-          following_count?: number | null;
+          followers_count?: number;
+          following_count?: number;
           gender?: string | null;
           id: string;
           last_login?: string | null;
           last_name?: string | null;
-          pin_count?: number | null;
+          pin_count?: number;
+          referral_key?: string;
           updated_at?: string | null;
           username?: string | null;
         };
@@ -550,13 +533,14 @@ export type Database = {
           date_of_birth?: string | null;
           email?: string | null;
           first_name?: string | null;
-          followers_count?: number | null;
-          following_count?: number | null;
+          followers_count?: number;
+          following_count?: number;
           gender?: string | null;
           id?: string;
           last_login?: string | null;
           last_name?: string | null;
-          pin_count?: number | null;
+          pin_count?: number;
+          referral_key?: string;
           updated_at?: string | null;
           username?: string | null;
         };
@@ -572,22 +556,22 @@ export type Database = {
       };
       search_history: {
         Row: {
-          created_at: string | null;
+          created_at: string;
           id: number;
-          search_term: string | null;
-          user_id: string | null;
+          search_term: string;
+          user_id: string;
         };
         Insert: {
-          created_at?: string | null;
+          created_at?: string;
           id?: number;
-          search_term?: string | null;
-          user_id?: string | null;
+          search_term: string;
+          user_id: string;
         };
         Update: {
-          created_at?: string | null;
+          created_at?: string;
           id?: number;
-          search_term?: string | null;
-          user_id?: string | null;
+          search_term?: string;
+          user_id?: string;
         };
         Relationships: [
           {
@@ -603,28 +587,28 @@ export type Database = {
         Row: {
           duration: number | null;
           id: number;
-          interacted_at: string | null;
-          interaction_type: string | null;
-          list_id: string | null;
-          pin_id: string | null;
+          interacted_at: string;
+          interaction_type: string;
+          list_id: string;
+          pin_id: string;
           user_id: string;
         };
         Insert: {
           duration?: number | null;
           id?: number;
-          interacted_at?: string | null;
-          interaction_type?: string | null;
-          list_id?: string | null;
-          pin_id?: string | null;
+          interacted_at?: string;
+          interaction_type: string;
+          list_id: string;
+          pin_id: string;
           user_id: string;
         };
         Update: {
           duration?: number | null;
           id?: number;
-          interacted_at?: string | null;
-          interaction_type?: string | null;
-          list_id?: string | null;
-          pin_id?: string | null;
+          interacted_at?: string;
+          interaction_type?: string;
+          list_id?: string;
+          pin_id?: string;
           user_id?: string;
         };
         Relationships: [
@@ -653,36 +637,36 @@ export type Database = {
       };
       user_preferences: {
         Row: {
-          created_at: string | null;
-          dark_mode: boolean | null;
+          created_at: string;
+          dark_mode: boolean;
           id: number;
-          language: string | null;
-          location_sharing_enabled: boolean | null;
-          notification_enabled: boolean | null;
+          language: string;
+          location_sharing_enabled: boolean;
+          notification_enabled: boolean;
           notification_frequency: string | null;
-          updated_at: string | null;
+          updated_at: string;
           user_id: string;
         };
         Insert: {
-          created_at?: string | null;
-          dark_mode?: boolean | null;
+          created_at?: string;
+          dark_mode?: boolean;
           id?: number;
-          language?: string | null;
-          location_sharing_enabled?: boolean | null;
-          notification_enabled?: boolean | null;
+          language?: string;
+          location_sharing_enabled?: boolean;
+          notification_enabled?: boolean;
           notification_frequency?: string | null;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id: string;
         };
         Update: {
-          created_at?: string | null;
-          dark_mode?: boolean | null;
+          created_at?: string;
+          dark_mode?: boolean;
           id?: number;
-          language?: string | null;
-          location_sharing_enabled?: boolean | null;
-          notification_enabled?: boolean | null;
+          language?: string;
+          location_sharing_enabled?: boolean;
+          notification_enabled?: boolean;
           notification_frequency?: string | null;
-          updated_at?: string | null;
+          updated_at?: string;
           user_id?: string;
         };
         Relationships: [

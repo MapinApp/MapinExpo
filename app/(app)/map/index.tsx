@@ -13,6 +13,8 @@ import SearchBar from "@/components/map/SearchBar";
 import Constants from "expo-constants";
 import darkMapStyle from "@/assets/map/darkMapStyle.json";
 import lightMapStyle from "@/assets/map/lightMapStyle.json";
+// Types
+import type { PlaceResult, PlacePhoto, Periods } from "@/types/maps";
 // Util
 // const util = require("util");
 // console.log(util.inspect(myObject, false, null, true /* enable colors */))
@@ -25,8 +27,8 @@ interface DeviceLocation {
 }
 
 interface Place {
-  name: string;
-  address: string;
+  name: string | null;
+  address: string | null;
   img_url: string | null;
   latitude?: number;
   longitude?: number;
@@ -35,7 +37,7 @@ interface Place {
 interface PlacePhotoDetails {
   photo_attribution_href: string;
   photo_attribution_name: string;
-  places_photo_url: string | null;
+  places_photo_url: string;
 }
 
 interface Coordinate {
@@ -53,6 +55,26 @@ interface POIClickEvent {
   name: string;
   placeId: string;
   position: Position;
+}
+
+interface PlaceSupabaseInsert {
+  // Type Expected by Supabase
+  // updated_at?: string | null;
+  // created_at?: string | null;
+  formatted_address: string | null;
+  lat: number | null;
+  lng: number | null;
+  maps_url: string | null;
+  name: string | null;
+  opening_hours: Periods | null;
+  phone_number: string | null;
+  places_id: string;
+  price_level: number | null;
+  types: string[];
+  website: string | null;
+  places_photo_url?: string | null;
+  photo_attribution_href?: string | null;
+  photo_attribution_name?: string | null;
 }
 
 export default function App() {
@@ -88,11 +110,7 @@ export default function App() {
     html_attributions,
     photo_reference,
     width,
-  }: {
-    html_attributions: string[];
-    photo_reference: string;
-    width: number;
-  }): PlacePhotoDetails => {
+  }: PlacePhoto): PlacePhotoDetails => {
     // If the places API returns at least 1 photo, we execute this function to extract the photo details
     const defaultName = "Unknown";
     const defaultHref = "#";
@@ -112,9 +130,7 @@ export default function App() {
       name = nameMatches ? nameMatches[1] : defaultName;
     }
 
-    const placesPhotoUrl = photo_reference
-      ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${width}&photoreference=${photo_reference}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`
-      : null;
+    const placesPhotoUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${width}&photoreference=${photo_reference}&key=${process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY}`;
 
     return {
       photo_attribution_href: href,
@@ -201,28 +217,27 @@ export default function App() {
     }
   };
 
-  const handleNewPlace = async (details: google.maps.places.PlaceResult) => {
+  const handleNewPlace = async (details: PlaceResult) => {
     // set the selected place
     setSelectedPlace({
       name: details?.name || null,
       address: details?.formatted_address || null,
       img_url: null,
-      latitude: details?.geometry?.location?.lat || null,
-      longitude: details?.geometry?.location?.lng || null,
+      latitude: details?.geometry?.location?.lat,
+      longitude: details?.geometry?.location?.lng,
     });
-
     // If It's a new place,  we want to store the data in the database in supabase
     let photoDetails = {
       photo_attribution_href: "#",
       photo_attribution_name: "Unknown",
-      places_photo_url: null,
+      places_photo_url: "",
     } as PlacePhotoDetails;
-    const imagePath = `${details.place_id}.jpg`;
 
-    if (details.photos?.length === 0) {
-      // This will catch if there are no photos for the place
-      console.error("No photos found for this place");
-    } else {
+    let imagePath = null;
+
+    if (details.photos && details.photos?.length > 0) {
+      // If photos exist, we want to store the first photo
+      imagePath = `${details.place_id}.jpg`;
       // Generate the photo details from the first photo
       photoDetails = generatePhotoDetails(details.photos[0]);
       /*
@@ -232,22 +247,21 @@ export default function App() {
         "places_photo_url": "https://maps.googleapis.com/maps/api/place/photo?maxwidth=1347&photoreference=ATplDJY-BYQp_kNuJtvIjotbVNMVWBApP0F20N2tmUBFxZyvxLtbE8DYrpmtSW9m85emuUQCANqW4YVQPNV23z0hobEtw2M4ajS0fMRUHdOb6d21FZgTgnzbhr7626tTf0Gd0_bp9hXizh4M1dATNmtug7kb4GwCXZB4R2n5poI1AWzoZuJB&key=AIzaSyAs3vAwusITtRwM6FPSsEWrfArv7r59llg"
       }
       */
-      if (photoDetails.places_photo_url !== null) {
-        // Fetch the image from the URL provided by Google Places API if we have a URL
-        const imageArrayBuffer = (await fetch(
-          photoDetails.places_photo_url
-        ).then((r) => r.arrayBuffer())) as ArrayBuffer;
-        // Upload the image to Supabase Storage
-        let result = await uploadPlaceImage(imageArrayBuffer, imagePath);
-        if (result) {
-          setSelectedPlace(
-            (currentPlace) =>
-              ({
-                ...currentPlace,
-                img_url: result,
-              } as Place)
-          );
-        }
+
+      // Fetch the image from the URL provided by Google Places API if we have a URL
+      const imageArrayBuffer = (await fetch(photoDetails.places_photo_url).then(
+        (r) => r.arrayBuffer()
+      )) as ArrayBuffer;
+      // Upload the image to Supabase Storage
+      let result = await uploadPlaceImage(imageArrayBuffer, imagePath);
+      if (result) {
+        setSelectedPlace(
+          (currentPlace) =>
+            ({
+              ...currentPlace,
+              img_url: result,
+            } as Place)
+        );
       }
     }
 
@@ -266,19 +280,28 @@ export default function App() {
       phone_number: details?.formatted_phone_number || null,
       editorial_summary: details?.editorial_summary?.overview || null,
       business_status: details?.business_status || null,
+      // Return 0.002698 if either of the values involved in the subtraction is undefined
       viewport_lat_delta:
-        details?.geometry?.viewport?.northeast?.lat -
-          details?.geometry?.viewport?.southwest?.lat || 0,
+        details?.geometry?.viewport?.northeast?.lat !== undefined &&
+        details?.geometry?.viewport?.southwest?.lat !== undefined
+          ? details.geometry.viewport.northeast.lat -
+            details.geometry.viewport.southwest.lat
+          : 0.002698,
       viewport_lng_delta:
-        details?.geometry?.viewport?.northeast?.lng -
-          details?.geometry?.viewport?.southwest?.lng || 0,
-      ...photoDetails,
-      // If the photo URL is still the google API link, we don't want it in the db
-      // We don't want to overwrite photoDetails, so it is still rendered
-      places_photo_url: imagePath,
-    };
+        details?.geometry?.viewport?.northeast?.lng !== undefined &&
+        details?.geometry?.viewport?.southwest?.lng !== undefined
+          ? details.geometry.viewport.northeast.lng -
+            details.geometry.viewport.southwest.lng
+          : 0.002698,
+    } as PlaceSupabaseInsert;
+
+    if (imagePath !== null) {
+      placeData.photo_attribution_href = photoDetails.photo_attribution_href;
+      placeData.photo_attribution_name = photoDetails.photo_attribution_name;
+      placeData.places_photo_url = imagePath;
+    }
     // Insert the place data into the "places" table, including the image URL
-    const { error } = await supabase.from("places").insert([placeData]);
+    const { error } = await supabase.from("places").insert([placeData as any]);
     if (error) throw new Error(error.message);
   };
 
@@ -382,7 +405,7 @@ export default function App() {
         const jsonResponse = await response.json();
         if (jsonResponse.status === "OK") {
           const details = jsonResponse.result;
-          console.log(details);
+          // console.log(details);
           // Handle the new place
           await handleNewPlace(details);
         } else {
@@ -453,8 +476,8 @@ export default function App() {
               latitude: selectedPlace.latitude,
               longitude: selectedPlace.longitude,
             }}
-            title={selectedPlace.name}
-            description={selectedPlace.address}
+            title={selectedPlace.name || undefined}
+            description={selectedPlace.address || undefined}
           />
         )}
       </MapView>
