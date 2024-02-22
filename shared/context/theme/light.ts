@@ -57,6 +57,8 @@ const COLORS: ThemeColors = {
   link: "#6782E7",
   /** List Color */
   list: "#f2f4f9",
+  /** UI color for Stars */
+  star: "#FFD700",
 };
 
 const GRADIENTS: ThemeGradients = {

@@ -25,7 +25,7 @@ const Feedback = () => {
       const updates = {
         user_id: session?.user.id,
         message: feedback,
-        dt: new Date(),
+        dt: new Date().toISOString(), // Convert to string
       };
 
       const { error } = await supabase.from("feedback").insert(updates);

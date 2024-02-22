@@ -9,7 +9,7 @@ import { useRouter } from "expo-router";
 
 // Profile Settings
 const Profile = () => {
-  const [bio, setBio] = useState("");
+  const [bio, setBio] = useState<string>("");
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,7 @@ const Profile = () => {
         throw error;
       }
 
-      if (data) {
+      if (data && data.bio) {
         setBio(data.bio);
       }
     } catch (error) {
@@ -52,7 +52,7 @@ const Profile = () => {
       const updates = {
         id: session?.user.id,
         bio,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(), // Convert to string
       };
 
       const { error } = await supabase.from("profiles").upsert(updates);

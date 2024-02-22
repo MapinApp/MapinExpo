@@ -131,8 +131,9 @@ export default function TabLayout() {
         <Tabs.Screen
           name="add-pin"
           options={{
-            headerTitle: "Create Pin",
             tabBarLabel: "Add Pin",
+            // headerTitle: "Create Pin",
+            headerShown: false,
             tabBarIcon: ({ color, size, focused }) => (
               <TabBarIcon
                 name={focused ? "location" : "location-outline"}

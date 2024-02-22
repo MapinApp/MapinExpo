@@ -60,7 +60,7 @@ const SearchBar = memo(
             paddingHorizontal: sizes.inputPadding,
             borderColor: isFocused ? colors.focus : colors.gray,
             borderWidth: sizes.inputBorder,
-            borderRadius: 10,
+            borderRadius: sizes.inputRadius,
             onFocus: () => handleFocus(true),
             onBlur: () => handleFocus(false),
             autoCapitalize: "words",
@@ -98,6 +98,11 @@ const SearchBar = memo(
               zIndex: 1,
               marginTop: Constants.statusBarHeight,
               // paddingHorizontal: 7, marginTop: 7
+              borderTopWidth: 0,
+              borderBottomWidth: 0.5,
+              borderLeftWidth: 0,
+              borderRightWidth: 0,
+              borderColor: colors.border,
             },
             textInputContainer: {
               flexDirection: "row",

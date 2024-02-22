@@ -35,7 +35,7 @@ const COLORS: ThemeColors = {
   background: "#1B1D22",
   border: "#3f3f46",
   /** UI color for shadowColor */
-  shadow: "#374151",
+  shadow: "#e4e4e7",
   overlay: "rgba(0,0,0,0.3)",
   /** UI color for input borderColor on focus */
   focus: "#7ecee0",
@@ -57,6 +57,8 @@ const COLORS: ThemeColors = {
   link: "#FFFFFF",
   /** List Color */
   list: "#000000",
+  /** UI color for Stars */
+  star: "#FFD700",
 };
 
 const GRADIENTS: ThemeGradients = {

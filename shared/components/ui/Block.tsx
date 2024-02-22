@@ -144,8 +144,18 @@ const Block = (props: IBlockProps) => {
       }),
       ...(modal && {
         backgroundColor: colors.card,
-        borderRadius: sizes.cardRadius,
+        borderTopRightRadius: sizes.cardRadius,
+        borderTopLeftRadius: sizes.cardRadius,
         padding: sizes.cardPadding,
+        // Shadow
+        shadowColor: colors.shadow,
+        shadowOffset: {
+          width: sizes.shadowOffsetWidth,
+          height: sizes.shadowOffsetHeight,
+        },
+        shadowOpacity: sizes.shadowOpacity,
+        shadowRadius: sizes.shadowRadius,
+        elevation: sizes.elevation,
       }),
       ...(list && {
         backgroundColor: colors.card,

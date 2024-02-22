@@ -1,3 +1,10 @@
+export interface DeviceLocation {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+}
+
 export interface PlacePhoto {
   /**
    * A string identifier that uniquely identifies a photo.

@@ -14,17 +14,15 @@ import Constants from "expo-constants";
 import darkMapStyle from "@/assets/map/darkMapStyle.json";
 import lightMapStyle from "@/assets/map/lightMapStyle.json";
 // Types
-import type { PlaceResult, PlacePhoto, Periods } from "@/types/maps";
+import type {
+  PlaceResult,
+  PlacePhoto,
+  Periods,
+  DeviceLocation,
+} from "@/types/maps";
 // Util
 // const util = require("util");
 // console.log(util.inspect(myObject, false, null, true /* enable colors */))
-
-interface DeviceLocation {
-  latitude: number;
-  longitude: number;
-  latitudeDelta: number;
-  longitudeDelta: number;
-}
 
 interface Place {
   name: string | null;
