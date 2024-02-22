@@ -36,6 +36,7 @@ const Block = (props: IBlockProps) => {
     style,
     shadow,
     card,
+    modal,
     list,
     center,
     outlined,
@@ -141,6 +142,11 @@ const Block = (props: IBlockProps) => {
         borderWidth: 0.8,
         borderColor: colors.border,
       }),
+      ...(modal && {
+        backgroundColor: colors.card,
+        borderRadius: sizes.cardRadius,
+        padding: sizes.cardPadding,
+      }),
       ...(list && {
         backgroundColor: colors.card,
         padding: sizes.cardPadding,
@@ -151,6 +157,7 @@ const Block = (props: IBlockProps) => {
         borderRightWidth: 0,
         borderColor: colors.border,
       }),
+
       ...(margin !== undefined && { margin }),
       ...(marginBottom && { marginBottom }),
       ...(marginTop && { marginTop }),
@@ -320,6 +327,11 @@ interface IBlockProps extends ISpacing, ViewProps, ScrollViewProps {
    * @see https://reactnative.dev/docs/shadow-props
    */
   card?: boolean;
+  /**
+   * Renders a View with predefined backgroundColor, borderRadius, padding, shadow / elevation
+   * @see https://reactnative.dev/docs/shadow-props
+   */
+  modal?: boolean;
   /**
    * Renders a View with predefined justifyContent: center
    * @see https://reactnative.dev/docs/flexbox#justify-content

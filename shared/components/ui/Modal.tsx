@@ -39,7 +39,7 @@ const Modal = ({
       onRequestClose={onRequestClose}
     >
       <Block justify="flex-end">
-        <Block blur safe card outlined flex={0}>
+        <Block safe modal flex={0}>
           <Button
             top={0}
             right={0}

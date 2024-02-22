@@ -12,6 +12,9 @@ import * as FileSystem from "expo-file-system";
 interface DataContextType {
   isDBLoadingComplete: boolean;
   lists: Lists;
+  // Create Pin Operations
+
+  // SQL Operations
   addList: (list: List) => Promise<void>;
   addPin: (pin: PinPlace) => Promise<void>;
   deleteList: (listId: number) => Promise<void>;
@@ -30,11 +33,21 @@ const DataContext = createContext<DataContextType>({
 });
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
+  /*
+   * DB Scope: Only use it for Places, Lists and Pins that a user has created
+   * Use this as a fallback for when Internet is not available
+   * Only allow viewing of the existing data in Offline Mode
+   * ToDo: Allow the user to edit existing Pins or Lists in Offline Mode
+   * ToDo: Allow the user to create new Lists and Pins in Offline Mode
+   * ToDo: Sync the data with the server when the user comes back online
+   */
   const [isDBLoadingComplete, setDBLoadingComplete] = React.useState(false);
   const [lists, setLists] = useState<Lists>({});
   const [db, setDb] = useState<SQLite.SQLiteDatabase | null>(null);
 
   async function openDatabase(): Promise<SQLite.SQLiteDatabase> {
+    // If the database doesn't exist, copy it from the assets
+    // mapin.db contains a starter DB so we don't have to create Tables etc.
     if (
       !(await FileSystem.getInfoAsync(FileSystem.documentDirectory + "SQLite"))
         .exists

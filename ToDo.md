@@ -4,7 +4,7 @@
 - [x] Need to make pictures saved to db. Find a way to deduplicate the calls to the Google Places Image API. Save the image in a bucket and reference, instead of calling the API every time.
   - Can use [Serverless Functions](https://docs.expo.dev/guides/serverless-functions/) for this
   - Supabase has [Serverless Functions](https://supabase.com/edge-functions)
-- [ ] On POI Click, show the location`
+- [x] On POI Click, show the location`
 - [ ] Create a "add new pin" state in data context
 - [ ] When clicked on a search result, pupulate the context and navigate to page
 - [ ] Create page with initial data. Add in a Search Function to use google search

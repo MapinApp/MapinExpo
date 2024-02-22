@@ -182,5 +182,5 @@ npm i supabase@">=1.8.1" --save-dev
 # Login
 npx supabase login
 # Generate types for your project to produce the types/supabase.ts file:
-npx supabase gen types typescript --project-id "zcydoiuuwfvixtzslhke" --schema public > shared/types/supabase.ts
+npx supabase gen types typescript --project-id "nbqlplnlhtwxhodenwpo" --schema public > shared/types/supabase.ts
 ```

@@ -44,3 +44,13 @@ export const username: RegExp = /^[a-zA-Z0-9]([a-zA-Z0-9._]){4,28}[a-zA-Z0-9]$/;
  *`$` asserts the end of the string.
  */
 export const referral: RegExp = /^[0-9a-z]{6}$/;
+
+/*
+ * Pin name validation
+ * accepted: letters & spaces, minimum 3 chars, maximum 15 chars
+ * ^ matches the start of the string.
+ * [a-zA-Z0-9' -] matches any letter (lowercase or uppercase), digit, apostrophes, spaces, or hyphens.
+ * {3,15} specifies that the name must be at least 3 characters long
+ * $ matches the end of the string.
+ */
+export const pinName: RegExp = /^[a-zA-Z0-9' -]{3,}$/;
