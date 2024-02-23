@@ -147,7 +147,7 @@ export default function AddPin() {
                   gradient={gradients.primary}
                   marginTop={sizes.s}
                 >
-                  Place Name
+                  {place?.name ? place.name : "No Place Selected"}
                 </Text>
                 <Text
                   p
@@ -155,7 +155,9 @@ export default function AddPin() {
                   marginLeft={sizes.xs}
                   marginBottom={sizes.sm}
                 >
-                  Address
+                  {place?.formatted_address
+                    ? place.formatted_address
+                    : "No Address"}
                 </Text>
               </Block>
               {/* form inputs 1 */}

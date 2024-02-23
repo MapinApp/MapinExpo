@@ -6,12 +6,15 @@
   - Supabase has [Serverless Functions](https://supabase.com/edge-functions)
 - [x] On POI Click, show the location`
 - [ ] Create a "add new pin" state in data context
-- [ ] When clicked on a search result, pupulate the context and navigate to page
+- [ ] Manage all add pin states in the data context
+- [ ] Add a clear Button to the add-pin page
+- [ ] Enable users to create pins from the add pin page. Update data context the entire time
+- [ ] When clicked on a search result on the map, pupulate the context and navigate to add-pin page
 - [ ] Create page with initial data. Add in a Search Function to use google search
   - [ ] Add in extra fields like notes etc
   - [ ] Add in a "Add to List" button
 - [ ] Make a pins list nullable. If the list is null, then it has not been sorted yet.
-- [ ] Generate many Pins in DB
+- [ ] Generate many Pins in DB using UI
 - [ ] Create a list page
   - [ ] Allow us to choose from nulled pins, or add later
 - [ ] View lists using flash list
@@ -25,8 +28,8 @@
   - [ ] Use this to render a search result conditionally, or a List scroll
   - [ ] Use the old code for animated view
 - [ ] On Map page, create the list navigation modal. Use a similar flash list from the profile page
-  - [ ] Remove the modal border
-- [ ] Find a way to remove my Google Places API Key from the FrontEnd. Maybe use Serverless functions
+  - [x] Remove the modal border
+- [ ] Find a way to remove my Google Places API Key from the FrontEnd. Maybe use Serverless functions, or lambda function
 - [ ] Optimise the code
   - Memoize Components and Hooks: Use React.memo for functional components and React.useCallback, React.useMemo for hooks to prevent unnecessary re-renders. This is particularly useful for components like MapView, Marker, and any custom components like SearchBar that don't need to re-render unless their props change.
 - [ ] Add a SQLite DB for the Lists-Pins Data for Offline Use
